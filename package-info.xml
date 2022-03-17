@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	Package manifest file for The SMFQuiz
+
+	ATTENTION: If you are trying to install this manually, you should try
+	the package manager.  If it will not work for you, please take a look
+	at the following for information on this format:
+		http://mods.simplemachines.org/docs/manual-install.php
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+
+	<id>SMF_Modding:SMFQuiz</id>
+	<name>SMF Quiz</name>
+	<version>2.0</version>
+	<type>modification</type>
+
+	<!-- Install -->
+	<install for="2.0 - 2.0.99">
+		<readme parsebbc="true">smf2/readme.txt</readme>
+		<modification>smf2/modification.xml</modification>
+
+		<!-- Code to execute -->
+		<code>smf2/installScript.php</code>
+
+		<!-- SMF2 specific files to copy over  -->
+		<require-file name="smf2/SMFQuiz.php" destination="$sourcedir" />
+		<require-file name="smf2/SMFQuiz.template.php" destination="$themedir" />
+		<require-file name="smf2/SMFQuizAdmin.php" destination="$sourcedir" />
+		<require-file name="smf2/SMFQuizAdmin.template.php" destination="$themedir" />
+		<require-file name="smf2/SMFQuizAjax.php" destination="$sourcedir" />
+		<require-file name="smf2/SMFQuizDb.php" destination="$sourcedir" />
+		<require-file name="smf2/SMFQuizLoad.php" destination="$sourcedir" />
+
+		<!-- Quiz images  -->
+		<require-dir name="images/quiz_images" destination="$imagesdir" />
+
+		<!-- Scripts -->
+		<require-dir name="scripts/quiz_scripts" destination="$themedir/scripts" />
+
+		<!-- CSS -->
+		<require-dir name="css/quiz_css" destination="$themedir/css" />
+
+		<!-- Common files to copy over  -->
+		<require-file name="common/SMFQuizAnswers.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizEnd.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizQuestions.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizStart.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizExport.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizDispute.php" destination="$sourcedir" />
+
+		<!-- Language files to copy over  -->
+		<require-file name="language/SMFQuiz.english.php" destination="$languagedir" />
+		<require-file name="language/SMFQuizAdmin.english.php" destination="$languagedir" />
+		<require-file name="language/SMFQuizCommon.english.php" destination="$languagedir" />
+
+		<!-- Readme at the end -->
+		<redirect url="$scripturl?action=admin;area=quiz;sa=adminCenter" timeout="15000">installdone.html</redirect>
+	</install>
+
+	<!-- Uninstall -->
+	<uninstall for="2.0 - 2.0.99">
+		<modification reverse="true">smf2/modification.xml</modification>
+
+		<!-- Code to execute -->
+		<code>smf2/uninstallScript.php</code>
+
+		<!-- Files to remove -->
+		<remove-file name="$sourcedir/SMFQuiz.php" />
+		<remove-file name="$themedir/SMFQuiz.template.php" />
+		<remove-file name="$themedir/SMFQuizAdmin.template.php" />
+		<remove-file name="$sourcedir/SMFQuizAdmin.php" />
+		<remove-file name="$sourcedir/SMFQuizDb.php" />
+		<remove-file name="$sourcedir/SMFQuizAjax.php" />
+		<remove-file name="$sourcedir/SMFQuizLoad.php" />
+
+		<!-- Scripts -->
+		<remove-dir name="$themedir/scripts/quiz_scripts" />
+
+		<!-- CSS -->
+		<remove-dir name="$themedir/css/quiz_css" />
+
+		<!-- Common Files -->
+		<remove-file name="$sourcedir/SMFQuizAnswers.php" />
+		<remove-file name="$sourcedir/SMFQuizEnd.php" />
+		<remove-file name="$sourcedir/SMFQuizQuestions.php" />
+		<remove-file name="$sourcedir/SMFQuizStart.php" />
+		<remove-file name="$sourcedir/SMFQuizExport.php" />
+		<remove-file name="$sourcedir/SMFQuizDispute.php" />
+
+		<!-- Language files  -->
+		<remove-file name="$languagedir/SMFQuiz.english.php" />
+		<remove-file name="$languagedir/SMFQuizAdmin.english.php" />
+		<remove-file name="$languagedir/SMFQuizCommon.english.php" />
+	</uninstall>
+
+
+
+
+
+
+
+
+	<!-- Install -->
+	<install for="2.1 - 2.1.99, 2.1 RC4">
+		<readme parsebbc="true">smf2/readme.txt</readme>
+		<modification>smf2/modification2.1.xml</modification>
+
+		<!-- Code to execute -->
+		<code>smf2/installScript.php</code>
+
+		<!-- SMF2 specific files to copy over  -->
+		<require-file name="smf2/SMFQuiz.php" destination="$sourcedir" />
+		<require-file name="smf2/SMFQuiz2.1.template.php" destination="$themedir" />
+		<require-file name="smf2/SMFQuizAdmin.php" destination="$sourcedir" />
+		<require-file name="smf2/SMFQuizAdmin2.1.template.php" destination="$themedir" />
+		<require-file name="smf2/SMFQuizAjax.php" destination="$sourcedir" />
+		<require-file name="smf2/SMFQuizDb.php" destination="$sourcedir" />
+		<require-file name="smf2/SMFQuizLoad.php" destination="$sourcedir" />
+		<require-file name="smf2/SMFQuizHooks.php" destination="$sourcedir" />
+
+		<!-- Quiz images  -->
+		<require-file name="smf2/quiz.png" destination="$imagesdir" />
+		<require-file name="smf2/quiz.png" destination="$imagesdir/admin" />
+		<require-dir name="images/quiz_images" destination="$imagesdir" />
+		<require-dir name="smf2/images" destination="$themedir" />
+
+		<!-- Scripts -->
+		<require-dir name="scripts/quiz_scripts" destination="$themedir/scripts" />
+
+		<!-- CSS -->
+		<require-dir name="css/quiz_css" destination="$themedir/css" />
+
+		<!-- Common files to copy over  -->
+		<require-file name="common/SMFQuizAnswers.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizEnd.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizQuestions.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizStart.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizExport.php" destination="$sourcedir" />
+		<require-file name="common/SMFQuizDispute.php" destination="$sourcedir" />
+
+		<!-- Language files to copy over  -->
+		<require-file name="language/SMFQuiz.english.php" destination="$languagedir" />
+		<require-file name="language/SMFQuizAdmin.english.php" destination="$languagedir" />
+		<require-file name="language/SMFQuizCommon.english.php" destination="$languagedir" />
+
+		<!-- Hooks -->
+		<hook hook="integrate_admin_areas" function="smfquiz_admin_areas" file="$sourcedir/SMFQuizHooks.php"  />
+		<hook hook="integrate_menu_buttons" function="smfquiz_menu_buttons" file="$sourcedir/SMFQuizHooks.php" />
+		<hook hook="integrate_actions" function="smfquiz_actions" file="$sourcedir/SMFQuizHooks.php"  />
+		<hook hook="integrate_load_permissions" function="smfquiz_load_permissions" file="$sourcedir/SMFQuizHooks.php"  />
+
+		<!-- Readme at the end -->
+		<redirect url="$scripturl?action=admin;area=quiz;sa=adminCenter" timeout="15000">installdone.html</redirect>
+	</install>
+
+	<!-- Uninstall -->
+	<uninstall for="2.1 - 2.1.99, 2.1 RC4">
+		<modification reverse="true">smf2/modification2.1.xml</modification>
+
+		<!-- Code to execute -->
+		<code>smf2/uninstallScript.php</code>
+
+		<!-- Files to remove -->
+		<remove-file name="$sourcedir/SMFQuiz.php" />
+		<remove-file name="$themedir/SMFQuiz2.1.template.php" />
+		<remove-file name="$themedir/SMFQuizAdmin2.1.template.php" />
+		<remove-file name="$sourcedir/SMFQuizAdmin.php" />
+		<remove-file name="$sourcedir/SMFQuizDb.php" />
+		<remove-file name="$sourcedir/SMFQuizAjax.php" />
+		<remove-file name="$sourcedir/SMFQuizLoad.php" />
+		<remove-file name="$sourcedir/SMFQuizHooks.php" />
+
+		<!-- Scripts -->
+		<remove-dir name="$themedir/scripts/quiz_scripts" />
+
+		<!-- CSS -->
+		<remove-dir name="$themedir/css/quiz_css" />
+
+		<!-- Common Files -->
+		<remove-file name="$sourcedir/SMFQuizAnswers.php" />
+		<remove-file name="$sourcedir/SMFQuizEnd.php" />
+		<remove-file name="$sourcedir/SMFQuizQuestions.php" />
+		<remove-file name="$sourcedir/SMFQuizStart.php" />
+		<remove-file name="$sourcedir/SMFQuizExport.php" />
+		<remove-file name="$sourcedir/SMFQuizDispute.php" />
+
+		<!-- Language files  -->
+		<remove-file name="$languagedir/SMFQuiz.english.php" />
+		<remove-file name="$languagedir/SMFQuizAdmin.english.php" />
+		<remove-file name="$languagedir/SMFQuizCommon.english.php" />
+
+		<!-- Hooks -->
+		<hook hook="integrate_admin_areas" function="smfquiz_admin_areas" file="$sourcedir/SMFQuizHooks.php"  reverse="true"  />
+		<hook hook="integrate_menu_buttons" function="smfquiz_menu_buttons" file="$sourcedir/SMFQuizHooks.php"  reverse="true" />
+		<hook hook="integrate_actions" function="smfquiz_actions" file="$sourcedir/SMFQuizHooks.php"  reverse="true"  />
+		<hook hook="integrate_load_permissions" function="smfquiz_load_permissions" file="$sourcedir/SMFQuizHooks.php"  reverse="true" />
+
+	</uninstall>
+
+
+
+
+</package-info>

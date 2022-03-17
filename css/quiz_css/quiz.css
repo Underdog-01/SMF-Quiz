@@ -1,0 +1,170 @@
+body
+{
+	background:#7cc5da;
+	margin:0;
+	padding:0;
+	font-size: 62.5%;
+}
+
+#wrapperDiv {
+	width:700px;
+	margin:0 auto;
+	height:600px;
+	background:#7cc5da;
+	padding: 5px;
+}
+
+#titleDiv 
+{
+    width: 690px;
+    height: 70px;
+    background: #ffffff;
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px;
+	border: thin solid #000000;
+}
+
+#answerDiv 
+{
+    width: 690px;
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px;
+	margin-top: 5px;
+}
+
+#countDownDiv 
+{
+    font-family: Arial, Sans-Serif;
+    font-size: 12px;
+    background: #ffffff;
+    overflow:visible;
+}
+
+#progressBarWrapperDiv 
+{
+    width: 690px;
+    background: #ffffff;
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px;
+	margin-top: 5px;
+	border: thin solid #000000;
+}
+
+#buttonWrapperDiv 
+{
+    width: 686px;
+    background: #ffffff;
+	padding: 2px;
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px;
+	margin-top: 5px;
+	border: thin solid #000000;
+}
+
+#progressBarDiv 
+{
+    height: 15px;
+    width: 550px;
+    background: #ffffff;
+}
+
+#questionDiv  
+{
+    width: 690px;
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px;
+	margin-top: 5px;
+}
+
+.subDiv 
+{
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px;
+    background: #ffffff;
+}
+
+.quizTitle 
+{
+    font-family: Arial, Sans-Serif;
+    color: #37626F;
+    padding: 1px;
+    font-size: 20px;
+    letter-spacing: -1px;
+}
+
+.quizDescription 
+{
+    font-family: Arial, Sans-Serif;
+    font-size: 10px;
+	font-weight: bold;
+}
+
+.question 
+{
+    font-family: Arial, Sans-Serif;
+    font-size: 12px;
+	font-weight: bold;
+}
+.answer
+{
+    font-family: Arial, Sans-Serif;
+    font-size: 12px;
+	color: #ffffff;
+	font-weight: bold;
+}
+*
+{
+	border:none;
+}
+.quizDetails
+{
+    font-family: arial,sans-serif;
+    font-size: 12px;
+}
+
+#wrapper {
+	width:700px;
+	margin:0 auto;
+	height:620px;
+	background:#3b902f;
+}
+
+#content{
+	text-align:center;
+	padding:10px;
+}
+		
+#content h2{
+	color:#FFF;
+	font-family:arial, sans-serif;
+	font-size:26px;
+	letter-spacing:-1px;
+}
+			
+#content p{
+	color:#FFF;
+	font-family:arial, sans-serif;
+	font-size:13px;
+}
+
+#content a{
+	color:#FFED2F;
+	text-decoration:none;
+}
+.loading {
+	font-family:arial, sans-serif;
+	font-size:6pt;
+}
+.pointTab {
+	padding: 2px; 
+	border-bottom: thin solid #000000; 
+	border-left: thin solid #000000; 
+	border-right: thin solid #000000; 
+	float:right; width:100px; 
+	font-size: 12px; 
+	font-family: Arial, Sans-Serif;
+}
+.small {
+    font-family: arial,sans-serif;
+    font-size: 9px;
+}

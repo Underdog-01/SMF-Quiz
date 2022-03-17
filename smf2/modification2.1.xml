@@ -1,0 +1,671 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    Modification file for SMF Quiz
+
+	ATTENTION: If you are trying to install this manually, you should try
+	the package manager.  If it will not work for you, please take a look
+	at the following for information on this format:
+		http://mods.simplemachines.org/docs/manual-install.php
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+
+	<id>SMF_Modding:SMFQuiz</id>
+
+	<version>1.1.0</version>
+	
+<file name="$sourcedir/Who.php">
+	<operation>
+		<search position="before"><![CDATA[	loadLanguage('Who');
+]]></search>
+			<add><![CDATA[	// SMFQuiz start
+	loadLanguage('SMFQuiz');
+	// SMFQuiz end
+]]></add>
+</operation>
+	<operation>
+		<search position="before"><![CDATA[function determineActions($urls, $preferred_prefix = false)
+{]]></search>
+			<add><![CDATA[	// SMFQuiz start
+	global $settings, $scripturl;
+	// SMFQuiz end
+]]></add>
+	</operation>
+	<operation>
+			<search position="after"><![CDATA[		// Some other normal action...?]]></search>
+			<add><![CDATA[				// SMFQuiz start
+		elseif ($actions['action'] == 'SMFQuiz')
+		{
+			if (!isset($actions['sa']))
+				$data[$k] = $txt['SMFQuiz_Common']['InThe'] . ' <a href="' . $scripturl . '?action=SMFQuiz;">' . $txt['SMFQuiz_Common']['Quiz'] . '</a>';
+			elseif ($actions['sa'] == 'play' && isset($actions['id_quiz']))
+				$quiz_ids[(int) $actions['id_quiz']][$k] = $txt['SMFQuiz_Common']['PlayingQuiz'] . '<a href="' . $scripturl . '?action=SMFQuiz;sa=categories;id_quiz=%d"><img border="0" src="%s" ALIGN="middle" alt="ico" width="20" height="20" title="Viewing %s"/> %s</a>';
+			elseif ($actions['sa'] == 'categories' && isset($actions['id_quiz']))
+				$quiz_ids[(int) $actions['id_quiz']][$k] = $txt['SMFQuiz_Common']['ViewingQuiz'] . ' <a href="' . $scripturl . '?action=SMFQuiz;sa=categories;id_quiz=%d"><img border="0" src="%s" ALIGN="middle" alt="ico" width="20" height="20" title="Viewing %s"/> %s</a>';
+			elseif ($actions['sa'] == 'categories' && !empty($actions['categoryId']))
+				$category_ids[(int) $actions['categoryId']][$k] = $txt['SMFQuiz_Common']['ViewingCategory'] . ' <a href="' . $scripturl . '?action=SMFQuiz;sa=categories;categoryId=%d"><img border="0" src="%s" ALIGN="middle" alt="ico" width="20" height="20" title="Viewing %s"/> %s</a>';
+			elseif ($actions['sa'] == 'categories')
+				$data[$k] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz;sa=categories">' . $txt['SMFQuiz_Common']['QuizCategories'] . '</a>';
+			elseif ($actions['sa'] == 'quizleagues')
+				$data[$k] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz;sa=quizleagues">' . $txt['SMFQuiz_Common']['QuizLeagues'] . '</a>';
+			elseif ($actions['sa'] == 'statistics')
+				$data[$k] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz;sa=statistics">' . $txt['SMFQuiz_Common']['QuizStatistics'] . '</a>';
+			elseif ($actions['sa'] == 'userdetails')
+				$data[$k] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz;sa=userdetails">' . $txt['SMFQuiz_Common']['QuizUserDetails'] . '</a>';
+			elseif ($actions['sa'] == 'userquizes')
+				$data[$k] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz;sa=userquizes">' . $txt['SMFQuiz_Common']['QuizUserQuizes'] . '</a>';
+			elseif ($actions['sa'] == 'home')
+				$data[$k] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz">' . $txt['SMFQuiz_Common']['Quiz'] . '</a>';
+			else
+				$data[$k] = $txt['SMFQuiz_Common']['DoingSomethingUnknown'];
+		}
+		// SMFQuiz end
+]]></add>
+        </operation>
+	<operation>
+			<search position="after"><![CDATA[	// Load board names.]]></search>
+			<add><![CDATA[					// SMFQuiz start
+	if (!empty($quiz_ids))
+	{
+		// @TODO query
+		$result = $smcFunc['db_query']('', '
+			SELECT id_quiz, title, image
+			FROM {db_prefix}quiz
+			WHERE id_quiz IN ('. implode(', ', array_keys($quiz_ids)) . ')
+			LIMIT '. count($quiz_ids).'',
+			array(
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($result))
+		{
+			foreach ($quiz_ids[$row['id_quiz']] as $k => $session_text)
+			{
+				$quizIcon = !empty($row['image']) ? $settings["default_images_url"] . '/quiz_images/Quizes/' . $row['image'] : $settings["default_images_url"] . '/quiz_images/Quizes/' . 'Default-64.png';
+				$data[$k] = sprintf($session_text, $row['id_quiz'], $quizIcon, $row['title'], $row['title']);
+			}
+		}
+		$smcFunc['db_free_result']($result);
+	}
+	if (!empty($category_ids))
+	{
+		// @TODO query
+		$result = $smcFunc['db_query']('', '
+			SELECT id_category, name, image
+			FROM {db_prefix}quiz_category
+			WHERE id_category IN ('. implode(', ', array_keys($category_ids)) . ')
+			LIMIT '. count($category_ids).'',
+			array(
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($result))
+		{
+			foreach ($category_ids[$row['id_category']] as $k => $session_text)
+			{
+				$categoryIcon = !empty($row['image']) ? $settings["default_images_url"] . '/quiz_images/Quizes/' . $row['image'] : $settings["default_images_url"] . '/quiz_images/Quizes/' . 'Default-64.png';
+				$data[$k] = sprintf($session_text, $row['id_category'], $categoryIcon, $row['name'], $row['name']);
+			}
+		}
+	 $smcFunc['db_free_result']($result);		
+	}
+	// SMFQuiz end
+]]></add>
+        </operation>
+    </file>
+
+
+	<file name="$languagedir/Who.english.php">
+		<!-- @TODO loadlang -->
+		<operation>
+			<search position="after"><![CDATA[$txt['whospider_login'] = 'Viewing the login page.';]]></search>
+			<add><![CDATA[
+//Begin SMFQuiz
+$txt['whoall_SMFQuiz'] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz">Quiz</a>';
+$txt['whoall_SMFQuiz_home'] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz">Quiz</a>';
+$txt['whoall_SMFQuiz_categories'] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz;sa=categories">Quiz Categories</a>';
+$txt['whoall_SMFQuiz_statistics'] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz;sa=statistics">Quiz Statistics</a>';
+$txt['whoall_SMFQuiz_userdetails'] = 'Viewing the <a href="' . $scripturl . '?action=SMFQuiz;sa=userdetails">Quiz User Details</a>';
+//End SMFQuiz
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$languagedir/index.english.php">
+		<!-- @TODO loadlang? or modifications -->
+		<operation error="ignore">
+			<search position="end"></search>
+			<add><![CDATA[
+//Begin SMFQuiz
+$txt['SMFQuiz'] = 'Quiz';
+//End SMFQuiz
+]]></add>
+		</operation>
+	</file>
+
+
+
+
+	<file name="$sourcedir/ScheduledTasks.php">
+		<operation error="ignore">
+			<search position="after"><![CDATA[
+?>]]></search>
+			<add><![CDATA[
+// SMFQuiz Start
+function scheduled_quiz_maintenance()
+{
+	global $smcFunc, $modSettings, $sourcedir, $user_settings;
+
+	require_once($sourcedir . '/SMFQuizAdmin.php');
+
+	// Get leagues dates to check for update required
+	$getLeagueDatesResult = $smcFunc['db_query']('', '
+		SELECT
+			QL.id_quiz_league,
+			QL.updated,
+			QL.day_interval,
+			QL.current_round,
+			QL.total_rounds,
+			QL.title,
+			COUNT(QLR.id_quiz_league_result) AS plays
+		FROM {db_prefix}quiz_league QL
+		LEFT JOIN {db_prefix}quiz_league_result QLR
+			ON QL.id_quiz_league = QLR.id_quiz_league
+		WHERE state = 1
+		GROUP BY
+			QL.id_quiz_league,
+			QL.updated,
+			QL.day_interval,
+			QL.current_round,
+			QL.total_rounds,
+			QL.title,
+			QLR.id_quiz_league_result',
+		array()
+	);
+	
+	// Loop through leagues that are enabled
+	while ($row = $smcFunc['db_fetch_assoc']($getLeagueDatesResult))
+	{
+		// Check if the league needs the round updating
+		$nextUpdate = strtotime("+" . $row['day_interval'] . " days", $row['updated']);
+
+		// If an update is required
+		if ($nextUpdate < time())
+		{
+			// Retrieve last weeks results
+			$lastWeekResultsResult = $smcFunc['db_query']('', '
+				SELECT
+					QLR.id_user,
+					QLR.correct,
+					QLR.incorrect,
+					QLR.timeouts,
+					QLR.seconds,
+					QLR.points
+				FROM {db_prefix}quiz_league_result QLR
+				WHERE QLR.id_quiz_league = {int:id_quiz_league}
+					AND QLR.round = {int:lastWeekRound}',
+				array(
+					'id_quiz_league' => $row['id_quiz_league'],
+					'lastWeekRound' => $row['current_round'],
+				)
+			);
+			
+			// If there were some results from last week
+			if ($smcFunc['db_num_rows']($lastWeekResultsResult) > 0)
+			{
+				while ($lastWeekResultsRow = $smcFunc['db_fetch_assoc']($lastWeekResultsResult))
+				{
+					// See if this user has table entry for this week (note that table entries for the forthcoming week are
+					// added at the end of each update)
+					$userTableEntryResult = $smcFunc['db_query']('', '
+						SELECT
+							QLT.id_user,
+							QLT.id_quiz_league_table
+						FROM {db_prefix}quiz_league_table QLT
+						WHERE QLT.id_quiz_league = {int:id_quiz_league}
+							AND QLT.id_user = {int:id_user}
+							AND QLT.round = {int:lastWeekRound}
+						LIMIT 0, 1',
+						array(
+							'id_quiz_league' => $row['id_quiz_league'],
+							'id_user' => $lastWeekResultsRow['id_user'],
+							'lastWeekRound' => $row['current_round']
+						)
+					);
+
+					// If the user does have a table entry for this week
+					if ($smcFunc['db_num_rows']($userTableEntryResult) > 0)
+					{
+						// Update the table entry to include the quiz results from this week
+						while ($userTableEntryRow = $smcFunc['db_fetch_assoc']($userTableEntryResult))
+						{
+							$smcFunc['db_query']('', '
+								UPDATE {db_prefix}quiz_league_table
+								SET
+									correct = correct + {int:correct},
+									incorrect = incorrect + {int:incorrect},
+									timeouts = timeouts + {int:timeouts},
+									points = points + {int:points},
+									seconds = seconds + {int:seconds},
+									plays = plays + 1
+								WHERE round = {int:round}
+									AND id_quiz_league_table = {int:id_quiz_league_table}
+									AND id_user = {int:id_user}',
+								array(
+									'correct' => $lastWeekResultsRow['correct'],
+									'incorrect' => $lastWeekResultsRow['incorrect'],
+									'timeouts' => $lastWeekResultsRow['timeouts'],
+									'points' => $lastWeekResultsRow['points'],
+									'seconds' => $lastWeekResultsRow['seconds'],
+									'round' => $row['current_round'],
+									'id_quiz_league_table' => $userTableEntryRow['id_quiz_league_table'],
+									'id_user' => $lastWeekResultsRow['id_user'],
+								)
+							);
+						}
+					}
+					else
+					{
+						// Otherwise a table entry doesn't exist for this week for this user. This means it is the first time they have
+						// played, so simply add a new table entry with the result data
+						$smcFunc['db_insert']('insert', 
+							'{db_prefix}quiz_league_table',
+							array(
+								'current_position' => 'int',
+								'id_user' => 'int',
+								'last_position' => 'int',
+								'plays' => 'int',
+								'correct' => 'int',
+								'incorrect' => 'int',
+								'timeouts' => 'int',
+								'points' => 'int',
+								'id_quiz_league' => 'int',
+								'round' => 'int',
+								'seconds' => 'int',
+							),
+							array(
+								0,
+								$lastWeekResultsRow['id_user'],
+								0,
+								1,
+								$lastWeekResultsRow['correct'],
+								$lastWeekResultsRow['incorrect'],
+								$lastWeekResultsRow['timeouts'],
+								$lastWeekResultsRow['points'],
+								$row['id_quiz_league'],
+								$row['current_round'],
+								$lastWeekResultsRow['seconds']
+							),
+							array('id_quiz_league_table')
+						);
+					}
+				}
+				$smcFunc['db_free_result']($lastWeekResultsResult);	
+			}
+
+			// Now we need to calculate positions and movement. If this is the first week of the league we don't have a previous week to do some
+			// calculations on, so we just need to return the entries for the table normally
+			if ($row['current_round'] < 2 || $row['plays'] < 2)
+			{
+				$quizLeaguePosResult = $smcFunc['db_query']('', '
+					SELECT
+						QLT.id_quiz_league_table,
+						QLT.current_position as last_position,
+						QLT.id_user
+					FROM {db_prefix}quiz_league_table QLT
+					WHERE QLT.round = {int:current_round}
+						AND QLT.id_quiz_league = {int:id_quiz_league}
+					ORDER BY
+						QLT.points DESC,
+						QLT.seconds ASC,
+						QLT.plays ASC',
+					array(
+						'current_round' => $row['current_round'],
+						'id_quiz_league' => $row['id_quiz_league'],
+					)
+				);
+			}
+			else
+			{
+				// Otherwise this league has already got some result so join on the previous round
+				$quizLeaguePosResult = $smcFunc['db_query']('', '
+					SELECT
+						QLT1.id_quiz_league_table,
+						QLT1.id_user,
+						IFNULL(QLT2.current_position,0) AS last_position
+					FROM {db_prefix}quiz_league_table QLT1
+					LEFT JOIN {db_prefix}quiz_league_table QLT2
+						ON QLT1.round = QLT2.round+1
+						AND QLT1.id_user = QLT2.id_user
+					WHERE QLT1.id_quiz_league = {int:id_quiz_league}
+						AND QLT1.round = {int:current_round}
+					ORDER BY
+						QLT1.Points DESC,
+						QLT1.seconds ASC,
+						QLT1.plays ASC',
+					array(
+						'current_round' => $row['current_round'],
+						'id_quiz_league' => $row['id_quiz_league'],
+					)
+				);
+			}
+
+			// Now we have our ordered results, go through them an update the positions
+			$position = 1;
+			$id_leader = 0;
+			while ($quizLeaguePosRow = $smcFunc['db_fetch_assoc']($quizLeaguePosResult))
+			{
+				// If this is the top position, save this at the league level
+				if ($position == 1)
+				{
+					// Store the leader id, this may be required later
+					$id_leader = $quizLeaguePosRow['id_user'];
+
+					$smcFunc['db_query']('', '
+						UPDATE {db_prefix}quiz_league
+						SET id_leader = {int:id_leader}
+						WHERE id_quiz_league = {int:id_quiz_league}',
+						array(
+							'id_leader' => $id_leader,
+							'id_quiz_league' => $row['id_quiz_league'],
+						)
+					);
+				}
+
+				// Update position and last position
+				$smcFunc['db_query']('', '
+					UPDATE {db_prefix}quiz_league_table
+					SET
+						current_position = {int:position},
+						last_position = {int:last_position}
+					WHERE id_quiz_league_table = {int:id_quiz_league_table}',
+					array(
+						'position' => $position,
+						'last_position' => $quizLeaguePosRow['last_position'],
+						'id_quiz_league_table' => $quizLeaguePosRow['id_quiz_league_table'],
+					)
+				);
+
+				// Send PM to user if enabled
+				if ($modSettings['SMFQuiz_SendPMOnLeagueRoundUpdate'])
+				{
+					require_once($sourcedir . '/Subs-Post.php');
+
+					$pmto = array(
+						'to' => array(),
+						'bcc' => array($quizLeaguePosRow['id_user'])
+					);
+
+					$subject = ParseLeagueMessage($modSettings['SMFQuiz_PMLeagueRoundUpdateSubject'], $row['title'], $quizLeaguePosRow['last_position'], $position, ($position-$quizLeaguePosRow['last_position']), $row['id_quiz_league']);
+					$message = ParseLeagueMessage($modSettings['SMFQuiz_PMLeagueRoundUpdateMsg'], $row['title'], $quizLeaguePosRow['last_position'], $position, ($position-$quizLeaguePosRow['last_position']), $row['id_quiz_league']);
+
+					$pmfrom = array(
+						'id' => $modSettings['SMFQuiz_ImportQuizesAsUserId'],
+						'name' => 'Quiz Notifier',
+						'username' => 'Quiz Notifier'
+					);
+
+					// Send message
+					sendpm($pmto, $subject, $message, 0, $pmfrom);
+				}
+				$position++;
+			}
+			$smcFunc['db_free_result']($quizLeaguePosResult);
+
+			// Delete any sessions related to this league
+			$smcFunc['db_query']('', '
+				DELETE
+				FROM {db_prefix}quiz_session
+				WHERE id_quiz_league = {int:id_quiz_league}',
+				array(
+					'id_quiz_league' => $row['id_quiz_league'],
+				)
+			);
+
+			// Check whether this should be the final round
+			if ($row['current_round'] > $row['total_rounds'] - 1)
+			{
+				// Finish up the league and set winner
+				$smcFunc['db_query']('', '
+					UPDATE {db_prefix}quiz_league QL
+					SET
+						current_round = total_rounds,
+						state = 2,
+						id_leader = {int:id_leader}
+					WHERE id_quiz_league = {int:id_quiz_league}',
+					array(
+						'id_quiz_league' => $row['id_quiz_league'],
+						'id_leader' => $id_leader,
+					)
+				);
+			}
+			else
+			{
+				// Finally, if this is not the end of the league insert a new entry for the next week for all current contestants
+				$smcFunc['db_query']('', '
+					INSERT INTO {db_prefix}quiz_league_table
+					(
+						current_position,
+						id_user,
+						last_position,
+						plays,
+						correct,
+						incorrect,
+						timeouts,
+						points,
+						id_quiz_league,
+						round,
+						seconds
+					)
+					SELECT
+						current_position,
+						id_user,
+						last_position,
+						plays,
+						correct,
+						incorrect,
+						timeouts,
+						points,
+						id_quiz_league,
+						{int:round}+1,
+						seconds
+					FROM {db_prefix}quiz_league_table
+					WHERE round = {int:round}
+						AND id_quiz_league = {int:id_quiz_league}',
+					array(
+						'round' => $row['current_round'],
+						'id_quiz_league' => $row['id_quiz_league'],
+					)
+				);
+
+				// Update the league round
+				$smcFunc['db_query']('', '
+					UPDATE {db_prefix}quiz_league QL
+					SET
+						current_round = current_round + 1,
+						updated = {int:newUpdateTime}
+					WHERE id_quiz_league = {int:id_quiz_league}',
+					array(
+						'id_quiz_league' => $row['id_quiz_league'],
+						'newUpdateTime' => $nextUpdate
+					)
+				);
+			}
+		}
+	}
+
+	// Free the database
+	$smcFunc['db_free_result']($getLeagueDatesResult);	
+
+	quiz_clean();
+
+	return true;
+}
+
+function quiz_clean()
+{
+	global $modSettings, $smcFunc, $sourcedir;
+
+	// If the auto clean flag is set, do the cleanup now
+	if ($modSettings['SMFQuiz_AutoClean'] == 'on')
+	{
+		require_once($sourcedir . '/SMFQuizDb.php');
+
+		// Default to clean 7 days worth of InfoBoard entries
+		$date = mktime(0, 0, 0, date("m")  , date("d") - 7, date("Y"));
+		$rows = DeleteInfoBoardEntries($date);
+
+		// Clean up any disputes
+		CleanDisputes();
+
+		// Clean up any orphaned answers
+		CleanAnswers();
+
+		// Clean up any orhpaned quiz results
+		CleanResults();
+
+		// Clean up any orhpaned quiz questions
+		CleanQuestions();
+
+		// Auto complete quiz sessions
+		CompleteQuizSessions($date);
+	}
+}
+
+// SMFQuiz End]]></add>
+		</operation>
+	</file>	
+
+	<file name="$themes_dir/default/languages/ManageScheduledTasks.english.php">
+		<!-- @TODO loadlang? or modifications -->
+		<operation>
+			<search position="after"><![CDATA[$txt['scheduled_task_desc_weekly_maintenance'] = 'Runs essential weekly maintenance on the forum - should not be disabled.';]]></search>
+			<add><![CDATA[
+// SMFQuiz Start
+$txt['scheduled_task_quiz_maintenance'] = 'Quiz Maintenance';
+$txt['scheduled_task_desc_quiz_maintenance'] = 'Runs essential maintenance for the Quiz mod - should not be disabled if the quiz is in use, especially Quiz Leagues';
+// SMFQuiz End
+]]></add>
+		</operation> 
+	</file>	
+
+	<file name="$themes_dir/default/languages/Modifications.english.php">
+		<operation>
+			<search position="after"><![CDATA[?>]]></search>
+			<add><![CDATA[
+//Begin SMFQuiz
+$txt['quiz'] = 'Quiz';
+ 
+// Permission names and help
+$txt['permissiongroup_quiz'] = 'Quiz';
+$txt['permissiongroup_simple_quiz'] = 'Quiz';
+$txt['permissionname_quiz_view'] = 'View Quiz';
+$txt['permissionhelp_quiz_view'] = 'May access Quiz';
+$txt['permissionname_quiz_play'] = 'Play the Quiz';
+$txt['permissionhelp_quiz_play'] = 'Allows member to play the quiz';
+$txt['permissionname_quiz_submit'] = 'Create Quiz'; 
+$txt['permissionhelp_quiz_submit'] = 'Allows users to create quizzes';
+$txt['permissionname_quiz_admin'] = 'Administrate Quiz';
+$txt['permissionhelp_quiz_admin'] = 'Quiz Administrator can Install/Edit/Delete quizzes from the admin screen';
+
+// Errors if they can't do something
+$txt['cannot_quiz_view'] = 'You are not allowed to access the Quiz.';
+$txt['cannot_quiz_play'] = 'You are not allowed to play the Quiz';
+$txt['cannot_quiz_submit'] = 'You are not allowed to create Quizzes';
+ 
+//End SMFQuiz
+]]></add>
+		</operation> 
+	</file>
+
+	<file name="$themes_dir/default/languages/Help.english.php">
+		<operation>
+			<search position="after"><![CDATA[$txt['close_window'] = 'Close window';]]></search>
+			<add><![CDATA[
+//Begin SMFQuiz
+$helptxt['quiz_available_imports'] = 'This list contains all the quizzes you may download directly from SMF Modding. You can import by clicking the import button on the right hand side. Notice that if you do not have the image installed there will be a plus button in the image column. If your server has the correct settings you will be able to directly import the image by clicking this plus button.';
+$helptxt['quiz_import_legend'] = 'Unavailable imports are those that are for premium members only<br/>Installed imports are those that the importer has discovered on your system<br/>Not Installed imports are those quizzes that cannot be found on your system';
+$helptxt['quiz_import_data'] = 'This is a list of the top 10 most imported quizzes';
+$helptxt['quiz_import_latest'] = 'This is a list of the recent quiz import activity';
+$helptxt['quiz_live_feed'] = 'This is a live news feed from SMF Modding to keep you informed of the latest updates';
+$helptxt['quiz_info_summary'] = 'This section is to provide you a snapshot of the quiz mod information so you can check important data at a glance';
+$helptxt['SMFQuiz_enabled'] = 'This determines whether the quiz is enabled on your forum or not';
+$helptxt['SMFQuiz_Welcome'] = 'This is the Quiz Welcome message displayed on the main Quiz page';
+$helptxt['SMFQuiz_ListPageSizes'] = 'This is the size of the pages when browsing most of the lists on the site';
+$helptxt['SMFQuiz_InfoBoardItemsToDisplay'] = 'The number of InfoBoard items to display on the main page';
+$helptxt['SMFQuiz_showUserRating'] = 'This setting determines whether the user rating should be displayed or not';
+$helptxt['SMFQuiz_SessionTimeLimit'] = 'This is the value in minutes before a user can resume playing a quiz. This is to discourage cheating, so the user does not keep closing the quiz window to obtain the answer each time.';
+$helptxt['SMFQuiz_ImportQuizesAsUserId'] = 'When importing quizzes the mod needs to set the owner of the quiz. The ID you specify here is the ID for the user you wish to make the owner of the imported quizzes. You may wish to create a special user for quiz importing so that you can play the imported quizzes as well.';
+$helptxt['SMFQuiz_SendPMOnBrokenTopScore'] = 'When checked a PM will be sent to the person who had the top score when their top score is broken. You can control the message sent to them in the next setting.';
+$helptxt['SMFQuiz_AutoClean'] = 'When this option is selected the quiz scheduled task that updates the league will also automatically clean up the data in the database';
+$helptxt['SMFQuiz_PMBrokenTopScoreMsg'] = 
+'
+Use the following placeholders in your message for the real values to be replaced when the message is sent
+<table>
+	<tr class="windowbg">
+		<td><b>{quiz_name}</b></td>
+		<td>Quiz Name</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{new_score}</b></td>
+		<td>New Score</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{new_score_seconds}</b></td>
+		<td>New Score Seconds</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{old_score}</b></td>
+		<td>Old Score</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{old_score_seconds}</b></td>
+		<td>The old scores seconds</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{old_member_name}</b></td>
+		<td>The name of the member who had the top score previously</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{member_name}</b></td>
+		<td>Member\'s Name</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{quiz_link}</b></td>
+		<td>Link to the Quiz</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{quiz_image}</b></td>
+		<td>The Image for the Quiz</td>
+	</tr>
+</table>';
+$helptxt['SMFQuiz_SendPMOnLeagueRoundUpdate'] = 'When checked a PM will be sent to each member participating in the quiz league that the round has been updated.';
+$helptxt['SMFQuiz_PMLeagueRoundUpdateMsg'] = 'Use the following placeholders in your message for the real values to be replaced when the message is sent
+<table>
+	<tr class="windowbg">
+		<td><b>{quiz_league_name}</b></td>
+		<td>Name of the Quiz League</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{old_position}</b></td>
+		<td>Old position in the league</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{new_position}</b></td>
+		<td>New position in the league</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{position_movement}</b></td>
+		<td>Movement in position</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{quiz_league_link}</b></td>
+		<td>Link to the Quiz League</td>
+	</tr>
+</table>';
+//End SMFQuiz
+]]></add>
+		</operation> 
+	</file>
+
+</modification>
