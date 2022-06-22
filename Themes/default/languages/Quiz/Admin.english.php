@@ -6,7 +6,7 @@ if (!defined('SMF'))
 
 // @TODO to remove
 // Load the common language file
-loadLanguage('SMFQuizCommon');
+loadLanguage('Quiz/Common');
 
 $txt['SMFQuiz'] = 'SMF Quiz';
 $txt['SMFQuizMod'] = 'The SMF Quiz Mod';
@@ -259,4 +259,106 @@ $txt['quiz_mod_unknown_quiz'] = 'The entire quiz package {FILENAME}';
 $txt['quiz_mod_failure_reason'] = 'reason';
 
 $txt['quiz_mod_preview_disabled'] = 'Sorry at the moment the preview is disabled, it will be back at a later stage of development';
-?>
+
+// Scheduled
+$txt['scheduled_task_quiz_maintenance'] = 'Quiz Maintenance';
+$txt['scheduled_task_desc_quiz_maintenance'] = 'Runs essential maintenance for the Quiz mod - should not be disabled if the quiz is in use, especially Quiz Leagues';
+
+// Permissions
+$txt['permissiongroup_quiz'] = 'Quiz';
+$txt['permissiongroup_simple_quiz'] = 'Quiz';
+$txt['permissionname_quiz_view'] = 'View Quiz';
+$txt['permissionhelp_quiz_view'] = 'May access Quiz';
+$txt['permissionname_quiz_play'] = 'Play the Quiz';
+$txt['permissionhelp_quiz_play'] = 'Allows member to play the quiz';
+$txt['permissionname_quiz_submit'] = 'Create Quiz'; 
+$txt['permissionhelp_quiz_submit'] = 'Allows users to create quizzes';
+$txt['permissionname_quiz_admin'] = 'Administrate Quiz';
+$txt['permissionhelp_quiz_admin'] = 'Quiz Administrator can Install/Edit/Delete quizzes from the admin screen';
+
+// Errors if they can't do something
+$txt['cannot_quiz_view'] = 'You are not allowed to access the Quiz.';
+$txt['cannot_quiz_play'] = 'You are not allowed to play the Quiz';
+$txt['cannot_quiz_submit'] = 'You are not allowed to create Quizzes';
+
+// Help
+$txt['quiz_available_imports'] = 'This list contains all the quizzes you may download directly from SMF Modding. You can import by clicking the import button on the right hand side. Notice that if you do not have the image installed there will be a plus button in the image column. If your server has the correct settings you will be able to directly import the image by clicking this plus button.';
+$txt['quiz_import_legend'] = 'Unavailable imports are those that are for premium members only<br/>Installed imports are those that the importer has discovered on your system<br/>Not Installed imports are those quizzes that cannot be found on your system';
+$txt['quiz_import_data'] = 'This is a list of the top 10 most imported quizzes';
+$txt['quiz_import_latest'] = 'This is a list of the recent quiz import activity';
+$txt['quiz_live_feed'] = 'This is a live news feed from SMF Modding to keep you informed of the latest updates';
+$txt['quiz_info_summary'] = 'This section is to provide you a snapshot of the quiz mod information so you can check important data at a glance';
+$txt['SMFQuiz_enabled'] = 'This determines whether the quiz is enabled on your forum or not';
+$txt['SMFQuiz_Welcome'] = 'This is the Quiz Welcome message displayed on the main Quiz page';
+$txt['SMFQuiz_ListPageSizes'] = 'This is the size of the pages when browsing most of the lists on the site';
+$txt['SMFQuiz_InfoBoardItemsToDisplay'] = 'The number of InfoBoard items to display on the main page';
+$txt['SMFQuiz_showUserRating'] = 'This setting determines whether the user rating should be displayed or not';
+$txt['SMFQuiz_SessionTimeLimit'] = 'This is the value in minutes before a user can resume playing a quiz. This is to discourage cheating, so the user does not keep closing the quiz window to obtain the answer each time.';
+$txt['SMFQuiz_ImportQuizesAsUserId'] = 'When importing quizzes the mod needs to set the owner of the quiz. The ID you specify here is the ID for the user you wish to make the owner of the imported quizzes. You may wish to create a special user for quiz importing so that you can play the imported quizzes as well.';
+$txt['SMFQuiz_SendPMOnBrokenTopScore'] = 'When checked a PM will be sent to the person who had the top score when their top score is broken. You can control the message sent to them in the next setting.';
+$txt['SMFQuiz_AutoClean'] = 'When this option is selected the quiz scheduled task that updates the league will also automatically clean up the data in the database';
+$txt['SMFQuiz_PMBrokenTopScoreMsg'] = 
+'
+Use the following placeholders in your message for the real values to be replaced when the message is sent
+<table>
+	<tr class="windowbg">
+		<td><b>{quiz_name}</b></td>
+		<td>Quiz Name</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{new_score}</b></td>
+		<td>New Score</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{new_score_seconds}</b></td>
+		<td>New Score Seconds</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{old_score}</b></td>
+		<td>Old Score</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{old_score_seconds}</b></td>
+		<td>The old scores seconds</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{old_member_name}</b></td>
+		<td>The name of the member who had the top score previously</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{member_name}</b></td>
+		<td>Member\'s Name</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{quiz_link}</b></td>
+		<td>Link to the Quiz</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{quiz_image}</b></td>
+		<td>The Image for the Quiz</td>
+	</tr>
+</table>';
+$txt['SMFQuiz_SendPMOnLeagueRoundUpdate'] = 'When checked a PM will be sent to each member participating in the quiz league that the round has been updated.';
+$txt['SMFQuiz_PMLeagueRoundUpdateMsg'] = 'Use the following placeholders in your message for the real values to be replaced when the message is sent
+<table>
+	<tr class="windowbg">
+		<td><b>{quiz_league_name}</b></td>
+		<td>Name of the Quiz League</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{old_position}</b></td>
+		<td>Old position in the league</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{new_position}</b></td>
+		<td>New position in the league</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{position_movement}</b></td>
+		<td>Movement in position</td>
+	</tr>
+	<tr class="windowbg">
+		<td><b>{quiz_league_link}</b></td>
+		<td>Link to the Quiz League</td>
+	</tr>
+</table>';

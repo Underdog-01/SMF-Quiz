@@ -180,7 +180,7 @@ function GetAllQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = '
 	$smcFunc['db_free_result']($result);
 }
 
-function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir, $id_quiz, $id_user)
+function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = false, $id_quiz = 0, $id_user = 0)
 {
 	global $context, $smcFunc;
 
@@ -840,22 +840,26 @@ function GetCategoryChildren($page = 1, $orderBy = 'C.name', $orderDir = 'up', $
 		$orderDir = 'DESC';
 
 		// @TODO query
-	$result = $smcFunc['db_query']('', "
+	$result = $smcFunc['db_query']('', '
 		SELECT 		C.id_category,
 					C.name,
 					C.description,
 					C.id_parent,
 					C.image,
 					C.quiz_count,
-					IFNULL(C2.name, 'Top Level') AS parent_name
+					IFNULL(C2.name, \'Top Level\') AS parent_name
 		FROM 		{db_prefix}quiz_category C
 		LEFT JOIN 	{db_prefix}quiz_category C2
 		ON 			C.id_parent = C2.id_category
 		WHERE		C.id_parent = {int:id_category}
-		ORDER BY 	{$orderBy} {$orderDir}
-		LIMIT		{$startPage}, {$pageSize}",
+		ORDER BY 	{raw:orderBy} {raw:orderDir}
+		LIMIT		{int:startPage}, {int:pageSize}',
 		array(
 			'id_category' => $id_category,
+			'startPage' => $startPage,
+			'pageSize' => $pageSize,
+			'orderBy' => $orderBy,
+			'orderDir' => $orderDir
 		)
 	);
 
@@ -2377,8 +2381,8 @@ function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer
 
 	if (!empty($image))
 	{
-		$dest = $settings['default_theme_dir'] . '/images/quiz_images/Questions/' . $image;
-		if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Questions/'))
+		$dest = $settings['default_theme_dir'] . '/images/quiz/Questions/' . $image;
+		if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz/Questions/'))
 		{
 			$imageData = base64_decode($imageData);
 			file_put_contents($dest, $imageData);
@@ -2468,7 +2472,7 @@ function ExportQuizes($quizIds)
 	$exportQuizesReturn = array();
 	while ($row = $smcFunc['db_fetch_assoc']($exportQuizesResult))
 	{
-		$imgDir = $settings['default_theme_dir'] . '/images/quiz_images/Quizes/' . $row['image'];
+		$imgDir = $settings['default_theme_dir'] . '/images/quiz/Quizes/' . $row['image'];
 		if (file_exists($imgDir))
 			$row['image_data'] = base64_encode(file_get_contents($imgDir));
 		else
@@ -2501,7 +2505,7 @@ function ExportQuizQuestions($id_quiz)
 	$exportQuizQuestionsReturn = array();
 	while ($row = $smcFunc['db_fetch_assoc']($exportQuizQuestionResult))
 	{
-		$imgDir = $settings['default_theme_dir'] . '/images/quiz_images/Questions/' . $row['image'];
+		$imgDir = $settings['default_theme_dir'] . '/images/quiz/Questions/' . $row['image'];
 		if (file_exists($imgDir))
 			$row['image_data'] = base64_encode(file_get_contents($imgDir));
 		else

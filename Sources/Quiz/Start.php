@@ -6,12 +6,10 @@ if (!defined('SMF'))
 function loadQuiz ()
 {
 	global $context, $txt;
-    if (function_exists("set_tld_regex"))
-	    loadTemplate('SMFQuiz2.1');
-    else
-        loadTemplate('SMFQuiz');
 
-	loadLanguage('SMFQuiz');
+	loadTemplate('Quiz/Admin');
+
+	loadLanguage('Quiz/Quiz');
 
 	if (!allowedTo('quiz_play'))
 	{

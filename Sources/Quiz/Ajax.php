@@ -51,7 +51,7 @@ function GetImages()
 	else
 		$imageFolder = '';
 
-	$path = $boarddir . '/Themes/default/images/quiz_images/' . $imageFolder;
+	$path = $boarddir . '/Themes/default/images/quiz/' . $imageFolder;
 
 	//using the opendir function
 		// @TODO check?
@@ -139,7 +139,7 @@ function ImageUpload()
 		else
 			$imageFolder = '';
 
-		$destination = $boarddir . '/Themes/default/images/quiz_images/' . $imageFolder . $_FILES['fileToUpload']['name'];
+		$destination = $boarddir . '/Themes/default/images/quiz/' . $imageFolder . $_FILES['fileToUpload']['name'];
 		// @TODO chmod??
 		@chmod($destination, 0777);
 

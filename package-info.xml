@@ -25,7 +25,7 @@
 		<!-- Database -->
 		<database>database.php</database>
 		<!-- Hooks -->
-		<hook hook="integrate_pre_load" function="Quiz\init::hooks" file="$sourcedir/Quiz/Quiz.php" />
+		<hook hook="integrate_pre_load" function="Quiz\Integration::init" file="$sourcedir/Quiz/Integration.php" />
 		<!-- Redirect -->
 		<redirect url="?action=admin;area=quiz" timeout="15000" />
 	</install>
@@ -33,7 +33,7 @@
 	<!-- Uninstall -->
 	<uninstall for="2.1 - 2.1.99">
 		<!-- Hooks -->
-		<hook hook="integrate_pre_load" function="Quiz\init::hooks" file="$sourcedir/Quiz/Quiz.php" reverse="true" />
+		<hook hook="integrate_pre_load" function="Quiz\Integration::init" file="$sourcedir/Quiz/Integration.php" reverse="true" />
 		<!-- Source Files -->
 		<remove-dir name="$sourcedir/Quiz" />
 		<!-- Templates -->

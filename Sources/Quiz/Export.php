@@ -7,7 +7,7 @@ function quizExport()
 	isAllowedTo('quiz_admin');
 
 	// Include the SMF2 specific database file
-	require_once($sourcedir . '/SMFQuizDb.php');
+	require_once($sourcedir . '/Quiz/Db.php');
 
 	PackageQuiz();
 	die();

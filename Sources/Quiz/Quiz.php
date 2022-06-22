@@ -5,7 +5,7 @@ if (!defined('SMF'))
 
 // Include the SMF2 specific database file
 // @TODO move into the function/s
-require_once($sourcedir . '/SMFQuizDb.php');
+require_once($sourcedir . '/Quiz/Db.php');
 
 // @TODO move into the function/s
 isAllowedTo('quiz_view');
@@ -14,10 +14,10 @@ function SMFQuiz()
 {
 	global $context, $txt;
 
-	$context['page_title'] = $txt['SMFQuiz'];
-
 	// Load the language file
-	loadLanguage('SMFQuiz');
+	loadLanguage('Quiz/Quiz');
+
+	$context['page_title'] = $txt['SMFQuiz'];
 
 	if ($context['current_subaction'] == 'play')
 	{
@@ -30,7 +30,7 @@ function SMFQuiz()
 	elseif (isset($_GET['id_quiz']))
 		$context['id_quiz'] = $_GET['id_quiz'];
 	else
-		$context['id_quiz'] = !empty($context['id_quiz']) ? $context['id_quiz'] : '';
+		$context['id_quiz'] = !empty($context['id_quiz']) ? $context['id_quiz'] : 0;
 
 	// Create an array of possible actions with the functions that will be called
 	$actions = array(
@@ -104,13 +104,7 @@ function SMFQuiz()
 
 	// Load the template
 	if ($action != 'search')
-    {
-        if (function_exists("set_tld_regex"))
-            loadTemplate('SMFQuiz2.1');
-        else
-            loadTemplate('SMFQuiz');
-    }
-
+		loadTemplate('Quiz/Quiz');
 
 	if (isset($actions[$action]))
 		$actions[$action]();
@@ -468,9 +462,9 @@ function AddShowImageScript()
 		{
 			var imgElement = document.getElementById(imgId);
 			var selectedValue = selectElement[selectElement.selectedIndex].text;
-			var imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/blank.gif";
+			var imageUrl = "' . $boardurl . '/Themes/default/images/quiz/blank.gif";
 			if (selectedValue != "-")
-				imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/" + imageFolder + "/" + selectedValue;
+				imageUrl = "' . $boardurl . '/Themes/default/images/quiz/" + imageFolder + "/" + selectedValue;
 
 			imgElement.src = imageUrl;
 		}

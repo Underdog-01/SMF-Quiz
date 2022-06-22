@@ -606,7 +606,7 @@ $tables = [
 			]
 		],
 	],
-	'id_quiz_league_result' => [
+	'quiz_league_result' => [
 		'columns' => [
 			[
 				'name' => 'id_quiz_league_result',
@@ -1084,3 +1084,6 @@ $tables = [
 		],
 	],
 ];
+
+foreach ($tables AS $table_name => $data)
+	$smcFunc['db_create_table']('{db_prefix}' . $table_name, $data['columns'], $data['indexes']);

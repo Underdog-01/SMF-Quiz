@@ -2,7 +2,9 @@
 
 // @TODO to remove
 // Load the common language file
-loadLanguage('SMFQuizCommon');
+loadLanguage('Quiz/Common');
+
+$txt['SMFQuiz'] = 'Quiz';
 
 // Language text located in the home page
 $txt['SMFQuiz_Home_Page'] = array(
