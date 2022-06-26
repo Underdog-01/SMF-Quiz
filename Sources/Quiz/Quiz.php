@@ -462,9 +462,9 @@ function AddShowImageScript()
 		{
 			var imgElement = document.getElementById(imgId);
 			var selectedValue = selectElement[selectElement.selectedIndex].text;
-			var imageUrl = "' . $boardurl . '/Themes/default/images/quiz/blank.gif";
+			var imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/blank.gif";
 			if (selectedValue != "-")
-				imageUrl = "' . $boardurl . '/Themes/default/images/quiz/" + imageFolder + "/" + selectedValue;
+				imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/" + imageFolder + "/" + selectedValue;
 
 			imgElement.src = imageUrl;
 		}

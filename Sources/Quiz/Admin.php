@@ -44,7 +44,7 @@ function SMFQuizAdmin()
 	// TODO: Make this dependant on what we are showing
 	// @TODO move as much as possible to a file
 	$context['html_headers'] .= '
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz_scripts/jquery-1.3.2.min.js"></script>
+		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-1.3.2.min.js"></script>
 		<script type="text/javascript"><!-- // --><![CDATA[
 			function submitPreview (item)
 			{
@@ -66,9 +66,9 @@ function SMFQuizAdmin()
 			{
 				var imgElement = document.getElementById(imgId);
 				var selectedValue = selectElement[selectElement.selectedIndex].text;
-				var imageUrl = "' . $boardurl . '/Themes/default/images/quiz/blank.gif"
+				var imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/blank.gif"
 				if (selectedValue != "-")
-					imageUrl = "' . $boardurl . '/Themes/default/images/quiz/" + imageFolder + "/" + selectedValue;
+					imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/" + imageFolder + "/" + selectedValue;
 
 				imgElement.src = imageUrl;
 			 }
@@ -223,8 +223,7 @@ function GetMaintenanceData()
 	{
 		ResetQuizResults();
 		ResetQuizTopScores();
-		// @TODO hard-coded text
-		$context['MaintenanceResult'] = 'Quiz results removed';
+		$context['MaintenanceResult'] = $txt['quiz_maint_results_removed'];
 	}
 
 	// User has selected to complete the quiz sessions
@@ -236,8 +235,8 @@ function GetMaintenanceData()
 			$date = mktime(0, 0, 0, date("m")  , date("d") + 1, date("Y"));
 
 		$rows = CompleteQuizSessions($date);
-		// @TODO hard-coded text
-		$context['MaintenanceResult'] = $rows . ' quiz sessions completed';
+
+		$context['MaintenanceResult'] = sprintf($txt['quiz_maint_sessions_removed'], $rows);
 	}
 
 	// User has selected to clean the infoboard
@@ -249,8 +248,7 @@ function GetMaintenanceData()
 			$date = mktime(0, 0, 0, date("m")  , date("d") + 1, date("Y"));
 
 		$rows = DeleteInfoBoardEntries($date);
-		// @TODO hard-coded text
-		$context['MaintenanceResult'] = 'Infoboard entries removed';
+		$context['MaintenanceResult'] = $txt['quiz_maint_infoboard_entries_removed'];
 	}
 
 		// @TODO can be replaced by a for?
@@ -344,11 +342,11 @@ function GetSettingsData($return_config = false)
 		array('title', 'QuizMessagingSettings', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['QuizMessagingSettings']),
 		array('check', 'SMFQuiz_SendPMOnBrokenTopScore', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['SendPMOnBrokenTopScore']),
 		array('text', 'SMFQuiz_PMBrokenTopScoreSubject', 50, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMBrokenTopScoreMsg'] . ' - ' . $txt['SMFQuiz_Common']['Subject']),
-		array('large_text', 'SMFQuiz_PMBrokenTopScoreMsg', 10, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMBrokenTopScoreMsg'] . ' - ' . $txt['SMFQuiz_Common']['MessageBody'], 'postinput' => '<br/><img style="cursor:pointer" class="preview_loading" onclick="submitPreview(1);" src="' .$settings['default_images_url'] . '/quiz/preview.png" title="' . $txt['SMFQuiz_Common']['Preview'] . '" alt="' . $txt['SMFQuiz_Common']['Preview'] . '" />'),
+		array('large_text', 'SMFQuiz_PMBrokenTopScoreMsg', 10, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMBrokenTopScoreMsg'] . ' - ' . $txt['SMFQuiz_Common']['MessageBody'], 'postinput' => '<br/><img style="cursor:pointer" class="preview_loading" onclick="submitPreview(1);" src="' .$settings['default_images_url'] . '/quiz_images/preview.png" title="' . $txt['SMFQuiz_Common']['Preview'] . '" alt="' . $txt['SMFQuiz_Common']['Preview'] . '" />'),
 
 		array('check', 'SMFQuiz_SendPMOnLeagueRoundUpdate', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['SendPMOnLeagueRoundUpdate']),
 		array('text', 'SMFQuiz_PMLeagueRoundUpdateSubject', 50, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMLeagueRoundUpdateMsg'] . ' - ' . $txt['SMFQuiz_Common']['Subject']),
-		array('large_text', 'SMFQuiz_PMLeagueRoundUpdateMsg', 10, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMLeagueRoundUpdateMsg'] . ' - ' . $txt['SMFQuiz_Common']['MessageBody'], 'postinput' => '<br/><img style="cursor:pointer" class="preview_loading" onclick="submitPreview(2);" src="' .$settings['default_images_url'] . '/quiz/preview.png" title="' . $txt['SMFQuiz_Common']['Preview'] . '" alt="' . $txt['SMFQuiz_Common']['Preview'] . '" />'),
+		array('large_text', 'SMFQuiz_PMLeagueRoundUpdateMsg', 10, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMLeagueRoundUpdateMsg'] . ' - ' . $txt['SMFQuiz_Common']['MessageBody'], 'postinput' => '<br/><img style="cursor:pointer" class="preview_loading" onclick="submitPreview(2);" src="' .$settings['default_images_url'] . '/quiz_images/preview.png" title="' . $txt['SMFQuiz_Common']['Preview'] . '" alt="' . $txt['SMFQuiz_Common']['Preview'] . '" />'),
 	);
 
 	if ($return_config)
@@ -614,9 +612,9 @@ function SetImageUploadJavascript()
 
 		// @TODO update jQuery + CDN + local loading, etc.
 	$context['html_headers'] .= '
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz_scripts/jquery-1.3.2.min.js"></script>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz_scripts/jquery.selectboxes.js"></script>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz_scripts/ajaxfileupload.js"></script>
+		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-1.3.2.min.js"></script>
+		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.selectboxes.js"></script>
+		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/ajaxfileupload.js"></script>
 		<script type="text/javascript"><!-- // --><![CDATA[
 		$(document).ready(function() {
 		});
@@ -1522,9 +1520,9 @@ function GetQuizesData()
 	$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
 
 	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;">*</a> ';
-	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;enabled"><img src="' . $settings['default_images_url'] . '/quiz/unlock.png" alt="enabled" title="enabled" align="top" /></a> ';
-	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;disabled"><img src="' . $settings['default_images_url'] . '/quiz/lock.png" alt="disabled" title="disabled" align="top" /></a> ';
-	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;review"><img src="' . $settings['default_images_url'] . '/quiz/review.png" alt="for review" title="for review" align="top" /></a> ';
+	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;enabled"><img src="' . $settings['default_images_url'] . '/quiz_images/unlock.png" alt="enabled" title="enabled" align="top" /></a> ';
+	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;disabled"><img src="' . $settings['default_images_url'] . '/quiz_images/lock.png" alt="disabled" title="disabled" align="top" /></a> ';
+	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;review"><img src="' . $settings['default_images_url'] . '/quiz_images/review.png" alt="for review" title="for review" align="top" /></a> ';
 
 	// List out the different sorting methods...
 	$sort_methods = array(
@@ -1659,8 +1657,8 @@ function GetShowDisputesData()
 
 	$context['html_headers'] .= '
 		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz_css/jquery-ui-1.7.1.custom.css"/>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz_scripts/jquery-1.3.2.min.js"></script>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz_scripts/jquery-ui-1.7.1.custom.min.js"></script>
+		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-1.3.2.min.js"></script>
+		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-ui-1.7.1.custom.min.js"></script>
 		<script type="text/javascript"><!-- // --><![CDATA[
 		
 		var id_dispute = 0;
@@ -2046,14 +2044,14 @@ function UploadQuiz($id_quiz)
 	$post_results = httpFunc('POST',$server,$port,$uri,$content);
 
 	if (!is_string($post_results))
-		$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizUploadError'];
+		$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizUploadError'];
 	else
 	{
 		if (strpos($post_results,'exists'))
-			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizUploadExists'];
+			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizUploadExists'];
 		else
 		{
-			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizUploadedSuccessfully'];
+			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizUploadedSuccessfully'];
 			upload_images($id_quiz);
 		}
 	}
@@ -2088,7 +2086,7 @@ function load_image($imageFileName)
 {
 	global $boarddir, $boarddir;
 
-	$filename = $boarddir . '/Themes/default/images/quiz/Questions/' . $imageFileName;
+	$filename = $boarddir . '/Themes/default/images/quiz_images/Questions/' . $imageFileName;
 	// @TODO check if file exists
 	$handle = fopen($filename, "rb");
 	$contents = fread($handle, filesize($filename));
@@ -2111,11 +2109,11 @@ function upload_image($imageString, $imageFileName)
 
 	$get_results = httpFunc('POST',$server,$port,$uri,$content);
 	if (strstr($get_results,'done'))
-		return '<img src="' . $settings['default_images_url'] . '/quiz/information.png" alt="yes" title="Information" align="top" /> ' . $imageFileName . ' uploaded successfully';
+		return '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" /> ' . $imageFileName . ' uploaded successfully';
 	elseif (strstr($get_results,'exists'))
-		return '<img src="' . $settings['default_images_url'] . '/quiz/warning.png" alt="yes" title="Warning" align="top" /> ' . $imageFileName . ' already exists on server';
+		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> ' . $imageFileName . ' already exists on server';
 	else
-		return '<img src="' . $settings['default_images_url'] . '/quiz/warning.png" alt="yes" title="Warning" align="top" /> ' . $imageFileName . ' did not upload due to unexpected error (' . $get_results . ')';
+		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> ' . $imageFileName . ' did not upload due to unexpected error (' . $get_results . ')';
 }
 
 function escape($url)
@@ -2321,8 +2319,8 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 
 			if ($quiz->exists('image') && $quiz->exists('imageData'))
 			{
-				$dest = $settings['default_theme_dir'] . '/images/quiz/Quizes/' . $image;
-				if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz/Quizes/'))
+				$dest = $settings['default_theme_dir'] . '/images/quiz_images/Quizes/' . $image;
+				if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Quizes/'))
 				{
 					$imageData = base64_decode($quiz->fetch('imageData'));
 					file_put_contents($dest, $imageData);
@@ -2349,7 +2347,7 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 				foreach ($questions->set('answers/answer') as $answers)
 					ImportQuizAnswer($newQuestionId, $answers->fetch('answerText'), $answers->fetch('isCorrect'));
 			}
-			$context['SMFQuiz']['importResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizImportedSuccessfully'];
+			$context['SMFQuiz']['importResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizImportedSuccessfully'];
 // 			if (!empty($newQuizId))
 // 				import_quiz_images($newQuizId);
 			if (!isset($unsuccessful[md5($title)]))
@@ -2389,28 +2387,28 @@ function import_image($imageFileName)
 	global $boarddir, $settings;
 
 	// Where to save the file
-	$outFilePath = $boarddir . '/Themes/default/images/quiz/Questions/' . $imageFileName;
+	$outFilePath = $boarddir . '/Themes/default/images/quiz_images/Questions/' . $imageFileName;
 
 	$server  = 'www.smfmodding.com';
 	$port    = '80';
-	$uri     = '/Themes/default/images/quiz/Questions/' . urlencode($imageFileName);
+	$uri     = '/Themes/default/images/quiz_images/Questions/' . urlencode($imageFileName);
 	$content = 'test';
 
 	$post_results = httpFunc('GET',$server,$port,$uri,$content);
 	if (!is_string($post_results))
-		return '<img src="' . $settings['default_images_url'] . '/quiz/warning.png" alt="yes" title="Warning" align="top" /> An unexpected error occurred while importing ' . $imageFileName;
+		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> An unexpected error occurred while importing ' . $imageFileName;
 	elseif (file_exists($outFilePath))
-		return '<img src="' . $settings['default_images_url'] . '/quiz/warning.png" alt="yes" title="Warning" align="top" /> The file ' . $imageFileName . ' already exists locally, skipping';
+		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> The file ' . $imageFileName . ' already exists locally, skipping';
 	else
 	{
 		$fileWrite = fopen($outFilePath, 'x');
 	// @TODO check if is_writable
 		if (fwrite( $fileWrite, $post_results ) == false)
-			return '<img src="' . $settings['default_images_url'] . '/quiz/warning.png" alt="yes" title="Warning" align="top" /> An unexpected error occurred while importing ' . $imageFileName;
+			return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> An unexpected error occurred while importing ' . $imageFileName;
 
 		fclose($fileWrite);
 	}
-	return '<img src="' . $settings['default_images_url'] . '/quiz/information.png" alt="yes" title="Information" align="top" /> ' . $imageFileName . ' imported successfully';
+	return '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" /> ' . $imageFileName . ' imported successfully';
 }
 
 function get_category_names()
@@ -2442,11 +2440,11 @@ function save_image($image)
 	global $boarddir;
 
 	// Where to save the file
-	$outFilePath = $boarddir . '/Themes/default/images/quiz/Quizes/' . $image;
+	$outFilePath = $boarddir . '/Themes/default/images/quiz_images/Quizes/' . $image;
 
 	$server  = 'www.smfmodding.com';
 	$port    = '80';
-	$uri     = '/Themes/default/images/quiz/Quizes/' . urlencode($image);
+	$uri     = '/Themes/default/images/quiz_images/Quizes/' . urlencode($image);
 	$content = 'test';
 
 	$post_results = httpFunc('GET',$server,$port,$uri,$content);
@@ -2646,8 +2644,8 @@ function GetQuizImportData()
 				{
 				//}
 					$imgFile = un_htmlspecialchars($_FILES['imported_quiz_img']['name'][$i]);
-					$img_destination = $settings['default_theme_dir'] . '/images/quiz/Quizes/' . $imgFile;
-					if (!file_exists($img_destination) && is_writable($settings['default_theme_dir'] . '/images/quiz/Quizes'))
+					$img_destination = $settings['default_theme_dir'] . '/images/quiz_images/Quizes/' . $imgFile;
+					if (!file_exists($img_destination) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Quizes'))
 						move_uploaded_file($_FILES['imported_quiz_img']['tmp_name'][$i], $img_destination);
 				}
 			}

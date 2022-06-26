@@ -168,7 +168,7 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 
 	// Set defaults
 	$quizTitle = '';
-	$quizImage = $settings['default_images_url'] . '/quiz/Quizes/Default-64.png';
+	$quizImage = $settings['default_images_url'] . '/quiz_images/Quizes/Default-64.png';
 	$topScore = false;
 
 	// Retrieve quiz info and top score
@@ -182,7 +182,7 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 			$top_user_name = $quiztitleRow['real_name'];
 			$top_time = $quiztitleRow['top_time'];
 			$quizTitle = $quiztitleRow['title'];
-			$quizImage = !empty($quiztitleRow['image']) ? $settings["default_images_url"] . '/quiz/Quizes/' . $quiztitleRow['image'] : $quizImage ;
+			$quizImage = !empty($quiztitleRow['image']) ? $settings["default_images_url"] . '/quiz_images/Quizes/' . $quiztitleRow['image'] : $quizImage ;
 		}
 		if (($correct > $top_correct) || ($correct == $top_correct && $total_seconds < $top_time))
 			$topScore = true;
@@ -273,7 +273,7 @@ function AddInfoBoardentry($id_user, $name, $id_quiz, $correct, $total_seconds, 
 
 	// Format the infoboard entry
 	if ($topScore == true)
-		$entry = '<img src="' . $settings['default_images_url'] . '/quiz/cup_g.gif"/> <a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=userdetails;id_user=' . $id_user . '"><b>' . addslashes($name) . '</b></a> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>' . $correct . '</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' <img width="17" height="17" src="' . $quizImage . '"/><b> <a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz . '">' . addslashes($quizTitle) . '</a></b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizInATimeOf'] . ' <b>' . $total_seconds . '</b> ' . $txt['SMFQuiz_QuizEnd_Page']['SecondsThisIsANewTopScore'];
+		$entry = '<img src="' . $settings['default_images_url'] . '/quiz_images/cup_g.gif"/> <a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=userdetails;id_user=' . $id_user . '"><b>' . addslashes($name) . '</b></a> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>' . $correct . '</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' <img width="17" height="17" src="' . $quizImage . '"/><b> <a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz . '">' . addslashes($quizTitle) . '</a></b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizInATimeOf'] . ' <b>' . $total_seconds . '</b> ' . $txt['SMFQuiz_QuizEnd_Page']['SecondsThisIsANewTopScore'];
 	else
 		$entry = '<a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=userdetails;id_user=' . $id_user . '"><b>' . addslashes($name) . '</b></a> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>' . $correct . '</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' <img width="17" height="17" src="' . $quizImage . '"/><b> <a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz . '">' . addslashes($quizTitle) . '</a></b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizInATimeOf'] . ' <b>' . $total_seconds . '</b> ' . $txt['SMFQuiz_Common']['seconds'] ;
 

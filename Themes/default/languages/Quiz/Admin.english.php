@@ -263,6 +263,9 @@ $txt['quiz_mod_preview_disabled'] = 'Sorry at the moment the preview is disabled
 // Scheduled
 $txt['scheduled_task_quiz_maintenance'] = 'Quiz Maintenance';
 $txt['scheduled_task_desc_quiz_maintenance'] = 'Runs essential maintenance for the Quiz mod - should not be disabled if the quiz is in use, especially Quiz Leagues';
+$txt['quiz_maint_results_removed'] = 'Quiz results removed';
+$txt['quiz_maint_sessions_removed'] = '%d quiz sessions removed';
+$txt['quiz_maint_infoboard_entries_removed'] = 'Infoboard entries removed';
 
 // Permissions
 $txt['permissiongroup_quiz'] = 'Quiz';

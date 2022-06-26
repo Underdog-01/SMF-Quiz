@@ -84,7 +84,7 @@ function GetQuizQuestion($id_quiz, $questionNum, $debugOn)
 		$xmlFragment .= '<questionanswer_text>' . xmlencode(format_string($questionRow["answer_text"])) . '</questionanswer_text>';
 		$xmlFragment .= '<image>';
 		if (!empty($questionRow["image"]))
-			$xmlFragment .= $settings["default_images_url"] . '/quiz/Questions/' . $questionRow["image"];
+			$xmlFragment .= $settings["default_images_url"] . '/quiz_images/Questions/' . $questionRow["image"];
 
 		$xmlFragment .= '</image>';
 	}
@@ -198,7 +198,7 @@ function GetQuizLeagueQuestion($id_quiz_league, $debugOn)
 		$xmlFragment .= '<questionanswer_text>' . xmlencode(format_string($questionRow["answer_text"])) . '</questionanswer_text>';
 		$xmlFragment .= '<image>';
 		if (!empty($questionRow["image"]))
-			$xmlFragment .= $settings["default_images_url"] . '/quiz/Questions/' . $questionRow["image"];
+			$xmlFragment .= $settings["default_images_url"] . '/quiz_images/Questions/' . $questionRow["image"];
 
 		$xmlFragment .= '</image>';
 		$xmlFragment .= '<quizTitle>' . xmlencode(format_string($questionRow["Title"])) . '</quizTitle>';

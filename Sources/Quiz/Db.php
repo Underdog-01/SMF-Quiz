@@ -2381,8 +2381,8 @@ function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer
 
 	if (!empty($image))
 	{
-		$dest = $settings['default_theme_dir'] . '/images/quiz/Questions/' . $image;
-		if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz/Questions/'))
+		$dest = $settings['default_theme_dir'] . '/images/quiz_images/Questions/' . $image;
+		if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Questions/'))
 		{
 			$imageData = base64_decode($imageData);
 			file_put_contents($dest, $imageData);
@@ -2472,7 +2472,7 @@ function ExportQuizes($quizIds)
 	$exportQuizesReturn = array();
 	while ($row = $smcFunc['db_fetch_assoc']($exportQuizesResult))
 	{
-		$imgDir = $settings['default_theme_dir'] . '/images/quiz/Quizes/' . $row['image'];
+		$imgDir = $settings['default_theme_dir'] . '/images/quiz_images/Quizes/' . $row['image'];
 		if (file_exists($imgDir))
 			$row['image_data'] = base64_encode(file_get_contents($imgDir));
 		else
@@ -2505,7 +2505,7 @@ function ExportQuizQuestions($id_quiz)
 	$exportQuizQuestionsReturn = array();
 	while ($row = $smcFunc['db_fetch_assoc']($exportQuizQuestionResult))
 	{
-		$imgDir = $settings['default_theme_dir'] . '/images/quiz/Questions/' . $row['image'];
+		$imgDir = $settings['default_theme_dir'] . '/images/quiz_images/Questions/' . $row['image'];
 		if (file_exists($imgDir))
 			$row['image_data'] = base64_encode(file_get_contents($imgDir));
 		else
