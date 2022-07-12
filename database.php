@@ -1087,3 +1087,27 @@ $tables = [
 
 foreach ($tables AS $table_name => $data)
 	$smcFunc['db_create_table']('{db_prefix}' . $table_name, $data['columns'], $data['indexes']);
+
+// Insert default question types
+$smcFunc['db_insert']('ignore',
+	'{db_prefix}quiz_question_type',
+	[
+		'id_question_type' => 'int', 
+		'description' => 'string',
+	],
+	[
+		[
+			1,
+			'Multiple Choice'
+		],
+		[
+			2,
+			'Free Text'
+		],
+		[
+			3,
+			'True/False'
+		]
+	],
+	['id_question_type']
+);

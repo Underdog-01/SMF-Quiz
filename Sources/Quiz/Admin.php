@@ -612,7 +612,6 @@ function SetImageUploadJavascript()
 
 		// @TODO update jQuery + CDN + local loading, etc.
 	$context['html_headers'] .= '
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-1.3.2.min.js"></script>
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.selectboxes.js"></script>
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/ajaxfileupload.js"></script>
 		<script type="text/javascript"><!-- // --><![CDATA[
@@ -1657,7 +1656,6 @@ function GetShowDisputesData()
 
 	$context['html_headers'] .= '
 		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz_css/jquery-ui-1.7.1.custom.css"/>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-1.3.2.min.js"></script>
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-ui-1.7.1.custom.min.js"></script>
 		<script type="text/javascript"><!-- // --><![CDATA[
 		

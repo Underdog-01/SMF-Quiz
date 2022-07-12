@@ -19,6 +19,9 @@ function SMFQuiz()
 
 	$context['page_title'] = $txt['SMFQuiz'];
 
+
+	addJavaScriptVar('id_user', $context['user']['id'], false);
+
 	if ($context['current_subaction'] == 'play')
 	{
 		$context['template_layers'] = array();

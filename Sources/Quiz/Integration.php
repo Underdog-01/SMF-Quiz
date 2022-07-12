@@ -30,6 +30,15 @@ class Integration
 			'SMFQuiz_InfoBoardItemsToDisplay' => 20,
 			'SMFQuiz_showUserRating' => 1,
 			'SMFQuiz_AutoClean' => 'on',
+			'SMFQuiz_SessionTimeLimit' => 30,
+
+			// Results
+			'SMFQuiz_0to19' => 'Oh dear, you really were poor in that quiz.',
+			'SMFQuiz_20to39' => 'That was not your best effort now was it?',
+			'SMFQuiz_40to59' => 'Well - You could have done better. Mediocrity is not the end of the world!',
+			'SMFQuiz_60to79' => 'That is a pretty good score, well done.',
+			'SMFQuiz_80to99' => 'Good score, we like that!',
+			'SMFQuiz_99to100' => 'WOW - You are simply amazing. That is a Perfect Score! Did you Google those answers?',
 		];
 		$modSettings = array_merge($defaults, $modSettings);
 	}

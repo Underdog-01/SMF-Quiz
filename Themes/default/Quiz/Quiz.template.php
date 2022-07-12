@@ -100,38 +100,40 @@ function template_quiz_play()
 {
 	global $settings, $boardurl, $modSettings, $txt, $context, $scripturl;
 
-	echo '<html>
+	echo '
+	<!DOCTYPE html>
+	<html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="' , $settings['default_theme_url'] , '/css/quiz_css/jquery-ui-1.7.1.custom.css"/>
-		<link rel="stylesheet" type="text/css" href="' , $settings['default_theme_url'] , '/css/quiz_css/quiz.css"/>
-		<link rel="stylesheet" type="text/css" href="' , $settings['default_theme_url'] , '/css/quiz_css/lightbox.css" />
-		<script type="text/javascript" src="' , $settings['default_theme_url'] , '/scripts/quiz_images/jquery-1.3.2.min.js"></script>
-		<script type="text/javascript" src="' , $settings['default_theme_url'] , '/scripts/quiz_images/jquery-ui-1.7.1.custom.min.js"></script>
-		<script type="text/javascript" src="' , $settings['default_theme_url'] , '/scripts/quiz_images/QuizClient.js"></script>
-		<script type="text/javascript" src="' , $settings['default_theme_url'] , '/scripts/quiz_images/jquery.lightbox.js"></script>
-		<script type="text/javascript"><!-- // --><![CDATA[
-		var SMFQuiz_0to19 = "' , $modSettings['SMFQuiz_0to19'] , '";
-		var SMFQuiz_20to39 = "' , $modSettings['SMFQuiz_20to39'] , '";
-		var SMFQuiz_40to59 = "' , $modSettings['SMFQuiz_40to59'] , '";
-		var SMFQuiz_60to79 = "' , $modSettings['SMFQuiz_60to79'] , '";
-		var SMFQuiz_80to99 = "' , $modSettings['SMFQuiz_80to99'] , '";
-		var SMFQuiz_99to100 = "' , $modSettings['SMFQuiz_99to100'] , '";
-		var SessionTimeLimit =  "' , $modSettings['SMFQuiz_SessionTimeLimit'] , '";
-		var id_user = "' , $context['user']['id'] , '";
-		var quizImageFolder = "' , $settings['default_theme_url'] , '/images/quiz_images/Quizes/";
-		var questionImageFolder = "' , $settings['default_theme_url'] , '/images/quiz_images/Questions/";
-		var quizImageRootFolder = "' , $settings['default_theme_url'] , '/images/quiz_images/";
-		var smf_scripturl = "' , $scripturl , '";
-		var textLoggedIn = \'' , $txt['SMFQuiz_Javascript']['MustBeLoggedIn'] , '\';
-		var textBrowserNotSupportHttp = \'' , $txt['SMFQuiz_Javascript']['BrowserNotSupportHttp'] , '\';
-		var textNoLeagueOrQuizSpecified = \'' , $txt['SMFQuiz_Javascript']['NoQuizSpecified'] , '\';
-		var textPlayedQuizOverMaximum = \'' , $txt['SMFQuiz_Javascript']['QuizMaximum'] , '\';
-		var textPlayedQuizLeagueOverMaximum = \'' , $txt['SMFQuiz_Javascript']['QuizLeagueMaximum'] , '\';
-		var textBrowserBroke = \'' , $txt['SMFQuiz_Javascript']['BrowserBroke'] , '\';
-		var textProblemGettingQuestion = \'' , $txt['SMFQuiz_Javascript']['ProblemGettingQuestions'] , '\';
-		var textTimeout = \'' , $txt['SMFQuiz_Javascript']['Timeout'] , '\';
-		var textSessionTime = \'' , $txt['SMFQuiz_Javascript']['SessionTime'] , ' (', $modSettings['SMFQuiz_SessionTimeLimit'] , ' ' , $txt['SMFQuiz_Common']['minutes'] , ')\';
-	// ]]></script>
+		<link rel="stylesheet" type="text/css" href="' , $settings['default_theme_url'] , '/css/quiz/jquery-ui-1.7.1.custom.css"/>
+		<link rel="stylesheet" type="text/css" href="' , $settings['default_theme_url'] , '/css/quiz/quiz.css"/>
+		<link rel="stylesheet" type="text/css" href="' , $settings['default_theme_url'] , '/css/quiz/lightbox.css" />
+		<script src="' , $settings['default_theme_url'] , '/scripts/quiz/jquery-1.3.2.min.js"></script>
+		<script src="' , $settings['default_theme_url'] , '/scripts/quiz/jquery-ui-1.7.1.custom.min.js"></script>
+		<script>
+			var id_user = "' , $context['user']['id'] , '";
+			var SMFQuiz_0to19 = "' , $modSettings['SMFQuiz_0to19'] , '";
+			var SMFQuiz_20to39 = "' , $modSettings['SMFQuiz_20to39'] , '";
+			var SMFQuiz_40to59 = "' , $modSettings['SMFQuiz_40to59'] , '";
+			var SMFQuiz_60to79 = "' , $modSettings['SMFQuiz_60to79'] , '";
+			var SMFQuiz_80to99 = "' , $modSettings['SMFQuiz_80to99'] , '";
+			var SMFQuiz_99to100 = "' , $modSettings['SMFQuiz_99to100'] , '";
+			var SessionTimeLimit =  "' , $modSettings['SMFQuiz_SessionTimeLimit'] , '";
+			var quizImageFolder = "' , $settings['default_images_url'] , '/quiz_images/Quizes/";
+			var questionImageFolder = "' , $settings['default_images_url'] , '/quiz_images/Questions/";
+			var quizImageRootFolder = "' , $settings['default_images_url'] , '/quiz_images/";
+			var smf_scripturl = "' , $scripturl , '";
+			var textLoggedIn = \'' , $txt['SMFQuiz_Javascript']['MustBeLoggedIn'] , '\';
+			var textBrowserNotSupportHttp = \'' , $txt['SMFQuiz_Javascript']['BrowserNotSupportHttp'] , '\';
+			var textNoLeagueOrQuizSpecified = \'' , $txt['SMFQuiz_Javascript']['NoQuizSpecified'] , '\';
+			var textPlayedQuizOverMaximum = \'' , $txt['SMFQuiz_Javascript']['QuizMaximum'] , '\';
+			var textPlayedQuizLeagueOverMaximum = \'' , $txt['SMFQuiz_Javascript']['QuizLeagueMaximum'] , '\';
+			var textBrowserBroke = \'' , $txt['SMFQuiz_Javascript']['BrowserBroke'] , '\';
+			var textProblemGettingQuestion = \'' , $txt['SMFQuiz_Javascript']['ProblemGettingQuestions'] , '\';
+			var textTimeout = \'' , $txt['SMFQuiz_Javascript']['Timeout'] , '\';
+			var textSessionTime = \'' , $txt['SMFQuiz_Javascript']['SessionTime'] , ' (', $modSettings['SMFQuiz_SessionTimeLimit'] , ' ' , $txt['SMFQuiz_Common']['minutes'] , ')\';
+		</script>
+		<script src="' , $settings['default_theme_url'] , '/scripts/quiz/QuizClient.js"></script>
+		<script src="' , $settings['default_theme_url'] , '/scripts/quiz/jquery.lightbox.js"></script>
 	<title>' , $txt['SMFQuiz_Common']['Quiz'] , '</title>
 	</head>
 	<body oncontextmenu="return false;">
@@ -161,7 +163,7 @@ function template_quiz_play()
 								<td valign="top"><span id="firstQuestionSpan" class="question"></span></td>
 							</tr>
 							<tr>
-								<td><div id="zoomImageWrapper" class="small"><a id="zoomImage" class="lightbox" title="' , $txt['SMFQuiz_Common']['ClickToZoom'] , '"><img id="zoomImageThumb" src="' , $settings['default_theme_url'] , '/quiz_images/images/Preview-64.png" width="64" height="64" alt="' , $txt['SMFQuiz_Common']['ClickToZoom'] , '" /></a><br/>' , $txt['SMFQuiz_Common']['ClickToZoom'] , '</div></td>
+								<td><div id="zoomImageWrapper" class="small"><a id="zoomImage" class="lightbox" title="' , $txt['SMFQuiz_Common']['ClickToZoom'] , '"><img id="zoomImageThumb" src="' , $settings['default_images_url'] , '/quiz_images/Preview-64.png" width="64" height="64" alt="' , $txt['SMFQuiz_Common']['ClickToZoom'] , '" /></a><br/>' , $txt['SMFQuiz_Common']['ClickToZoom'] , '</div></td>
 							</tr>
 						</table>
 					</div>

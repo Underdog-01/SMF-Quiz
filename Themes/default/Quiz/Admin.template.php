@@ -459,8 +459,8 @@ function template_new_question()
 													</tr>
 												</tbody>
 											</table>
-											<input type="button" value="Add Row" onclick="addRow()"/>
-											<input type="button" value="Delete Row" onclick="deleteRow()"/>
+											<input type="button" value="', $txt['SMFQuiz_Common']['AddRow'], '" onclick="addRow()"/>
+											<input type="button" value="', $txt['SMFQuiz_Common']['DeleteRow'], '" onclick="deleteRow()"/>
 										</div>
 
 										<div id="trueFalseAnswer" style="display:none">
@@ -1599,7 +1599,7 @@ function template_category_dropdown($selectedCategoryId, $identifier)
 // Template that provides the quiz dropdown
 function template_quiz_dropdown($selectedId = -1)
 {
-	global $context, $smcFunc;
+	global $context;
 
 	if (sizeof($context['SMFQuiz']['quizes']) > 0)
 	{
@@ -1617,7 +1617,7 @@ function template_quiz_dropdown($selectedId = -1)
 
 function template_question_type_dropdown($onChange = null)
 {
-	global $context, $smcFunc;
+	global $context;
 
 	if (sizeof($context['SMFQuiz']['questionTypes']) > 0)
 	{
