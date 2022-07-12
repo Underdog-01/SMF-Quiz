@@ -39,7 +39,10 @@
 		<!-- Templates -->
 		<remove-dir name="$themedir/Quiz" />
 		<!-- Images -->
-		<remove-dir name="$imagesdir/quiz" />
+		<!--
+			<remove-dir name="$imagesdir/quiz_images" />
+			Actually, don't remove this in case the user uploaded a bunch of new images
+		-->
 		<remove-file name="$imagesdir/icons/quiz.png" />
 		<!-- Scripts -->
 		<remove-dir name="$themedir/scripts/quiz" />
