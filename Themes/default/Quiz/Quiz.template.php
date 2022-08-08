@@ -552,7 +552,12 @@ function template_user_quizes()
 						</tr>
 		';
 	else
-		echo '<table border="0" width="100%"><tr class="windowbg"><td align="left">' , $txt['SMFQuiz_UserQuizes_Page']['NotCreatedQuizes'] , '</td></tr>';
+		echo '<table border="0" width="100%"><tr class="windowbg"><td align="left">' , $txt['SMFQuiz_UserQuizes_Page']['NotCreatedQuizes'] , '</td></tr>
+			<tr class="windowbg">
+				<td align="left">
+					<a href="' , $scripturl . '?action=' , $context['current_action'] , ';sa=addquiz"><img src="' . $settings['default_images_url'] . '/quiz_images/add.png" alt="' , $txt['SMFQuiz_AddQuiz_Page']['Title'] , '" title="' , $txt['SMFQuiz_AddQuiz_Page']['Title'] , '" border="0" align="absmiddle"/> ' , $txt['SMFQuiz_Common']['AddNewQuiz'] , '</a>
+				</td>
+			</tr>';
 
 	$counter = 0;
 	foreach($context['SMFQuiz']['userQuizes'] as $userQuizesRow)
@@ -590,11 +595,6 @@ function template_user_quizes()
 					</table>
 				</td>
 			</tr>
-			<tr class="windowbg">
-				<td align="left">
-					<a href="' , $scripturl . '?action=' , $context['current_action'] , ';sa=addquiz"><img src="' . $settings['default_images_url'] . '/quiz_images/add.png" alt="' , $txt['SMFQuiz_AddQuiz_Page']['Title'] , '" title="' , $txt['SMFQuiz_AddQuiz_Page']['Title'] , '" border="0" align="absmiddle"/> ' , $txt['SMFQuiz_Common']['AddNewQuiz'] , '</a>
-				</td>
-			</tr>
 		</table>
 	';
 }
@@ -616,6 +616,9 @@ function template_topTabs()
 				
 		foreach ($context['tab_links'] as $link)
 		{
+			if (isset($link['show']) && empty($link['show']))
+				continue;
+
 			if ($link['action'] == $context['current_subaction'])
 				echo '
 								<li><a class="active firstlevel" href="' , $scripturl . '?action=' , $context['current_action'] , (!empty($link['action']) ? ';sa=' . $link['action'] : '') . '"><span class="firstlevel">', $link['label'], '</span></a></li>
@@ -770,7 +773,7 @@ echo '
 		foreach($context['SMFQuiz']['latestQuizes'] as $latestQuizRow)
 		{
 			echo '						<tr class="' , $counter % 2 == 1 ? 'windowbg2' : 'windowbg' , '">
-											<td><img width="25" height="25" src="' , !empty($latestQuizRow['image']) ? $settings["default_images_url"] . '/quiz_images/Quizes/' . $latestQuizRow['image'] : $settings["default_images_url"] . '/quiz_images/Quizes/Default-64.png' , '"/></td>
+											<td width="5%"><img width="25" height="25" src="' , !empty($latestQuizRow['image']) ? $settings["default_images_url"] . '/quiz_images/Quizes/' . $latestQuizRow['image'] : $settings["default_images_url"] . '/quiz_images/Quizes/Default-64.png' , '"/></td>
 											<td width="100%"><table border="0" cellpadding="0" cellspacing="0"><tr><td><a href="' , $scripturl , '?action=SMFQuiz;sa=categories;id_quiz=' , $latestQuizRow['id_quiz'] , '">' , format_string($latestQuizRow['title']) , '</a>
 			';
 			if ($latestQuizRow['updated'] > $newDate)
@@ -813,7 +816,7 @@ echo '
 		foreach ($context['SMFQuiz']['quizLeagueLeaders'] as $quizLeagueLeadersRow)
 		{
 			echo '						<tr class="' , $counter % 2 == 1 ? 'windowbg2' : 'windowbg' , '">
-											<td>
+											<td width="5%">
 												' , $quizLeagueLeadersRow['updated']  > $newDate ? '<img src="' . $settings['default_images_url'] . '/quiz_images/new.gif"/>' : '&nbsp;' , '
 											</td>
 											<td width="100%">
@@ -856,7 +859,7 @@ echo '
 		foreach ($context['SMFQuiz']['popularQuizes'] as $popularQuizRow)
 		{
 			echo '						<tr class="' , $counter % 2 == 1 ? 'windowbg2' : 'windowbg' , '">
-											<td><img width="25" height="25" src="' , !empty($popularQuizRow['image']) ? $settings["default_images_url"] . '/quiz_images/Quizes/' . $popularQuizRow['image'] : $settings["default_images_url"] . '/quiz_images/Quizes/Default-64.png' , '"/></td>
+											<td width="5%"><img width="25" height="25" src="' , !empty($popularQuizRow['image']) ? $settings["default_images_url"] . '/quiz_images/Quizes/' . $popularQuizRow['image'] : $settings["default_images_url"] . '/quiz_images/Quizes/Default-64.png' , '"/></td>
 											<td width="100%"><table border="0" cellpadding="0" cellspacing="0"><tr><td><a href="' , $scripturl , '?action=SMFQuiz;sa=categories;id_quiz=' , $popularQuizRow['id_quiz'] , '">' , format_string($popularQuizRow['title']) , '</a>
 			';
 			if ($popularQuizRow['updated'] > $newDate)
@@ -955,7 +958,7 @@ echo '
 		foreach ($context['SMFQuiz']['infoBoard'] as $infoboardRow)
 		{
 			echo '						<tr class="' , $counter % 2 == 1 ? 'windowbg2' : 'windowbg' , '">
-											<td align="left" valign="top" class="nobr" >' , date("M d Y H:i", $infoboardRow['entry_date']) , '</td>
+											<td align="left" width="12%" valign="top" class="nobr" >' , date("M d Y H:i", $infoboardRow['entry_date']) , '</td>
 											<td align="left" width="100%" valign="top">' , format_string($infoboardRow['Entry']) , '</td>
 										</tr>
 			';
@@ -1630,7 +1633,7 @@ function template_categories()
 				echo '	<tr class="windowbg">';
 
 			echo '
-							<td width="1%">
+							<td width="5%">
 			';
 			if (!empty($row['image']))
 				echo '			<img width="32" height="32" src="' , $settings['default_images_url'] , '/quiz_images/Quizes/' , $row['image'] , '"/>';
@@ -2488,6 +2491,14 @@ function template_quiz_scores()
 			// @TODO should go Source-side?
 	$id_quiz = isset($_GET['id_quiz']) ? $_GET['id_quiz'] : 0;
 
+	if (empty($context['SMFQuiz']['quiz_results']))
+	{
+		echo '
+			<div class="windowbg">There are no Quiz Results	</div>';
+
+			return;
+	}
+
 	echo '
 		<table class="bordercolor" border="0" cellpadding="4" cellspacing="1" width="100%">
 			<tbody>
@@ -2518,8 +2529,6 @@ function template_quiz_scores()
 	}
 	echo '</tr>';
 
-	if (sizeof($context['SMFQuiz']['quiz_results']) > 0)
-	{
 		foreach($context['SMFQuiz']['quiz_results'] as $row)
 			echo '					<tr class="windowbg">
 										<td align="left"><a href="' , $scripturl , '?action=SMFQuiz;sa=userdetails;id_user=' , $row['id_user'] , '">' , $row['real_name'] , '</a></td>
@@ -2531,9 +2540,7 @@ function template_quiz_scores()
 										<td align="center">' , $row['total_seconds'] , '</td>
 										<td align="center">' , $row['auto_completed'] == 1 ? '<img src="' . $settings['default_images_url'] . '/quiz_images/time.png" title="' . $txt['SMFQuiz_Common']['AutoCompleted'] . '"/>' : '&nbsp;' , '</td>
 									</tr>';
-	}
-	else
-		echo ' 						<tr class="windowbg"><td colspan="10" align="left">There are no Quiz Results	</td></tr>';
+
 
 	echo '
 							</tbody>

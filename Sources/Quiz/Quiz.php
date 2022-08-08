@@ -7,15 +7,15 @@ if (!defined('SMF'))
 // @TODO move into the function/s
 require_once($sourcedir . '/Quiz/Db.php');
 
-// @TODO move into the function/s
-isAllowedTo('quiz_view');
-
 function SMFQuiz()
 {
 	global $context, $txt;
 
 	// Load the language file
 	loadLanguage('Quiz/Quiz');
+	loadLanguage('Quiz/Admin');
+
+	isAllowedTo('quiz_view');
 
 	$context['page_title'] = $txt['SMFQuiz'];
 
@@ -88,7 +88,8 @@ function SMFQuiz()
 	);
 	$context['tab_links'][] = array(
 		'action' => 'userdetails',
-		'label' => isset($txt['SMFQuiz_tabs']['userDetails']) ? $txt['SMFQuiz_tabs']['userDetails'] : 'User Details'
+		'label' => isset($txt['SMFQuiz_tabs']['userDetails']) ? $txt['SMFQuiz_tabs']['userDetails'] : 'User Details',
+		'show' => $context['user']['is_logged'],
 	);
 	$context['tab_links'][] = array(
 		'action' => 'userquizes',
@@ -541,7 +542,11 @@ function GetQuizLeaguesData()
 
 function GetUserDetailsData()
 {
-	global $context, $memberContext;
+	global $context, $memberContext, $user_info;
+
+	// Guests can't see details...
+	if ($user_info['is_guest'])
+		redirectexit('action=SMFQuiz');
 
 	// @TODO isAllowed?
 	if (isset($_GET['id_user']))
@@ -1038,8 +1043,10 @@ function GetQuizScoresData()
 	global $context, $scripturl, $smcFunc, $txt, $modSettings;
 
 	$id_quiz = isset($_GET['id_quiz']) ? $_GET['id_quiz'] : '0';
-	$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'default';
+	$sort = isset($_REQUEST['sort']) && !empty($_REQUEST['sort']) ? $_REQUEST['sort'] : 'default';
 	$limit = $modSettings['SMFQuiz_ListPageSizes'];
+
+	$_GET['start'] = (int) isset($_GET['start']) ? $_GET['start'] : 0;
 
 	// Set up the columns...
 	$context['columns'] = array(
@@ -1069,10 +1076,6 @@ function GetQuizScoresData()
 			'label' => $txt['SMFQuiz_Common']['Seconds'],
 			'width' => '20'
 		),
-		'autocompleted' => array(
-			'label' => '',
-			'width' => '1'
-		)
 	);
 
 	// Sort out the column information.
@@ -1126,7 +1129,7 @@ function GetQuizScoresData()
 	);
 	
 	$query_parameters = array(
-		'sort' => $sort_methods[$sort][$context['sort_direction']],
+		'sort' => isset($sort_methods[$sort]) ? $sort_methods[$sort][$context['sort_direction']] : $sort_methods['default']['up'],
 		'limit' => $limit,
 		'id_quiz' => $id_quiz,
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
@@ -1171,12 +1174,13 @@ function GetQuizScoresData()
 		$query_parameters
 	);
 
-	$context['SMFQuiz']['quiz_results'] = Array();
+	$context['SMFQuiz']['quiz_results'] = array();
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		$context['SMFQuiz']['quiz_results'][] = $row;
 		$context['SMFQuiz']['quiz_title'] = $row['title'];
 	}
+
 
 	$smcFunc['db_free_result']($result);
 	$context['SMFQuiz']['Action'] = 'quiz_results';

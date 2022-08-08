@@ -1037,7 +1037,7 @@ function GetSaveQuestionData($addMore)
 	// TODO - Need some validation on front end
 	$questionText = isset($_POST['question_text']) ? ReplaceCurlyQuotes($_POST['question_text']) : '';
 	$questionTypeId = isset($_POST['id_question_type']) ? $_POST['id_question_type'] : '';
-	$quizId = isset($_POST['id_quiz']) ? $_POST['id_quiz'] : '';
+	$quizId = isset($_POST['id_quiz']) ? $_POST['id_quiz'] : 0;
 	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
 	$answerText = isset($_POST['question_answer_text']) ? ReplaceCurlyQuotes($_POST['question_answer_text']) : '';
 
