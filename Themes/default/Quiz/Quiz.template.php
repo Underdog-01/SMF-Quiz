@@ -800,39 +800,55 @@ echo '
 				<div class="title_bar">
 					<h4 class="titlebg">
 						<span class="left"></span>
-						' , $txt['SMFQuiz_Home_Page']['QuizLeagueLeaders'] , '
+						' , $txt['SMFQuiz_Home_Page']['QuizMasters'] , '
 					</h3>
 				</div>
 				<div class="blockcontent windowbg" style="margin-top:2px; ">
 					<div style="padding:4px;">
 								<table border="0" width="100%" class="windowbg">
 									<tr class="titlebg">
-										<td colspan="2">' , $txt['SMFQuiz_Common']['QuizLeague'] , '</td>
-										<td>' , $txt['SMFQuiz_Common']['CurrentLeader'] , '</td>
+										<td>' , $txt['SMFQuiz_Common']['Member'] , '</td>
+										<td>' , $txt['SMFQuiz_Common']['Wins'] , '</td>
+										<td class="nobr" >% ' , $txt['SMFQuiz_Common']['TotalWins'] , '</td>
 									</tr>
 	';
-
-	if (isset($context['SMFQuiz']['quizLeagueLeaders']))
-		foreach ($context['SMFQuiz']['quizLeagueLeaders'] as $quizLeagueLeadersRow)
+	$counter = 1;
+	if (isset($context['SMFQuiz']['quizMasters']))
+		foreach ($context['SMFQuiz']['quizMasters'] as $quizMastersRow)
 		{
-			echo '						<tr class="' , $counter % 2 == 1 ? 'windowbg2' : 'windowbg' , '">
-											<td width="5%">
-												' , $quizLeagueLeadersRow['updated']  > $newDate ? '<img src="' . $settings['default_images_url'] . '/quiz_images/new.gif"/>' : '&nbsp;' , '
-											</td>
+			$totalWinPerc = ($quizMastersRow['total_wins'] / $context['SMFQuiz']['totalQuizes'][0]) * 100;
+			echo '						<tr height="27" class="' , $counter % 2 == 1 ? 'windowbg2' : 'windowbg' , '">
+			   
+																																						
+				
+ 
 											<td width="100%">
-												<a href="' , $scripturl , '?action=SMFQuiz;sa=quizleagues;id=' , $quizLeagueLeadersRow["id_quiz_league"] , '">' , format_string($quizLeagueLeadersRow['title']) , '</a>
+			';
+			if ($counter == 1)
+				echo '<img src="' , $settings['default_images_url'] , '/quiz_images/cup_g.gif"/>';
+			elseif ($counter == 2)
+				echo '<img src="' , $settings['default_images_url'] , '/quiz_images/cup_s.gif"/>';
+			else if ($counter == 3)
+				echo '<img src="' , $settings['default_images_url'] , '/quiz_images/cup_b.gif"/>';
+
+			echo '
+												<a href="' , $scripturl , '?action=SMFQuiz;sa=userdetails;id_user=' , $quizMastersRow['id_user'] , '">' , $quizMastersRow['real_name'] , '</a>
 											</td>
-											<td align="left" class="nobr">' , $quizLeagueLeadersRow['id_leader'] > 0 ? '<img src="' . $settings['default_images_url'] . '/quiz_images/cup_g.gif"/> <a href="' . $scripturl . '?action=SMFQuiz;sa=userdetails;id_user=' . $quizLeagueLeadersRow['id_leader'] . '">' . $quizLeagueLeadersRow['real_name'] . '</a>' : $txt['SMFQuiz_Common']['NoLeader'] , '</td>
+											<td align="center">' , $quizMastersRow['total_wins'] , '</td>
+											<td align="center">' , round($totalWinPerc,2) , '%</td>
 										</tr>
 			';
 			$counter++;
 		}
 
 	echo '
+										<tr>
+											<td colspan="3">[<a href="' , $scripturl , '?action=SMFQuiz;sa=quizmasters">' , $txt['SMFQuiz_Common']['ViewAll'] , ']</a></td>
+										</td>
 								</table>					</div>
 				</div>
 			</div>
-		</td>		
+		</td>
 	</tr>
 	<tr>
 		<td width="50%" valign="top">
@@ -886,51 +902,45 @@ echo '
 				<div class="title_bar">
 					<h4 class="titlebg">
 						<span class="left"></span>
-						' , $txt['SMFQuiz_Home_Page']['QuizMasters'] , '
+						' , $txt['SMFQuiz_Home_Page']['QuizLeagueLeaders'] , '
 					</h3>
 				</div>
 				<div class="blockcontent windowbg" style="margin-top:2px; ">
 					<div style="padding:4px;">
 								<table border="0" width="100%" class="windowbg">
 									<tr class="titlebg">
-										<td>' , $txt['SMFQuiz_Common']['Member'] , '</td>
-										<td>' , $txt['SMFQuiz_Common']['Wins'] , '</td>
-										<td class="nobr" >% ' , $txt['SMFQuiz_Common']['TotalWins'] , '</td>
+										<td colspan="2">' , $txt['SMFQuiz_Common']['QuizLeague'] , '</td>
+										<td>' , $txt['SMFQuiz_Common']['CurrentLeader'] , '</td>
+																			  
 									</tr>
 	';
-	$counter = 1;
-	if (isset($context['SMFQuiz']['quizMasters']))
-		foreach ($context['SMFQuiz']['quizMasters'] as $quizMastersRow)
-		{
-			$totalWinPerc = ($quizMastersRow['total_wins'] / $context['SMFQuiz']['totalQuizes'][0]) * 100;
-			echo '						<tr height="27" class="' , $counter % 2 == 1 ? 'windowbg2' : 'windowbg' , '">
-											<td width="100%">
-			';
-			if ($counter == 1)
-				echo '<img src="' , $settings['default_images_url'] , '/quiz_images/cup_g.gif"/>';
-			elseif ($counter == 2)
-				echo '<img src="' , $settings['default_images_url'] , '/quiz_images/cup_s.gif"/>';
-			else if ($counter == 3)
-				echo '<img src="' , $settings['default_images_url'] , '/quiz_images/cup_b.gif"/>';
 
-			echo '
-												<a href="' , $scripturl , '?action=SMFQuiz;sa=userdetails;id_user=' , $quizMastersRow['id_user'] , '">' , $quizMastersRow['real_name'] , '</a>
+	if (isset($context['SMFQuiz']['quizLeagueLeaders']))
+		foreach ($context['SMFQuiz']['quizLeagueLeaders'] as $quizLeagueLeadersRow)
+		{
+																								 
+			echo '						<tr class="' , $counter % 2 == 1 ? 'windowbg2' : 'windowbg' , '">
+											<td width="5%">
+												' , $quizLeagueLeadersRow['updated']  > $newDate ? '<img src="' . $settings['default_images_url'] . '/quiz_images/new.gif"/>' : '&nbsp;' , '
 											</td>
-											<td align="center">' , $quizMastersRow['total_wins'] , '</td>
-											<td align="center">' , round($totalWinPerc,2) , '%</td>
+											<td width="100%">
+												<a href="' , $scripturl , '?action=SMFQuiz;sa=quizleagues;id=' , $quizLeagueLeadersRow["id_quiz_league"] , '">' , format_string($quizLeagueLeadersRow['title']) , '</a>
+</td>
+											<td align="left" class="nobr">' , $quizLeagueLeadersRow['id_leader'] > 0 ? '<img src="' . $settings['default_images_url'] . '/quiz_images/cup_g.gif"/> <a href="' . $scripturl . '?action=SMFQuiz;sa=userdetails;id_user=' . $quizLeagueLeadersRow['id_leader'] . '">' . $quizLeagueLeadersRow['real_name'] . '</a>' : $txt['SMFQuiz_Common']['NoLeader'] , '</td>
+																  
 										</tr>
 			';
 			$counter++;
 		}
 
 	echo '
-										<tr>
-											<td colspan="3">[<a href="' , $scripturl , '?action=SMFQuiz;sa=quizmasters">' , $txt['SMFQuiz_Common']['ViewAll'] , ']</a></td>
-										</td>
+			  
+																																		  
+			   
 								</table>					</div>
 				</div>
 			</div>
-		</td>
+		</td>		
 	</tr>
 </table>
 		
