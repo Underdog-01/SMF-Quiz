@@ -203,10 +203,6 @@ $tables = [
 				'columns' => ['id_quiz']
 			],
 			[
-				'type' => 'unique',
-				'columns' => ['title'],
-			],
-			[
 				'type' => 'index',
 				'columns' => ['id_category'],
 			],
