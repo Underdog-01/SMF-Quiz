@@ -22,7 +22,7 @@ function PackageQuiz()
 		return;
 
 	$quizKeys = explode(',', $_GET['quizIds']);
-	$quizKeys = array_map(create_function('$id', 'return (int) $id;'), $quizKeys);
+	$quizKeys = array_map(function($id) { return (int) $id; }, $quizKeys);
 	$quizKeys = array_unique($quizKeys);
 
 	if (empty($quizKeys))

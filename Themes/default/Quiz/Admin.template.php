@@ -1352,7 +1352,7 @@ function template_show_quizes()
 													<td><input type="text" name="packageSiteAddress" id="packageSiteAddress" size="60" maxlength="250"/></td>
 												</tr>
 												<tr>
-													<td colspan="2"><input type="submit" class="button" name="QuizAction" value="' , $txt['SMFQuizAdmin_Quizes_Page']['PackageQuiz'] , '" onclick="return verifyQuizesChecked(this.form);"/></td>
+													<td colspan="2"><button type="button" class="button" name="QuizAction" onclick="return verifyQuizesChecked(this.form);">' , $txt['SMFQuizAdmin_Quizes_Page']['PackageQuiz'] , '</button></td>
 												</tr>
 											</table>
 										</td>
