@@ -1225,7 +1225,7 @@ function GetUnplayedQuizesData()
 	else
 		$userId = $context['user']['id'];
 
-	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
+	$starts_with = isset($_GET['starts_with']) && !empty($_GET['starts_with']) ? $_GET['starts_with'] : '';
 	$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'title';
 	$limit = $modSettings['SMFQuiz_ListPageSizes'];
 
@@ -1321,7 +1321,7 @@ function GetUnplayedQuizesData()
 	);
 
 	$query_parameters = array(
-		'sort' => $sort_methods[$sort][$context['sort_direction']],
+		'sort' => isset($sort_methods[$sort][$context['sort_direction']]) ? $sort_methods[$sort][$context['sort_direction']] : 'Q.title ASC',
 		'starts_with' => $starts_with . '%',
 		'limit' => $limit,
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
@@ -1381,8 +1381,8 @@ function GetUnplayedQuizesData()
 		LEFT JOIN {db_prefix}quiz_result QR
 			ON Q.id_quiz = QR.id_quiz
 			AND QR.id_user = {int:id_user}
-		WHERE Q.title LIKE {string:starts_with}
-			AND Q.enabled = 1
+		WHERE Q.enabled = 1' . (!empty($starts_with) ? '
+			AND Q.title LIKE {string:starts_with}' : '') . '
 		GROUP BY Q.id_quiz, QR.id_quiz_result,
 		  Q.title,
 			Q.image,
@@ -1423,7 +1423,7 @@ function GetPlayedQuizesData()
 	else
 		$userId = $context['user']['id'];
 
-	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
+	$starts_with = isset($_GET['starts_with']) && !empty($_GET['starts_with']) ? $_GET['starts_with'] : '';
 	$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'result_date';
 	$limit = $modSettings['SMFQuiz_ListPageSizes'];
 
@@ -1521,7 +1521,7 @@ function GetPlayedQuizesData()
 	);
 
 	$query_parameters = array(
-		'sort' => $sort_methods[$sort][$context['sort_direction']],
+		'sort' => isset($sort_methods[$sort][$context['sort_direction']]) ? $sort_methods[$sort][$context['sort_direction']] : 'Q.title ASC',
 		'starts_with' => $starts_with . '%',
 		'limit' => $limit,
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
@@ -1569,9 +1569,9 @@ function GetPlayedQuizesData()
 		FROM {db_prefix}quiz Q
 		INNER JOIN {db_prefix}quiz_result QR
 			ON Q.id_quiz = QR.id_quiz
-		WHERE Q.title LIKE {string:starts_with}
-			AND Q.enabled = 1
-			AND QR.id_user = {int:id_user}
+		WHERE Q.enabled = 1
+			AND QR.id_user = {int:id_user}' . (!empty($starts_with) ? '
+			AND Q.title LIKE {string:starts_with}' : '') . '
 		ORDER BY {raw:sort}
 		LIMIT {int:start} , {int:limit}',
 		$query_parameters
@@ -1591,7 +1591,6 @@ function GetQuizesInCategoryData($id_category, $id_user)
 {
 	global $context, $scripturl, $smcFunc, $txt, $modSettings;
 
-	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
 	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 'all';
 	$limit = $modSettings['SMFQuiz_ListPageSizes'];
 
@@ -1668,7 +1667,7 @@ function GetQuizesInCategoryData($id_category, $id_user)
 	);
 
 	$query_parameters = array(
-		'sort' => $sort_methods[$sort][$context['sort_direction']],
+		'sort' => isset($sort_methods[$sort][$context['sort_direction']]) ? $sort_methods[$sort][$context['sort_direction']] : 'Q.title ASC',
 		'limit' => $limit,
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
 		'id_category' => $id_category,
@@ -1745,7 +1744,7 @@ function GetQuizesData()
 {
 	global $context, $scripturl, $smcFunc, $txt, $modSettings;
 
-	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
+	$starts_with = isset($_GET['starts_with']) && !empty($_GET['starts_with']) ? $_GET['starts_with'] : '';
 	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 'all';
 	$limit = $modSettings['SMFQuiz_ListPageSizes'];
 
@@ -1889,7 +1888,7 @@ function GetQuizesData()
 	);
 
 	$query_parameters = array(
-		'sort' => $sort_methods[$sort][$context['sort_direction']],
+		'sort' => isset($sort_methods[$sort][$context['sort_direction']]) ? $sort_methods[$sort][$context['sort_direction']] : 'Q.title ASC',
 		'starts_with' => $starts_with . '%',
 		'limit' => $limit,
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
@@ -1939,8 +1938,8 @@ function GetQuizesData()
 			ON Q.id_quiz = U.id_quiz
 		INNER JOIN {db_prefix}members M
 			ON Q.creator_id = M.id_member
-		WHERE Q.title LIKE {string:starts_with}
-			AND Q.enabled = 1
+		WHERE Q.enabled = 1' . (!empty($starts_with) ? '
+			AND Q.title LIKE {string:starts_with}' : '') . '
 		GROUP BY Q.id_quiz,
 			Q.title,
 			Q.image,
