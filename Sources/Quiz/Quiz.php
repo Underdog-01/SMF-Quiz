@@ -112,7 +112,7 @@ function SMFQuiz()
 
 	if (isset($actions[$action]))
 		$actions[$action]();
-}	
+}
 
 // @TODO move to a proper template file?
 function template_xml_list()
@@ -127,7 +127,7 @@ function template_xml_list()
 			<quiz>
 				<id>', $quiz['id'], '</id>
 				<name><![CDATA[', $quiz['title'], ']]></name>
-				<url><![CDATA[', $quiz['url'], ']]></url>			
+				<url><![CDATA[', $quiz['url'], ']]></url>
 			</quiz>';
 
 	echo '</smf>';
@@ -136,7 +136,7 @@ function template_xml_list()
 function QuizSearchXML()
 {
 	global $smcFunc, $scripturl, $db_prefix, $context;
-	
+
 	$context['template_layers'] = array();
 	$limit = 5;
 
@@ -201,7 +201,7 @@ function GetQuestionsData()
 			'Quiz' => 'Q.id_quiz',
 		);
 
-		// If sort not set, do so now 
+		// If sort not set, do so now
 		if (!isset($_GET['orderBy']))
 		{
 			$context['SMFQuiz']['orderBy'] = 'Question';
@@ -246,7 +246,7 @@ function QuizScript()
 				}
 			}
 			// ]]></script>
-	';	
+	';
 }
 
 function QuestionScript()
@@ -312,7 +312,7 @@ function QuestionScript()
 				row.appendChild(td2);
 				tbody.appendChild(row);
 			}
-			
+
 			function deleteRow()
 			{
 				var rowCount = document.getElementById("answerTable").rows.length - 1;
@@ -582,25 +582,42 @@ function GetHomePageData()
 	global $context, $modSettings;
 
 	$context['html_headers'] .= '
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script type="text/javascript">
 		var search_wait = false;
 		var search_url = smf_scripturl + "?action=SMFQuiz;sa=search;xml";
-		var search_div = \'quick_div\';
-
+		var search_divQ = "quick_div";
+		function quizSearchLoader() {
+			var quizSearchTrigger = document.getElementById("quick_name");
+			sessionStorage.setItem("quizQuickNameVal", quizSearchTrigger.value.trim());
+			if (quizSearchTrigger) {
+				quizSearchTrigger.onkeypress = function(){
+					QuizQuickSearch();
+					setTimeout(function(){
+						var quick_name = document.getElementById("quick_name").value.trim();
+						if (sessionStorage.getItem("quizQuickNameVal") != quick_name)
+							QuizQuickSearch();
+					}, 2000);
+				};
+			}
+			setInterval(function(){
+				var quick_name = document.getElementById("quick_name").value.trim();
+				if (quick_name == "")
+					document.getElementById(search_divQ).innerHTML = "";
+			}, 5000);
+		}
 		function QuizQuickSearch()
 		{
 			if (search_wait) // Wait before new search.
 			{
-				setTimeout("QuizQuickSearch();", 800);
+				setTimeout(function(){QuizQuickSearch();}, 800);
 				return 1;
 			}
 
 			search_wait = true;
-			setTimeout("resetWait();", 800);
+			setInterval(function(){resetWait();}, 800);
 
 			var i, x = new Array();
-			var n = document.getElementById(\'quick_name\').value;
-
+			var n = document.getElementById("quick_name").value.trim();
 			x[0] = "name=" + escape(textToEntities(n.replace(/&#/g, "&#38;#"))).replace(/\+/g, "%2B");
 			sendXMLDocument(search_url, x.join("&"), onQuizSearch);
 			ajax_indicator(true);
@@ -619,30 +636,42 @@ function GetHomePageData()
 
 			return entities;
 		}
+		function decodeQuizHTML(html) {
+			var txt = document.createElement("textarea");
+			txt.innerHTML = html;
+			return txt.value;
+		}
+		function resetWait() {
 
+		}
 		function onQuizSearch(XMLDoc)
 		{
 			if (!XMLDoc)
-				document.getElementById(search_div).innerHtml = \'Error\';
-
-			search_wait = false;
-
-			var i;
-			var html = \'\';
-			var quizes = XMLDoc.getElementsByTagName("quiz");
-			// @TODO why are commented out?
-			//var more = XMLDoc.getElementsByTagName("more")[0];
-
-			for (i = 0; i < quizes.length; i++)
-				html += "<div><a href=\"" + quizes[i].getElementsByTagName("url")[0].firstChild.nodeValue + "\">" + quizes[i].getElementsByTagName("name")[0].firstChild.nodeValue + "</a></div>";
-
-			// @TODO why are commented out?
-			//if (more.getElementsByTagName("is")[0].firstChild.nodeValue == 1)
-			//	html += "<div><a href=\"" + more.getElementsByTagName("url")[0].firstChild.nodeValue  + "\">Show all</a></div>";
-			setInnerHTML(document.getElementById(search_div), html);
+				document.getElementById(search_divQ).textContent = "Error";
+			else {
+				search_wait = false;
+				var quizzes = XMLDoc.getElementsByTagName("quiz");
+				var addNewNode = [], addNewLink = [], addNewText = [],searchDiv = document.createElement("DIV"), searchMainDiv = document.getElementById(search_divQ), i=0;
+				for (i = 0; i < quizzes.length; i++) {
+					addNewNode[i] = document.createElement("div");
+					addNewLink[i] = document.createElement("a");
+					addNewLink[i].href = quizzes[i].getElementsByTagName("url")[0].firstChild.nodeValue;
+					addNewText[i] = document.createTextNode(decodeQuizHTML(quizzes[i].getElementsByTagName("name")[0].firstChild.nodeValue));
+					addNewLink[i].appendChild(addNewText[i]);
+					addNewNode[i].appendChild(addNewLink[i]);
+					searchDiv.appendChild(addNewNode[i]);
+				}
+				searchMainDiv.innerHTML = searchDiv.innerHTML;
+			}
 			ajax_indicator(false);
 		}
-	// ]]></script>';
+		if (window.addEventListener) {
+			window.addEventListener("load", quizSearchLoader, false);
+		}
+		else {
+			window.attachEvent("onload", quizSearchLoader);
+		}
+	</script>';
 
 	// Get any outstanding sessions
 	GetQuizSessions($context['user']['id']);
@@ -899,7 +928,7 @@ function AddMultipleChoiceAnswer($questionId)
 			}
 		}
 	}
-}	
+}
 
 // @TODO
 // Function to replace curly quotes with normal ones - might be a better way of doing this, but this
@@ -1127,14 +1156,14 @@ function GetQuizScoresData()
 			'up' => 'total_seconds ASC'
 		)
 	);
-	
+
 	$query_parameters = array(
 		'sort' => isset($sort_methods[$sort]) ? $sort_methods[$sort][$context['sort_direction']] : $sort_methods['default']['up'],
 		'limit' => $limit,
 		'id_quiz' => $id_quiz,
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
 	);
-	
+
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM  {db_prefix}quiz_result
@@ -1167,7 +1196,7 @@ function GetQuizScoresData()
 		INNER JOIN {db_prefix}quiz_result QR
 			ON Q.id_quiz = QR.id_quiz
 		INNER JOIN {db_prefix}members M
-			ON QR.id_user = M.id_member	
+			ON QR.id_user = M.id_member
 		WHERE QR.id_quiz = {int:id_quiz}
 		ORDER BY {raw:sort}
 		LIMIT {int:start} , {int:limit}',
@@ -1290,7 +1319,7 @@ function GetUnplayedQuizesData()
 			'up' => 'seconds_per_question ASC'
 		)
 	);
-	
+
 	$query_parameters = array(
 		'sort' => $sort_methods[$sort][$context['sort_direction']],
 		'starts_with' => $starts_with . '%',
@@ -1298,7 +1327,7 @@ function GetUnplayedQuizesData()
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
 		'id_user' => $userId
 	);
-	
+
 	$request = $smcFunc['db_query']('','
 		SELECT QR.id_quiz_result
 		FROM {db_prefix}quiz Q
@@ -1533,7 +1562,7 @@ function GetPlayedQuizesData()
 			QR.total_seconds,
 			IFNULL(round((QR.correct / QR.questions) * 100),0) AS percentage_correct,
 			(CASE Q.top_user_id
-			WHEN {int:id_user} THEN 1 
+			WHEN {int:id_user} THEN 1
 			ELSE 0
 			END) AS top_score,
 			auto_completed
@@ -1551,7 +1580,7 @@ function GetPlayedQuizesData()
 	$context['SMFQuiz']['quizes'] = Array();
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizes'][] = $row;
-	
+
 	$smcFunc['db_free_result']($result);
 
 	$context['SMFQuiz']['Action'] = 'quizes';
@@ -1686,7 +1715,7 @@ function GetQuizesInCategoryData($id_category, $id_user)
 		WHERE Q.id_category = {int:id_category}
 			AND Q.enabled = 1
 		GROUP BY
-			Q.id_quiz,	
+			Q.id_quiz,
 			Q.title,
 			Q.description,
 			Q.quiz_plays,
@@ -1929,7 +1958,7 @@ function GetQuizesData()
 			QC.id_category,
 			Q.id_category,
 			QC.name,
-			U.id_quiz 
+			U.id_quiz
 		ORDER BY {raw:sort}
 		LIMIT {int:start} , {int:limit}',
 		$query_parameters
@@ -2028,7 +2057,7 @@ function GetQuizMastersData()
 		INNER JOIN {db_prefix}members M
 			ON Q.top_user_id = M.id_member
 		WHERE Q.top_user_id <> 0
-		GROUP BY Q.top_user_id, M.real_name 
+		GROUP BY Q.top_user_id, M.real_name
 		ORDER BY {raw:sort}
 		LIMIT {int:start} , {int:limit}',
 		$query_parameters
@@ -2174,7 +2203,7 @@ function GetQuizLeagueData()
 	// @TODO check input
 	$context['start'] = $_REQUEST['start'] + 1;
 	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
-	
+
 	$result = $smcFunc['db_query']('', '
 		SELECT
 			QLT.id_quiz_league_table,
@@ -2193,7 +2222,7 @@ function GetQuizLeagueData()
 		FROM {db_prefix}quiz_league_table QLT
 		INNER JOIN {db_prefix}members M
 			ON QLT.id_user = M.id_member
-		INNER JOIN {db_prefix}quiz_league QL 
+		INNER JOIN {db_prefix}quiz_league QL
 			ON QLT.id_quiz_league = QL.id_quiz_league
 		WHERE QLT.round = {int:current_round}
 			AND QLT.id_quiz_league = {int:id_quiz_league}
@@ -2408,7 +2437,7 @@ function GetQuizLeagueResultsData()
 		$context['SMFQuiz']['quiz_league_title'] = $row['title'];
 	}
 
-	$smcFunc['db_free_result']($result);	
+	$smcFunc['db_free_result']($result);
 
 	$context['SMFQuiz']['Action'] = 'quiz_league_results';
 }

@@ -2,7 +2,7 @@
 
 /**
  * @package SMF Quiz
- * @version 2.0 Beta 1
+ * @version 2.0 RC 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
