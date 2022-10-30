@@ -1419,7 +1419,7 @@ function template_show_disputes()
 										<td align="left"><a href="' , $scripturl , '?action=admin;area=quiz;sa=quizes;id=' , $row['id_quiz'] , '">' , format_string($row['title']) , '</a></td>
 										<td align="left"><a href="' , $scripturl , '?action=admin;area=quiz;sa=questions;id=' , $row['id_question'] , '">' , format_string($row['question_text']) , '</a></td>
 										<td align="left" id="reason' , $row['id_quiz_dispute'] , '">' , format_string($row['reason']) , '</td>
-										<td align="left"><img id="' , $row['id_quiz_dispute'] , '" src="' , $settings['default_images_url'] , '/quiz_images/comments.png" class="disputeDialog" style="cursor:pointer" alt="respond" title="' , $txt['SMFQuizAdmin_QuizDisputes_Page']['RespondToDispute'] , '" align="top" /></td>
+										<td align="left" width="4%"><img id="' , $row['id_quiz_dispute'] , '" src="' , $settings['default_images_url'] , '/quiz_images/comments.png" class="disputeDialog" style="cursor:pointer" alt="respond" title="' , $txt['SMFQuizAdmin_QuizDisputes_Page']['RespondToDispute'] , '" align="top" /></td>
 									</tr>';
 	}
 	// @TODO localization
@@ -2028,7 +2028,8 @@ function format_string($stringToFormat)
 	global $smcFunc;
 
 	// Remove any slashes. These should not be here, but it has been known to happen
-	$returnString = str_replace("\\", "", $smcFunc['db_unescape_string']($stringToFormat));
+	// $returnString = $smcFunc['htmlspecialchars'](stripslashes($stringToFormat));
+	$returnString = un_htmlspecialchars($stringToFormat);
 
 	//return html_entity_decode($returnString, ENT_QUOTES, 'UTF-8');
 	return $returnString;

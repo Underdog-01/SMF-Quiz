@@ -1381,7 +1381,6 @@ function template_quiz_details()
 										<td align="left" colspan="3">
 											<a href="#" onclick="this.style.visibility=\'hidden\';window.open(\'' , $scripturl , '?action=SMFQuiz;sa=play;id_quiz=' , $quizRow['id_quiz'] , '\',\'playnew\',\'height=625,width=720,toolbar=no,scrollbars=yes,location=no,statusbar=no,menubar=no,resizable=yes\')"><img src="' , $settings['default_images_url'] , '/quiz_images/Play-24.png" alt="Play Quiz" border="0" height="24" width="24"/></a>
 											<a href="' , $scripturl . '?action=' , $context['current_action'] , (!empty($link['action']) ? ';sa=' . $link['action'] : '') . '"><img src="' , $settings['default_images_url'] , '/quiz_images/Home-24.png" alt="Go Home" border="0" height="24" width="24"/></a>
-											<img src="' , $settings['default_images_url'] , '/quiz_images/AddFavourites-24.png" alt="Add to Favourites" border="0" height="24" width="24"/>
 										</td>
 									</tr>
 								</table>
