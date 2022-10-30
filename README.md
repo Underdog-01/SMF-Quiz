@@ -6,9 +6,9 @@
 * Developed by [Diego Andrés](https://github.com/DiegoAndresCortes)
 * Original Developer: [quiz_modder](https://www.simplemachines.org/community/index.php?action=profile;u=172483)
 * Main Contributors: 
-- [CircleDock](https://simplemachines.org/community/index.php?action=profile;u=311710)
-- [Dave J](https://simplemachines.org/community/index.php?action=profile;u=277473)
-- [Chen Zhen](https://github.com/Underdog-01)
+  - [CircleDock](https://simplemachines.org/community/index.php?action=profile;u=311710)
+  - [Dave J](https://simplemachines.org/community/index.php?action=profile;u=277473)
+  - [Chen Zhen](https://github.com/Underdog-01)
 
 ## Introduction
 SMF Quiz will add a quiz system to your forum.
