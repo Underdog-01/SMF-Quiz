@@ -18,6 +18,7 @@ class Integration
 		add_integration_function('integrate_load_permissions', __CLASS__ . '::permissions', false);
 		add_integration_function('integrate_load_illegal_guest_permissions', __CLASS__ . '::illegal_guest_permissions', false);
 		add_integration_function('integrate_load_permissions', __CLASS__ . '::permissions', false);
+		add_integration_function('integrate_pre_css_output', __CLASS__ . '::preCSS', false);
 	}
 
 	public static function setVersion()
@@ -130,7 +131,7 @@ class Integration
 				$temp_buttons['SMFQuiz'] = array(
 					'title' => $txt['SMFQuiz'],
 					'href' => $scripturl . '?action=SMFQuiz',
-					'icon' => 'icons/quiz.png',
+					'icon' => 'quiz',
 					'show' => allowedTo('quiz_view') && !empty($modSettings['SMFQuiz_enabled']),
 					'sub_buttons' => array(),
 				);
@@ -138,5 +139,19 @@ class Integration
 			$temp_buttons[$k] = $v;
 		}
 		$buttons = $temp_buttons;
+	}
+
+	public static function preCSS()
+	{
+		global $settings;
+
+		// Add the icon using inline css
+		addInlineCss('
+			.main_icons.quiz::before {
+				background-position: 0;
+				background-image: url("' . $settings['default_images_url'] . '/icons/quiz.png");
+				background-size: contain;
+			}
+		');
 	}
 }
