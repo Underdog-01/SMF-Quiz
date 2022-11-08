@@ -1462,8 +1462,27 @@ function template_quiz_details()
 						<div class="blockcontent windowbg" style="margin-top:2px; ">
 							<div style="padding:4px;">
 								<div class="windowbg">
-									<table border="0" width="100%" class="windowbg">
-	';
+									<table border="0" width="100%" class="windowbg">';
+
+	// Quiz context?
+	if (!isset($context['SMFQuiz']['quiz']) || empty($context['SMFQuiz']['quiz']))
+	{
+		echo '
+										<tr>
+											<td align="center">' , $txt['SMFQuiz_Categories_Page']['NoQuizesInCategory'] , '</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>';
+
+			return;
+	}
+
 	foreach ($context['SMFQuiz']['quiz'] as $quizRow)
 	{
 		echo '							<tr>
