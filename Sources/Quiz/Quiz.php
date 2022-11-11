@@ -186,6 +186,10 @@ function GetQuestionsData()
 {
 	global $context;
 
+	// They need a quiz to access here...
+	if (!isset($_GET['id_quiz']) || empty($_GET['id_quiz']))
+		fatal_lang_error('no_access', false);
+
 	if (isset($_GET['questionId']))
 	{
 		QuestionScript();
@@ -810,13 +814,17 @@ function GetNewQuestionData()
 
 function GetEditQuizData()
 {
-	global $context;
+	global $context, $user_info;
 
 	QuizScript();
 
 	AddShowImageScript();
 
 	GetQuiz($context['id_quiz']);
+
+	// Only the quiz creator can edit the quiz
+	if ($user_info['id'] != $context['SMFQuiz']['quiz'][0]['creator_id'] && !allowedTo('quiz_admin'))
+		fatal_lang_error('no_access', false);
 
 	// The edit quiz page also shows a list of categories, so we must get this data
 	GetAllCategoryDetails();
@@ -1009,10 +1017,19 @@ function GetKeysFromPost($id)
 
 function GetDeleteQuizData()
 {
-	global $context;
+	global $context, $user_info;
+
+	// Get the key ids for the questions to delete. This function returns a string containing a comma separated list of id's
 
 	// Get the key ids for the quiz leagues to delete. This function returns a string containing a comma separated list of id's
 	$deleteKeys = GetKeysFromPost('quiz');
+
+	// Get quiz info
+	GetQuiz($context['id_quiz']);
+
+	// Check if the user is the owner of the quiz
+	if ($user_info['id'] != $context['SMFQuiz']['quiz'][0]['creator_id'] && !allowedTo('quiz_admin'))
+		fatal_lang_error('no_access', false);
 
 	if (!empty($context['id_quiz']))
 		DeleteQuizes($context['id_quiz']);

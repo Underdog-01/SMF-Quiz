@@ -1,5 +1,8 @@
 # Changelog
 
+#### 2.0.2 - 10 November 2022
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Prevent non creators from managing other users quizzes.
+
 #### 2.0.1 - 07 November 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed stats issue when there are no quizzes/questions created.
 

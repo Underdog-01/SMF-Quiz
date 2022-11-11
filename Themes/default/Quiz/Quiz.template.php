@@ -2263,10 +2263,6 @@ function template_edit_quiz()
 
 	foreach ($context['SMFQuiz']['quiz'] as $row)
 	{
-		// Only the creator should be able to edit the quiz
-		if ($context['user']['id'] != $row['creator_id'])
-			break;
-
 		echo '
 			<input type="hidden" name="id_quiz" value="' , $context['id_quiz'] , '"/>
 			<table border="0" width="100%" cellspacing="1" cellpadding="4" class="bordercolor">
