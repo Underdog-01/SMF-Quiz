@@ -46,11 +46,13 @@ function endQuiz()
 			{
 				InsertQuizEnd($id_quiz, $id_user, $questions, $correct, $incorrect, $timeouts, $total_seconds, $totalResumes);
 				UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $name);
+				call_integration_hook('integrate_quiz_result', array($id_quiz, $id_user, $questions, $correct, $incorrect, $timeouts, $total_seconds, $totalResumes));
 			}
 		}
 	}
 	elseif (!empty($id_quiz_league))
 		InsertQuizLeagueEnd($id_quiz_league, $id_user, $questions, $correct, $incorrect, $timeouts, $total_seconds, $points, $round, $total_seconds, $name);
+		call_integration_hook('integrate_quiz_league_result', array($id_quiz_league, $id_user, $questions, $correct, $incorrect, $timeouts, $total_seconds, $points, $round, $total_seconds, $name));
 
 	EndSession($id_session);
 
