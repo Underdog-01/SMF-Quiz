@@ -9,7 +9,8 @@ class Integration
 {
 	public static function init()
 	{
-		Integration::setVersion();
+		self::setVersion();
+		self::loadScheduledClass();
 
 		add_integration_function('integrate_autoload', __CLASS__ . '::autoload', false);
 		add_integration_function('integrate_admin_areas', __CLASS__ . '::admin_areas', false);
@@ -42,6 +43,16 @@ class Integration
 			'SMFQuiz_99to100' => 'WOW - You are simply amazing. That is a Perfect Score! Did you Google those answers?',
 		];
 		$modSettings = array_merge($defaults, $modSettings);
+	}
+
+	public static function loadScheduledClass()
+	{
+		global $sourcedir;
+
+		// Ensure the task class is available
+		if (!class_exists(__NAMESPACE__  . '\Tasks\Scheduled')) {
+			require_once($sourcedir . '/' . __NAMESPACE__  . '/Tasks/Scheduled.php');
+		}
 	}
 
 	public static function autoload(&$classMap)
