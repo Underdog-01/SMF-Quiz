@@ -3,11 +3,11 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>SMF_Modding:SMFQuiz</id>
 	<name>SMF Quiz</name>
-	<version>2.0.2</version>
+	<version>2.0.3-BETA2</version>
 	<type>modification</type>
 
 	<!-- Install -->
-	<install for="2.1 - 2.1.99">
+	<install for="2.0.98 - 2.1.98">
 		<!-- Mod Readme -->
 		<readme lang="english" parsebbc="true" type="file">readme/readme.english.txt</readme>
 		<!-- Credits -->
@@ -24,6 +24,7 @@
 		<require-dir name="Sources" destination="$boarddir">Source files</require-dir>
 		<!-- Database -->
 		<database>database.php</database>
+		<code>install.php</code>
 		<!-- Hooks -->
 		<hook hook="integrate_pre_load" function="Quiz\Integration::init" file="$sourcedir/Quiz/Integration.php" />
 		<!-- Redirect -->
@@ -31,7 +32,7 @@
 	</install>
 
 	<!-- Uninstall -->
-	<uninstall for="2.1 - 2.1.99">
+	<uninstall for="2.0.98 - 2.1.98">
 		<!-- Hooks -->
 		<hook hook="integrate_pre_load" function="Quiz\Integration::init" file="$sourcedir/Quiz/Integration.php" reverse="true" />
 		<!-- Source Files -->

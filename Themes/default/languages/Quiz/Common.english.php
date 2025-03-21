@@ -1,5 +1,5 @@
 <?php
-
+global $txt;
 // Common language phrases
 $txt['SMFQuiz_Common'] = array(
 	'AddNewQuiz' => 'Add New Quiz',
@@ -160,7 +160,7 @@ $txt['SMFQuiz_Common'] = array(
 	'Type' => 'Type',
 	'UnplayedQuizes' => 'Unplayed Quizzes',
 	'Updated' => 'Updated',
-	'UpdateAndAddMore' => 'Update and Add More',	
+	'UpdateAndAddMore' => 'Update and Add More',
 	'updatedon' => 'updated on',
 	'UpdateQuestion' => 'Update Question',
 	'UpdateQuiz' => 'Update Quiz',
@@ -179,4 +179,13 @@ $txt['SMFQuiz_Common'] = array(
 
 $txt['SMFQuiz_n_a'] = 'Not applicable';
 $txt['SMFQuiz_Upload'] = 'Upload';
+
+// Dialog buttons ~ key/val pairs are literal JavaScript variables
+$txt['quizDialogButtons'] = [
+	"quizCancelButton" => "Cancel",
+	"quizConfirmButton" => "Confirm",
+	"quizSendButton" => "Send",
+	"quizSendRemoveButton" => "Send and Remove",
+];
+
 ?>

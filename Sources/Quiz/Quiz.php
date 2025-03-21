@@ -9,17 +9,13 @@ require_once($sourcedir . '/Quiz/Db.php');
 
 function SMFQuiz()
 {
-	global $context, $txt;
+	global $context, $txt, $sourcedir;
 
 	// Load the language file
 	loadLanguage('Quiz/Quiz');
 	loadLanguage('Quiz/Admin');
-
 	isAllowedTo('quiz_view');
-
 	$context['page_title'] = $txt['SMFQuiz'];
-
-
 	addJavaScriptVar('id_user', $context['user']['id'], false);
 
 	if ($context['current_subaction'] == 'play')
@@ -495,26 +491,30 @@ function GetUserQuizesData()
 	// @TODO check input
 	if (isset($_GET['review']))
 	{
-		SetQuizForReview($_GET['review']);
+		$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
+		$quizAdmins = array_filter(array_merge(Quiz\Helper::quiz_usersAllowedTo('quiz_admin'), $usersPrefs));
+		if (!empty($quizAdmins)) {
+			SetQuizForReview($_GET['review']);
 
-		include_once($sourcedir . '/Subs-Post.php');
+			include_once($sourcedir . '/Subs-Post.php');
 
-		$pmto = array(
-			'to' => array(1),
-			'bcc' => array()
-		);
+			$pmto = array(
+				'to' => $quizAdmins,
+				'bcc' => array()
+			);
 
-		$subject = $txt['SMFQuiz_UserQuizes_Page']['UserQuizSubmittedForReview'];
-		$message = $txt['SMFQuiz_UserQuizes_Page']['QuizSubmittedForReview'];
+			$subject = $txt['SMFQuiz_UserQuizes_Page']['UserQuizSubmittedForReview'];
+			$message = $txt['SMFQuiz_UserQuizes_Page']['QuizSubmittedForReview'];
 
-		$pmfrom = array(
-			'id' => $userId,
-			'name' => 'Quiz',
-			'username' => 'Quiz'
-		);
+			$pmfrom = array(
+				'id' => $userId,
+				'name' => 'Quiz',
+				'username' => 'Quiz'
+			);
 
-		// Send message
-		sendpm($pmto, $subject, $message, 0, $pmfrom);
+			// Send message
+			sendpm($pmto, $subject, $message, 0, $pmfrom);
+		}
 	}
 
 	GetUserQuizes($userId);
@@ -1208,7 +1208,8 @@ function GetQuizScoresData()
 			QR.incorrect,
 			QR.timeouts,
 			QR.total_seconds,
-			QR.auto_completed
+			QR.auto_completed,
+			QR.player_limit
 		FROM {db_prefix}quiz Q
 		INNER JOIN {db_prefix}quiz_result QR
 			ON Q.id_quiz = QR.id_quiz
@@ -1577,6 +1578,7 @@ function GetPlayedQuizesData()
 			QR.incorrect,
 			QR.timeouts,
 			QR.total_seconds,
+			QR.player_limit,
 			IFNULL(round((QR.correct / QR.questions) * 100),0) AS percentage_correct,
 			(CASE Q.top_user_id
 			WHEN {int:id_user} THEN 1
@@ -1838,6 +1840,10 @@ function GetQuizesData()
 			);
 			$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'percentage_correct';
 			$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
+			break;
+		default:
+			$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
+			$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'title';
 			break;
 	}
 

@@ -4,7 +4,7 @@ var countdownPercentage = 100;
 // The number of seconds remaining to answer the question
 var secondsRemaining = 1000;
 
-// The maximum number of Ajax retries that can occur - best to set this so members don't just keep 
+// The maximum number of Ajax retries that can occur - best to set this so members don't just keep
 // retrying
 var ajaxMaxRetries = 5;
 
@@ -88,6 +88,7 @@ var lastTotalTimeouts = 0;
 // Whether the answer has already been submitted
 var answerSubmitted = 0;
 
+var enabled = 0, play_limit = 0;
 $(document).ready(function() {
 
 	// Make sure user is logged in
@@ -117,18 +118,18 @@ $(document).ready(function() {
 	$("#nextQuestionButton").click(function() {
 		nextQuestion();
 		$('#nextQuestionButton').hide();
-	});	
+	});
 
 	// Wire up the click event of the quiz start button
 	$("#startQuizButton").click(function() {
 		$("#startQuizButton").hide();
 		nextQuestion();
-	});	
+	});
 
 	// Wire up the click event of the exit quiz button
 	$("#exitQuizButton").click(function() {
 		window.close();
-	});	
+	});
 
 	// Wire up the click event of the dispute button
 	$("#disputeButton").click(function() {
@@ -202,7 +203,7 @@ function parseQuerystring()
 		}
 	}
 	return qsParm;
-} 
+}
 
 /*
 Function that gets the quiz from the server
@@ -346,10 +347,10 @@ Function that ends the quiz
 */
 function quizEnd()
 {
-	// @TODO Move to a POST
 	$.ajax({
-		type: "GET",
-		url: smf_scripturl + "?action=SMFQuizEnd;id_quiz=" + id_quiz + ";questions=" + number_of_questions + ";correct=" + correct_answer_count + ";incorrect=" + incorrect_answer_count + ";timeouts=" + timeout_count + ";id_session=" + id_session + ";total_seconds=" + total_quiz_seconds + ";creator_id=" + creator_id + ";totalResumes=" + totalResumes,
+		type: 'POST',
+		url: smf_scripturl + "?action=SMFQuizEnd",
+		data: {"id_quiz":id_quiz,"questions":number_of_questions,"correct":correct_answer_count, "incorrect":incorrect_answer_count,"timeouts":timeout_count, "id_session":id_session, "total_seconds":total_quiz_seconds, "creator_id":creator_id, "totalResumes":totalResumes, "enabled":enabled, "play_limit":play_limit},
 		cache: false,
 		dataType: "xml",
 		timeout: ajaxTimeout,
@@ -369,10 +370,10 @@ function quizLeagueEnd()
 {
 	// Calculate the points
 	points = points_for_correct * correct_answer_count;
-	// @TODO move to a POST
 	$.ajax({
-		type: "GET",
-		url: smf_scripturl + "?action=SMFQuizEnd;id_quiz_league=" + id_quiz_league + ";questions=" + number_of_questions + ";correct=" + correct_answer_count + ";incorrect=" + incorrect_answer_count + ";timeouts=" + timeout_count + ";id_session=" + id_session + ";total_seconds=" + total_quiz_seconds + ";points=" + points + ";round=" + round + ";totalResumes=" + totalResumes,
+		type: 'POST',
+		url: smf_scripturl + "?action=SMFQuizEnd",
+		data: {"id_quiz_league":id_quiz_league,"questions":number_of_questions,"correct":correct_answer_count, "incorrect":incorrect_answer_count,"timeouts":timeout_count, "id_session":id_session, "total_seconds":total_quiz_seconds, "points":points, "round":round, "totalResumes":totalResumes, "enabled":enabled, "play_limit":play_limit},
 		cache: false,
 		dataType: "xml",
 		timeout: ajaxTimeout,
@@ -393,12 +394,19 @@ function parseQuizDetailXml(xmlDoc)
 		seconds_per_question = xmlDoc.getElementsByTagName('seconds_per_question')[0].firstChild.nodeValue;
 		creator_id = xmlDoc.getElementsByTagName('creator_id')[0].firstChild.nodeValue;
 		show_answers = xmlDoc.getElementsByTagName('show_answers')[0].firstChild.nodeValue;
-
 		number_of_questions = questions_per_session;
 
 		// If a session is returned in the XML it means that this user has an outstanding session for this quiz, so they need complete this
 		var sessionOutput = '';
-		if (xmlDoc.getElementsByTagName('session')[0] != null)
+		if (xmlDoc.getElementsByTagName('topReached')[0] != null) {
+			alert(textPlayedQuizTopScore);
+			window.close();
+		}
+		else if (xmlDoc.getElementsByTagName('limitReached')[0] != null) {
+			alert(textPlayedQuizOverLimit);
+			window.close();
+		}
+		else if (xmlDoc.getElementsByTagName('session')[0] != null)
 		{
 
 			// Get the time the last question was answered
@@ -427,6 +435,8 @@ function parseQuizDetailXml(xmlDoc)
 			correct_answer_count = xmlDoc.getElementsByTagName('session_correct')[0].firstChild.nodeValue;
 			incorrect_answer_count = xmlDoc.getElementsByTagName('session_incorrect')[0].firstChild.nodeValue;
 			timeout_count = xmlDoc.getElementsByTagName('session_timeouts')[0].firstChild.nodeValue;
+			play_limit = xmlDoc.getElementsByTagName('play_limit')[0].firstChild.nodeValue;
+			enabled = xmlDoc.getElementsByTagName('enabled')[0].firstChild.nodeValue;
 			currentQuestionNumber = xmlDoc.getElementsByTagName('question_count')[0].firstChild.nodeValue;
 			updateCounts();
 
@@ -461,7 +471,6 @@ function parseQuizDetailXml(xmlDoc)
 
 		// Quiz Overview
 // @TODO localization
-		var play_limit = xmlDoc.getElementsByTagName('play_limit')[0].firstChild.nodeValue;
 		var firstDivOutput = "<b><font size=\"6\" color=\"#99FF66\">Quiz Details</font></b>";
 		firstDivOutput += "<br/><br/>You will be given <font color=\"#F5F54A\">" + questions_per_session + "</font> questions";
 		firstDivOutput += "<br/>You will have <font color=\"#F5F54A\">" + seconds_per_question + "</font> seconds to answer each question";
@@ -541,7 +550,7 @@ function parseQuizLeagueDetailXml(xmlDoc)
 		}
 		else
 			id_session = xmlDoc.getElementsByTagName('id_session')[0].firstChild.nodeValue;
- 
+
 		$("#firstQuestionSpan").html(firstDivOutput);
 	}
 	else
@@ -613,7 +622,7 @@ function startCounter()
 	countdownPercentage = 100;
 
 	// Start the timer
-	timerId = setInterval("doCounter();", interval); 
+	timerId = setInterval("doCounter();", interval);
 }
 
 function nextQuestion()
@@ -1055,18 +1064,34 @@ function showDispute()
 {
 	$("#disputeText").val('');
 	$("#disputeDialog").dialog({
-		bgiframe: true,
-		modal: true,
+		closeOnEscape: true,
+		closeText: "",
+		draggable: false,
+		modal: false,
 		resizable: false,
-		buttons: {
-			Ok: function() {
-				submitDispute();
-				$(this).dialog('close');
+		show: { effect: "blind", duration: 400 },
+		title: "Submit response",
+		create: function(event, ui) {
+			var widget = $(this).dialog("widget");
+			$(".ui-dialog-titlebar-close span", widget)
+			.css({"filter":"brightness(85%) invert(1)","opacity":"1.0","margin":"0 auto","width":"100%","height":"100%"});
+		},
+		buttons: [
+			{
+				text: quizConfirmButton,
+				showText: true,
+				click: function() {
+					submitDispute();
+					$(this).dialog('close');
+				}
 			},
-			Cancel: function() {
-				$(this).dialog('close');
+			{
+				text: quizCancelButton,
+				click: function() {
+					$(this).dialog('close');
+				}
 			}
-		}
+		]
 	});
 	$("#disputeDialog").dialog('open');
 }
@@ -1078,7 +1103,6 @@ function submitDispute()
 {
 	// Get the reason entered
 	var reason = $("#disputeText").val();
-
 	$.ajax({
 		type: "GET",
 		url: smf_scripturl + "?action=SMFQuizDispute;id_quiz=" + id_quiz + ";id_user=" + id_user + ";id_quiz_question=" + currentid_question + ";reason=" + reason,

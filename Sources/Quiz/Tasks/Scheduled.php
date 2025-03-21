@@ -7,7 +7,7 @@ class Scheduled
 	/**
 	 * Scheduled::maintenance()
 	 *
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function maintenance()
@@ -67,7 +67,7 @@ class Scheduled
 						'lastWeekRound' => $row['current_round'],
 					)
 				);
-				
+
 				// If there were some results from last week
 				if ($smcFunc['db_num_rows']($lastWeekResultsResult) > 0)
 				{
@@ -126,7 +126,7 @@ class Scheduled
 						{
 							// Otherwise a table entry doesn't exist for this week for this user. This means it is the first time they have
 							// played, so simply add a new table entry with the result data
-							$smcFunc['db_insert']('insert', 
+							$smcFunc['db_insert']('insert',
 								'{db_prefix}quiz_league_table',
 								array(
 									'current_position' => 'int',
@@ -158,7 +158,7 @@ class Scheduled
 							);
 						}
 					}
-					$smcFunc['db_free_result']($lastWeekResultsResult);	
+					$smcFunc['db_free_result']($lastWeekResultsResult);
 				}
 
 				// Now we need to calculate positions and movement. If this is the first week of the league we don't have a previous week to do some
@@ -248,23 +248,27 @@ class Scheduled
 					if ($modSettings['SMFQuiz_SendPMOnLeagueRoundUpdate'])
 					{
 						require_once($sourcedir . '/Subs-Post.php');
+						require_once($sourcedir . '/Quiz/Helper.php');
+						$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
 
-						$pmto = array(
-							'to' => array(),
-							'bcc' => array($quizLeaguePosRow['id_user'])
-						);
+						if (in_array($quizLeaguePosRow['id_user'], $userPrefs)) {
+							$pmto = array(
+								'to' => array(),
+								'bcc' => array($quizLeaguePosRow['id_user'])
+							);
 
-						$subject = ParseLeagueMessage($modSettings['SMFQuiz_PMLeagueRoundUpdateSubject'], $row['title'], $quizLeaguePosRow['last_position'], $position, ($position-$quizLeaguePosRow['last_position']), $row['id_quiz_league']);
-						$message = ParseLeagueMessage($modSettings['SMFQuiz_PMLeagueRoundUpdateMsg'], $row['title'], $quizLeaguePosRow['last_position'], $position, ($position-$quizLeaguePosRow['last_position']), $row['id_quiz_league']);
+							$subject = ParseLeagueMessage($modSettings['SMFQuiz_PMLeagueRoundUpdateSubject'], $row['title'], $quizLeaguePosRow['last_position'], $position, ($position-$quizLeaguePosRow['last_position']), $row['id_quiz_league']);
+							$message = ParseLeagueMessage($modSettings['SMFQuiz_PMLeagueRoundUpdateMsg'], $row['title'], $quizLeaguePosRow['last_position'], $position, ($position-$quizLeaguePosRow['last_position']), $row['id_quiz_league']);
 
-						$pmfrom = array(
-							'id' => $modSettings['SMFQuiz_ImportQuizesAsUserId'],
-							'name' => 'Quiz Notifier',
-							'username' => 'Quiz Notifier'
-						);
+							$pmfrom = array(
+								'id' => $modSettings['SMFQuiz_ImportQuizesAsUserId'],
+								'name' => 'Quiz Notifier',
+								'username' => 'Quiz Notifier'
+							);
 
-						// Send message
-						sendpm($pmto, $subject, $message, 0, $pmfrom);
+							// Send message
+							sendpm($pmto, $subject, $message, 0, $pmfrom);
+						}
 					}
 					$position++;
 				}
@@ -353,7 +357,33 @@ class Scheduled
 		}
 
 		// Free the database
-		$smcFunc['db_free_result']($getLeagueDatesResult);	
+		$smcFunc['db_free_result']($getLeagueDatesResult);
+
+		// remove rogue member ids from quiz_members
+		$nonMembers = [];
+		$request = $smcFunc['db_query']('', '
+			SELECT qm.id_member
+			FROM {db_prefix}quiz_members qm
+			LEFT JOIN {db_prefix}members m ON m.id_member = qm.id_member
+			WHERE qm.id_member IS NULL',
+			[]
+		);
+
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$nonMembers[] = $row['id_member'];
+		}
+		$smcFunc['db_free_result']($request);
+
+		if (!empty($nonMembers)) {
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}quiz_members
+				WHERE id_member IN({array_int:memIDs})',
+				array(
+					'memIDs' => $nonMembers,
+				)
+			);
+		}
 
 		$this->quiz_clean();
 

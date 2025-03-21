@@ -44,13 +44,13 @@
 #prevLink, #nextLink{
 	width: 49%;
 	height: 100%;
-	background: transparent url(images/blank.gif) no-repeat; /* Trick IE into showing hover */
+	background: transparent url(../images/blank.gif) no-repeat; /* Trick IE into showing hover */
 	display: block;
 	}
 #prevLink { left: 0; float: left;}
 #nextLink { right: 0; float: right;}
-#prevLink:hover, #prevLink:visited:hover { background: url(images/prev.gif) left 50% no-repeat; }
-#nextLink:hover, #nextLink:visited:hover { background: url(images/next.gif) right 50% no-repeat; }
+#prevLink:hover, #prevLink:visited:hover { background: url(../images/prev.gif) left 50% no-repeat; }
+#nextLink:hover, #nextLink:visited:hover { background: url(../images/next.gif) right 50% no-repeat; }
 
 /*** START : next / previous text links ***/
 #nextLinkText, #prevLinkText{
@@ -86,6 +86,7 @@ padding-right: 20px;
 #imageData #imageDetails{ width: 70%; float: left; text-align: left; }	
 #imageData #caption{ font-weight: bold;	}
 #imageData #numberDisplay{ display: block; clear: left; padding-bottom: 1.0em;	}
+#imageData #numberDisplay a { color: black; padding-left: 5px; padding-right: 5px;}
 #imageData #bottomNavClose{ width: 66px; float: right;  padding-bottom: 0.7em;	}
 #imageData #helpDisplay {clear: left; float: left; display: block; }
 
@@ -99,7 +100,7 @@ padding-right: 20px;
 	background-color: #000;
 	filter:alpha(opacity=60);
 	-moz-opacity: 0.6;
-	opacity: 0.6;
+	opacity: 0.6 !important;
 	display: none;
 	}
 	
@@ -122,4 +123,7 @@ padding-right: 20px;
 	height: 1%;
 	/* End hide from IE-mac */
 	}	
-	
+
+#lightboxIframe {
+	display: none;
+}	

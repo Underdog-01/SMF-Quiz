@@ -1,14 +1,12 @@
 /*
  *
- * Copyright (c) 2006-2009 Sam Collett (http://www.texotela.co.uk)
+ * Copyright (c) 2006-2010 Sam Collett (http://www.texotela.co.uk)
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version 2.2.4
+ * Version 2.2.6
  * Demo: http://www.texotela.co.uk/code/jquery/select/
  *
- * $LastChangedDate$
- * $Rev$
  *
  */
  
@@ -27,7 +25,7 @@
  */
 $.fn.addOption = function()
 {
-	var add = function(el, v, t, sO)
+	var add = function(el, v, t, sO, index)
 	{
 		var option = document.createElement("option");
 		option.value = v, option.text = t;
@@ -44,6 +42,22 @@ $.fn.addOption = function()
 				el.cache[o[i].value] = i;
 			}
 		}
+		if (index || index == 0)
+		{
+ 			// we're going to insert these starting  at a specific index...
+			// this has the side effect of el.cache[v] being the 
+			// correct value for the typeof check below
+			var ti = option;
+			for(var ii =index; ii <= oL; ii++)
+			{
+				var tmp = el.options[ii];
+				el.options[ii] = ti;
+				o[ii] = ti;
+				el.cache[o[ii].value] = ii;
+				ti = tmp;
+			}
+		}
+    
 		// add to cache if it isn't already
 		if(typeof el.cache[v] == "undefined") el.cache[v] = oL;
 		el.options[el.cache[v]] = option;
@@ -60,7 +74,7 @@ $.fn.addOption = function()
 	// multiple items
 	var m = false;
 	// other variables
-	var items, v, t;
+	var items, v, t, startindex = 0;
 	if(typeof(a[0]) == "object")
 	{
 		m = true;
@@ -68,8 +82,20 @@ $.fn.addOption = function()
 	}
 	if(a.length >= 2)
 	{
-		if(typeof(a[1]) == "boolean") sO = a[1];
-		else if(typeof(a[2]) == "boolean") sO = a[2];
+		if(typeof(a[1]) == "boolean")
+		{
+			sO = a[1];
+			startindex = a[2];
+		}
+		else if(typeof(a[2]) == "boolean")
+		{
+			sO = a[2];
+			startindex = a[1];
+		}
+		else
+		{
+			startindex = a[1];
+		}
 		if(!m)
 		{
 			v = a[0];
@@ -82,14 +108,21 @@ $.fn.addOption = function()
 			if(this.nodeName.toLowerCase() != "select") return;
 			if(m)
 			{
-				for(var item in items)
-				{
-					add(this, item, items[item], sO);
-				}
+				var sel = this;
+				jQuery.each(items, function(val, text){
+					if(typeof(text) == "object"){
+						jQuery.each(text, function(k,v){
+							val = k;
+							text = v;
+						});
+					}
+					add(sel, val, text, sO, startindex);
+					startindex += 1; 
+				});
 			}
 			else
 			{
-				add(this, v, t, sO);
+				add(this, v, t, sO, startindex);
 			}
 		}
 	);

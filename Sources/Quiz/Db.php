@@ -112,10 +112,10 @@ function GetQuizQuestionCount($id_quiz)
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['questionCount'][] = $row;
 
-	$smcFunc['db_free_result']($result);	
+	$smcFunc['db_free_result']($result);
 }
 
-// Data class for question details	
+// Data class for question details
 function GetAllQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 'up', $id_quiz = 0)
 {
 	global $context, $smcFunc, $modSettings;
@@ -410,8 +410,8 @@ function GetRandomQuizzes($limit, $id_user)
 
 		// @TODO query
 	$result = $smcFunc['db_query']('', '
-		SELECT 			Q.id_quiz, 
-						Q.title, 
+		SELECT 			Q.id_quiz,
+						Q.title,
 						Q.image
 		FROM 			{db_prefix}quiz Q
 		LEFT JOIN 		{db_prefix}quiz_result QR
@@ -441,7 +441,7 @@ function GetQuizCorrect($id_quiz)
 
 		// @TODO query
 	$result = $smcFunc['db_query']('', '
-		SELECT 			correct, 
+		SELECT 			correct,
 						COUNT(*) AS count_correct
 		FROM 			{db_prefix}quiz_result
 		WHERE			id_quiz = {int:id_quiz}
@@ -517,7 +517,7 @@ function GetQuiz($quizId)
 					Q.id_category,
 					Q.enabled,
 					Q.creator_id,
-					IFNULL(QC.id_category,0) AS id_category, 
+					IFNULL(QC.id_category,0) AS id_category,
 					QC.name,
 					M.real_name AS creator_name,
 					round((Q.total_correct / Q.question_plays) * 100) AS percentage,
@@ -560,10 +560,10 @@ function GetQuiz($quizId)
 		$context['SMFQuiz']['quiz'][] = $row;
 
 	// Free the database
-	$smcFunc['db_free_result']($result);	
+	$smcFunc['db_free_result']($result);
 }
 
-// Data class for Quiz League details	
+// Data class for Quiz League details
 function GetAllQuizLeagueDetails()
 {
 	global $context, $smcFunc;
@@ -602,7 +602,7 @@ function GetAllQuizLeagueDetails()
 	$smcFunc['db_free_result']($result);
 }
 
-// Data class for single Quiz League details	
+// Data class for single Quiz League details
 function GetQuizLeagueDetails($id_quiz_league)
 {
 	global $context, $smcFunc;
@@ -684,7 +684,7 @@ function GetQuizLeagueResults($id_quiz_league)
 	$smcFunc['db_free_result']($result);
 }
 
-// Data class for single Quiz League table	
+// Data class for single Quiz League table
 function GetQuizLeagueTable($id_quiz_league, $round)
 {
 	global $context, $smcFunc;
@@ -723,10 +723,10 @@ function GetQuizLeagueTable($id_quiz_league, $round)
 		$context['SMFQuiz']['quizTable'][] = $row;
 
 	// Free the database
-	$smcFunc['db_free_result']($result);	
+	$smcFunc['db_free_result']($result);
 }
 
-// Data class for user Quiz League details	
+// Data class for user Quiz League details
 function GetUserQuizLeagueDetails($id_user)
 {
 	global $context, $smcFunc;
@@ -739,9 +739,9 @@ function GetUserQuizLeagueDetails($id_user)
 					QL.current_round,
 					QL.state,
 					QL.day_interval,
-					IFNULL(QL.id_leader,0) AS id_leader, 
-					IFNULL(M.real_name,\'None\') AS leader_name, 
-					IFNULL(QLT.points,0) AS user_points, 
+					IFNULL(QL.id_leader,0) AS id_leader,
+					IFNULL(M.real_name,\'None\') AS leader_name,
+					IFNULL(QLT.points,0) AS user_points,
 					IFNULL(QLT.current_position,0) AS user_position
 		FROM 		{db_prefix}quiz_league QL
 		LEFT JOIN	{db_prefix}members M
@@ -898,7 +898,7 @@ function GetCategoryParent($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pa
 		LEFT JOIN 	{db_prefix}quiz_category C2
 		ON 			C.id_parent = C2.id_category
 		WHERE		C.id_parent IN (
-						SELECT 		QC.id_parent 
+						SELECT 		QC.id_parent
 						FROM		{db_prefix}quiz_category QC
 						WHERE 		QC.id_category = {int:id_category}
 					)
@@ -951,7 +951,7 @@ function GetParentCategoryDetails($parentId = 0)
 	$rows = $smcFunc['db_num_rows']($result);
 
 	// Free the database
-	$smcFunc['db_free_result']($result);	
+	$smcFunc['db_free_result']($result);
 }
 
 // Updates the answer with the specified data
@@ -974,7 +974,7 @@ function UpdateAnswer($id_answer, $answer_text, $is_correct)
 			'answer_text' => $smcFunc['db_escape_string'] (htmlspecialchars($answer_text, ENT_QUOTES, 'utf-8')),
 			'is_correct' => $is_correct,
 			'updated' => $updated
-	));	
+	));
 }
 
 function SaveAnswer($id_question, $answer_text, $is_correct)
@@ -985,7 +985,7 @@ function SaveAnswer($id_question, $answer_text, $is_correct)
 
 		// @TODO utf8
 	// Execute the query
-	$smcFunc['db_insert']('insert', 
+	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_answer',
 		array(
 			'id_question' => 'int',
@@ -1061,7 +1061,7 @@ function SaveQuiz($title, $description, $play_limit, $seconds_per_question, $sho
 
 		// Execute the query
 		// @TODO utf8
-		$smcFunc['db_insert']('insert', 
+		$smcFunc['db_insert']('insert',
 			'{db_prefix}quiz',
 			array(
 				'title' => 'string',
@@ -1126,7 +1126,7 @@ function UpdateQuestion($id_question, $question_text, $image, $answer_text)
 	// Execute this query
 		// @TODO utf8
 	$smcFunc['db_query']('', '
-		UPDATE 		{db_prefix}quiz_question 
+		UPDATE 		{db_prefix}quiz_question
 		SET			question_text = {string:question_text},
 					image = {string:image},
 					answer_text = {text:answer_text},
@@ -1149,7 +1149,7 @@ function SaveQuestion($question_text, $id_question_type, $id_quiz, $image, $answ
 	$updated = time();
 
 	// Execute the query
-	$smcFunc['db_insert']('insert', 
+	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_question',
 		array(
 			'question_text' => 'string',
@@ -1218,7 +1218,7 @@ function SaveQuizLeague($title, $description, $day_interval, $questions_per_sess
 	global $smcFunc;
 
 	// Execute the query
-	$smcFunc['db_insert']('insert', 
+	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_league',
 		array(
 			'title' => 'string',
@@ -1283,7 +1283,7 @@ function SaveCategory($name, $description, $id_parent, $image)
 	global $smcFunc;
 
 	// Execute the query
-	$smcFunc['db_insert']('insert', 
+	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_category',
 		array(
 			'name' => 'string',
@@ -1430,7 +1430,7 @@ function GetLatestQuizes()
 	}
 
 	// Free the database
-	$smcFunc['db_free_result']($result);	
+	$smcFunc['db_free_result']($result);
 }
 
 function GetPopularQuizes($limit)
@@ -1505,7 +1505,7 @@ function GetQuizMasters($limit)
 		INNER JOIN 	{db_prefix}members M
 		ON 			Q.top_user_id = M.id_member
 		WHERE		Q.top_user_id <> 0
-		GROUP BY 	Q.top_user_id, M.real_name 
+		GROUP BY 	Q.top_user_id, M.real_name
 		ORDER BY 	total_wins DESC
 		LIMIT		0, {int:limit}',
 		array(
@@ -1527,7 +1527,7 @@ function GetLatestInfoBoard($limit = 20)
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', "	
+	$result = $smcFunc['db_query']('', "
 		SELECT 		I.entry_date,
 					I.Entry
 		FROM 		{db_prefix}quiz_infoboard I
@@ -1593,7 +1593,7 @@ function IncrementCategoryTree($id_category)
 				$parentId = $parentIdRow['id_parent'];
 
 			// Free the database
-			$smcFunc['db_free_result']($parentIdResult);		
+			$smcFunc['db_free_result']($parentIdResult);
 		}
 		else
 			$parentId = 0;
@@ -1607,7 +1607,7 @@ function IncrementCategoryTree($id_category)
 				WHERE		id_category = {int:id_category}',
 				array(
 					'id_category' => $parentId,
-				)				
+				)
 			);
 			$id_category = $parentId;
 		}
@@ -1696,7 +1696,7 @@ function GetTotalDisputesCount()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT 		COUNT(*) AS total_disputes_count
 		FROM 		{db_prefix}quiz_dispute'
 	);
@@ -1715,7 +1715,7 @@ function GetTotalReviewCount()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT 		COUNT(*) AS total_review_count
 		FROM 		{db_prefix}quiz
 		WHERE		for_review = 1'
@@ -1735,7 +1735,7 @@ function GetDisabledQuizCount()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT 		COUNT(*) AS total_diabled_quizes_count
 		FROM 		{db_prefix}quiz
 		WHERE		enabled = 0'
@@ -1755,7 +1755,7 @@ function GetTotalQuizStats()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT 		COUNT(*) AS total_quiz_count,
 					SUM(quiz_plays) AS total_quiz_plays,
 					SUM(question_plays) AS total_question_plays,
@@ -1778,11 +1778,11 @@ function GetBestQuizResult()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
-		SELECT 		M.real_name, 
-					QR.total_seconds, 
-					QR.questions, 
-					QR.result_date, 
+	$result = $smcFunc['db_query']('', '
+		SELECT 		M.real_name,
+					QR.total_seconds,
+					QR.questions,
+					QR.result_date,
 					QR.correct,
 					round((QR.correct / QR.questions) * 100) AS percentage_correct
 		FROM 		{db_prefix}quiz_result QR
@@ -1809,11 +1809,11 @@ function GetWorstQuizResult()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
-		SELECT 		M.real_name, 
-					QR.total_seconds, 
-					QR.questions, 
-					QR.result_date, 
+	$result = $smcFunc['db_query']('', '
+		SELECT 		M.real_name,
+					QR.total_seconds,
+					QR.questions,
+					QR.result_date,
 					QR.correct,
 					round((QR.correct / QR.questions) * 100) AS percentage_correct
 		FROM 		{db_prefix}quiz_result QR
@@ -1840,8 +1840,8 @@ function GetHardestQuizes()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
-		SELECT 		Q.id_quiz, 
+	$result = $smcFunc['db_query']('', '
+		SELECT 		Q.id_quiz,
 					Q.title,
 					round((Q.question_plays - Q.total_correct) / Q.question_plays * 100) AS percentage_incorrect
 		FROM 		{db_prefix}quiz Q
@@ -1865,8 +1865,8 @@ function GetEasiestQuizes()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
-		SELECT 		Q.id_quiz, 
+	$result = $smcFunc['db_query']('', '
+		SELECT 		Q.id_quiz,
 					Q.title,
 					round(Q.total_correct / Q.question_plays * 100) AS percentage_correct
 		FROM 		{db_prefix}quiz Q
@@ -1890,8 +1890,8 @@ function GetNewestQuiz()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
-		SELECT 		Q.id_quiz, 
+	$result = $smcFunc['db_query']('', '
+		SELECT 		Q.id_quiz,
 					Q.title,
 					Q.updated
 		FROM 		{db_prefix}quiz Q
@@ -1914,8 +1914,8 @@ function GetOldestQuiz()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
-		SELECT 		Q.id_quiz, 
+	$result = $smcFunc['db_query']('', '
+		SELECT 		Q.id_quiz,
 					Q.title,
 					Q.updated
 		FROM 		{db_prefix}quiz Q
@@ -1938,7 +1938,7 @@ function MostQuizWins()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT 		Q.top_user_id,
 					M.real_name,
 					COUNT(Q.top_user_id) AS TopScores
@@ -1966,7 +1966,7 @@ function GetTotalQuestions()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT 		COUNT(*) AS total_question_count
 		FROM		{db_prefix}quiz_question
 		LIMIT		0, 1'
@@ -2063,6 +2063,7 @@ function GetUserQuizScores($id_user)
 					QR.incorrect,
 					QR.timeouts,
 					QR.total_seconds,
+					QR.player_limit,
 					IFNULL(round((QR.correct / QR.questions) * 100),0) AS percentage_correct,
 					QR.auto_completed
 		FROM		{db_prefix}quiz_result QR
@@ -2091,7 +2092,7 @@ function GetUserCorrectScores($id_user)
 
 // @TODO query
 	$result = $smcFunc['db_query']('', '
-		SELECT 		QR.correct, 
+		SELECT 		QR.correct,
 					COUNT(QR.correct) AS count_correct
 		FROM 		{db_prefix}quiz_result QR
 		WHERE 		QR.id_user = {int:id_user}
@@ -2259,14 +2260,14 @@ function GetMostActivePlayers()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT  	QR.id_user,
 					M.real_name,
 					COUNT(QR.id_user) as total_plays
 		FROM 		{db_prefix}quiz_result QR
 		INNER JOIN 	{db_prefix}members M
 		ON 			QR.id_user = M.id_member
-		GROUP BY 	QR.id_user, 
+		GROUP BY 	QR.id_user,
 					M.real_name
 		ORDER BY	total_plays DESC
 		LIMIT		0, 10'
@@ -2285,14 +2286,14 @@ function GetMostQuizCreators()
 {
 	global $context, $smcFunc;
 
-	$result = $smcFunc['db_query']('', '	
-		SELECT 		COUNT(*) AS quizes, 
-					Q.creator_id, 
+	$result = $smcFunc['db_query']('', '
+		SELECT 		COUNT(*) AS quizes,
+					Q.creator_id,
 					M.real_name
 		FROM 		{db_prefix}quiz Q
 		INNER JOIN 	{db_prefix}members M
 		ON 			Q.creator_id = M.id_member
-		GROUP BY 	Q.creator_id, M.real_name 
+		GROUP BY 	Q.creator_id, M.real_name
 		ORDER BY 	quizes DESC
 		LIMIT		0, 10'
 	);
@@ -2323,7 +2324,7 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 		return 'quiz_alredy_exists';
 
 	// Add the quiz to the quiz table
-	$smcFunc['db_insert']('insert', 
+	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz',
 		array(
 			'title' => 'string',
@@ -2351,7 +2352,7 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 		),
 		array('id_quiz')
 	);
- 
+
 	// Retrieve the ID for the inserted quiz
 	$import_quiz['id_quiz'] = $smcFunc['db_insert_id']('{db_prefix}quiz', 'id_quiz');
 
@@ -2398,7 +2399,7 @@ function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer
 		}
 	}
 
-	$smcFunc['db_insert']('insert', 
+	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_question',
 		array(
 			'question_text' => 'string',
@@ -2430,7 +2431,7 @@ function ImportQuizAnswer($id_question, $answer_text, $is_correct)
 
 	$updated = time();
 
-	$smcFunc['db_insert']('insert', 
+	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_answer',
 		array(
 			'id_question' => 'int',
@@ -2565,33 +2566,37 @@ function ResetQuizResults()
 {
 	global $smcFunc;
 
+	if (allowedTo('admin_forum')) {
 // @TODO permissions?
-	$smcFunc['db_query']('', '
-		TRUNCATE TABLE {db_prefix}quiz_result'
-	);
+		$smcFunc['db_query']('', '
+			TRUNCATE TABLE {db_prefix}quiz_result'
+		);
+	}	
 }
 
 function DeleteInfoBoardEntries($date)
 {
 	global $smcFunc;
 
+	if (allowedTo('admin_forum')) {
 // @TODO permissions?
-	$smcFunc['db_query']('', '
-		DELETE
-		FROM 		{db_prefix}quiz_infoboard
-		WHERE		entry_date < {int:date}',
-		array(
-			'date' => $date
-		)
-	);
+		$smcFunc['db_query']('', '
+			DELETE
+			FROM 		{db_prefix}quiz_infoboard
+			WHERE		entry_date < {int:date}',
+			array(
+				'date' => $date
+			)
+		);
+	}	
 }
 
 function CompleteQuizSessions($date)
 {
 	global $context, $smcFunc;
 
-// @TODO query
-	$result = $smcFunc['db_query']('', '	
+	// @TODO query
+	$result = $smcFunc['db_query']('', '
 		SELECT		id_quiz_session,
 					question_count,
 					timeouts,
@@ -2605,13 +2610,42 @@ function CompleteQuizSessions($date)
 		array(
 			'date' => $date
 		)
-		
+
 	);
 
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
-// @TODO query+performance?
-		$smcFunc['db_insert']('insert', 
+		list($result_date, $quizResultData) = array(time(), array('id_quiz_result' => 0, 'player_limit' => 0));
+		$dataResult = $smcFunc['db_query']('', '
+			SELECT 		id_quiz_result,	id_quiz, id_user, player_limit
+			FROM 		{db_prefix}quiz_result
+			WHERE 		id_quiz = {int:id_quiz} AND id_user = {int:id_user}',
+			[
+				'id_quiz' => $row['id_quiz'], 'id_user' => $row['id_user']
+			]
+		);
+
+		while ($dataRow = $smcFunc['db_fetch_assoc']($dataResult)) {
+			$quizResultData = [
+				'id_quiz_result' => $dataRow['id_quiz_result'],
+				'player_limit' => $dataRow['player_limit'],
+			];
+		}
+
+		// Free the database
+		$smcFunc['db_free_result']($dataResult);
+
+		if (!empty($quizResultData['id_quiz_result'])) {
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}quiz_result
+				WHERE id_quiz_result = {int:id_result}',
+				array(
+					'id_result' => $quizResultData['id_quiz_result'],
+				)
+			);
+		}
+		// @TODO query+performance?
+		$smcFunc['db_insert']('insert',
 			'{db_prefix}quiz_result',
 			array(
 				'id_quiz' => 'int',
@@ -2622,7 +2656,8 @@ function CompleteQuizSessions($date)
 				'incorrect' => 'int',
 				'timeouts' => 'int',
 				'total_seconds' => 'int',
-				'auto_completed' => 'int'
+				'auto_completed' => 'int',
+				'player_limit' => 'int'
 			),
 			array(
 				$row['id_quiz'],
@@ -2633,7 +2668,8 @@ function CompleteQuizSessions($date)
 				$row['incorrect'],
 				$row['timeouts'],
 				$row['total_seconds'],
-				1
+				1,
+				$quizResultData['player_limit']
 			),
 			array('id_quiz_result')
 		);
@@ -2662,7 +2698,7 @@ function FindOrphanedAnswersData()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT  	id_answer,
 					id_question,
 					answer_text,
@@ -2670,7 +2706,7 @@ function FindOrphanedAnswersData()
 		FROM   		{db_prefix}quiz_answer
 		WHERE  		id_question NOT IN
 		(
-			SELECT 		id_question 
+			SELECT 		id_question
 			FROM 		{db_prefix}quiz_question
 		)'
 	);
@@ -2689,7 +2725,7 @@ function FindOrphanedQuestionsData()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT 		id_question,
 					id_quiz,
 					question_text,
@@ -2715,11 +2751,12 @@ function FindOrphanedQuizResultsData()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT 		id_quiz_result,
 					id_quiz,
 					id_user,
-					result_date
+					result_date,
+					player_limit
 		FROM 		{db_prefix}quiz_result
 		WHERE 		id_quiz NOT IN (
 			SELECT 		id_quiz
@@ -2745,7 +2782,7 @@ function FindOrphanedCategoriesData()
 	global $context, $smcFunc;
 
 // @TODO query
-	$result = $smcFunc['db_query']('', '	
+	$result = $smcFunc['db_query']('', '
 		SELECT 		id_category,
 					id_parent,
 					name,
@@ -2754,7 +2791,7 @@ function FindOrphanedCategoriesData()
 		WHERE 		id_parent NOT IN (
 			SELECT 		id_category
 			FROM 		{db_prefix}quiz_category
-		) 
+		)
 		AND 		id_parent != 0'
 	);
 
@@ -2764,7 +2801,7 @@ function FindOrphanedCategoriesData()
 		$context['SMFQuiz']['findOrphanedCategories'][] = $row;
 
 	// Free the database
-	$smcFunc['db_free_result']($result);	
+	$smcFunc['db_free_result']($result);
 }
 
 function DeleteOrphanedQuestionsData()
@@ -2792,7 +2829,7 @@ function DeleteOrphanedAnswersData()
 		FROM   		{db_prefix}quiz_answer
 		WHERE  		id_question NOT IN
 		(
-			SELECT 		id_question 
+			SELECT 		id_question
 			FROM 		{db_prefix}quiz_question
 		)'
 	);
@@ -2830,10 +2867,10 @@ function DeleteOrphanedCategoriesData()
 		WHERE 		id_parent NOT IN (
 			SELECT 		id_category
 			FROM 		{db_prefix}quiz_category
-		) 
+		)
 		AND 		id_parent != 0'
 	);
-	
+
 	// Loop through the session results
 // @TODO query
 	while ($row = $smcFunc['db_fetch_assoc']($findOrphanedCategoriesResult))
@@ -2848,7 +2885,7 @@ function DeleteOrphanedCategoriesData()
 		);
 
 	// Free the database
-	$smcFunc['db_free_result']($findOrphanedCategoriesResult);	
+	$smcFunc['db_free_result']($findOrphanedCategoriesResult);
 }
 
 function CanUserPlayQuizLeagueData($id_quiz_league, $id_user)
@@ -2898,7 +2935,7 @@ function CleanDisputes()
 		ON 			QD.id_user = M.id_member
 		LEFT JOIN 	{db_prefix}quiz_question QQ
 		ON 			QD.id_quiz_question = QQ.id_question
-		WHERE 		Q.id_quiz IS NULL 
+		WHERE 		Q.id_quiz IS NULL
 		OR 			M.id_member IS NULL
 		OR 			QQ.id_question IS NULL'
 	);

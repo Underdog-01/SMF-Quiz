@@ -2,7 +2,7 @@
 
 /**
  * @package SMF Quiz
- * @version 2.0 Beta 1
+ * @version 2.0.3
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -20,5 +20,13 @@ $smcFunc['db_query']('', '
 	WHERE task = {string:name}',
 	[
 		'name' => 'quiz_maintenance',
+	]
+);
+
+$smcFunc['db_query']('', '
+	DELETE FROM {db_prefix}settings
+	WHERE variable = {string:quiz}',
+	[
+		'quiz' => 'smf_quiz_version',
 	]
 );

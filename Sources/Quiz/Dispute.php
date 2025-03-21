@@ -6,10 +6,14 @@ if (!defined('SMF'))
 // @TODO move to another file
 function quizDispute()
 {
-	global $smcFunc, $context, $user_settings, $sourcedir;
+	global $smcFunc, $context, $user_settings, $sourcedir, $scripturl, $txt;
 
 	// Get passed variables from client
 	// @TODO sanitize (check reason)
+	loadLanguage('Quiz/Quiz');
+
+	$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
+	list($sentTo, $admins) = [[], []];
 	$id_quiz_question = isset($_GET["id_quiz_question"]) ? (int) $_GET["id_quiz_question"] : 0;
 	$id_quiz = isset($_GET["id_quiz"]) ? (int) $_GET["id_quiz"] : 0;
 	$reason = isset($_GET["reason"]) ? $smcFunc['htmlspecialchars']($_GET["reason"], ENT_QUOTES) : '';
@@ -41,31 +45,30 @@ function quizDispute()
 
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
-			$pmto = array(
-				'to' => array(),
-				'bcc' => array($row['id_user'])
-			);
+			if (in_array($row['id_user'], $usersPrefs)) {
+				$pmto = array(
+					'to' => array(),
+					'bcc' => array($row['id_user'])
+				);
 
 	// @TODO localization
-			$subject = "Quiz Dispute Response #" . $id_dispute;
-			// @TODO check how the html_entity_decode work (+ UTF8?)
-			$message = "Your dispute [b]" . html_entity_decode($row['reason'], ENT_QUOTES, 'UTF-8') . "[/b] against the question [b]" . $row['question_text'] . "[/b] in the quiz [b]" . $row['title'] . "[/b] has had the following response from the Quiz Administrator:
-			
-	[i]" . html_entity_decode($reason, ENT_QUOTES, 'UTF-8') . "[/i]";
+				$subject = sprintf($txt['quiz_dispute_userpm_subject'], (int)$id_dispute);
+				// @TODO check how the html_entity_decode work (+ UTF8?)
+				$message = sprintf($txt['quiz_dipute_userpm_message'], html_entity_decode($row['reason'], ENT_QUOTES, 'UTF-8'), $row['question_text'], $row['title'], html_entity_decode($reason, ENT_QUOTES, 'UTF-8'));
 
-			if ($remove == 1)
-				$message .= "
+				if ($remove == 1)
+					$message .= $txt['quiz_dipute_userpm_msg_del'];
 
-	This dispute has now been removed";
+				$pmfrom = array(
+					'id' => $user_settings['id_member'],
+					'name' => $user_settings['real_name'],
+					'username' => $user_settings['member_name']
+				);
 
-			$pmfrom = array(
-				'id' => $user_settings['id_member'],
-				'name' => $user_settings['real_name'],
-				'username' => $user_settings['member_name']
-			);
-
-			// Send message
-			sendpm($pmto, $subject, $message, 0, $pmfrom);
+				// Send message
+				sendpm($pmto, $subject, $message, 0, $pmfrom);
+				$sentTo[] = $row['id_user'];
+			}
 		}
 		$smcFunc['db_free_result']($result);
 
@@ -85,25 +88,59 @@ function quizDispute()
 	}
 	elseif (!empty($reason) && !empty($id_quiz_question))
 	{
-		// Otherwise someone is submitting a dispute
-		$smcFunc['db_insert']('insert', 
-			'{db_prefix}quiz_dispute',
-			array(
-				'id_quiz_question' => 'int',
-				'id_quiz' => 'int',
-				'id_user' => 'int',
-				'reason' => 'string',
-				'updated' => 'int'
-			),
-			array(
-				$id_quiz_question,
-				$id_quiz,
-				$id_user,
-				$reason,
-				time()
-			),
-			array('id_quiz_dispute')
-		);
+		// Gather the user ids of Quiz admins that want report PM's
+		$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_report');
+		$quizAdmins = array_filter(array_merge(Quiz\Helper::quiz_usersAllowedTo('quiz_admin'), $usersPrefs));
+
+		if (!empty($quizAdmins)) {
+			// Otherwise someone is submitting a dispute
+			$smcFunc['db_insert']('insert',
+				'{db_prefix}quiz_dispute',
+				array(
+					'id_quiz_question' => 'int',
+					'id_quiz' => 'int',
+					'id_user' => 'int',
+					'reason' => 'string',
+					'updated' => 'int'
+				),
+				array(
+					$id_quiz_question,
+					$id_quiz,
+					$id_user,
+					$reason,
+					time()
+				),
+				array('id_quiz_dispute')
+			);
+
+			// Get the admins
+			$adminQuery = $smcFunc['db_query']('', '
+				SELECT id_member
+				FROM {db_prefix}members
+				WHERE id_member IN ({array_int:quiz_admins})',
+				array(
+					'quiz_admins' => $quizAdmins,
+				)
+			);
+			$sentTo = array_filter($sentTo);
+			while($row = $smcFunc['db_fetch_assoc']($adminQuery)) {
+				if (!in_array($row['id_member'], $sentTo)) {
+					$admins[] = $row['id_member'];
+				}
+			}
+			$smcFunc['db_free_result']($adminQuery);
+
+			require_once($sourcedir . '/Subs-Post.php');
+			// Mickey Mouse built a house...
+			$msg = str_replace('__CR__', '\r', $txt['quiz_dispute_report']);
+			$msg = str_replace("'", "\'", stripcslashes(html_entity_decode($txt['quiz_dispute_report'], ENT_QUOTES, 'UTF-8')));
+			$msg = str_replace('\r', '__CR__', $msg);
+			sendpm(
+				array('to' => $admins, 'bcc' => array()),
+				$txt['quiz_dispute_pmtitle'],
+				sprintf($msg, $scripturl . '?action=admin;area=quiz;sa=disputes'),
+			);
+		}
 	}
 
 // @TODO move to a template?

@@ -1,5 +1,15 @@
 # Changelog
 
+#### 2.0.3 - 21 March 2025
+- ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Custom hooks for use by other modifications.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Updated JQuery and its plug-ins.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added Quiz DB members table for member settings.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added Quiz member profile settings for PM alerts.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed player quiz limit adheres to quiz setting.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed scheduled task include class file.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed report question UI widget.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed admin reported question delete.
+
 #### 2.0.2 - 10 November 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Prevent non creators from managing other users quizzes.
 

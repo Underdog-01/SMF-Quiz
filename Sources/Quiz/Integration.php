@@ -2,6 +2,8 @@
 
 namespace Quiz;
 
+use Quiz\Helper;
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
@@ -9,8 +11,16 @@ class Integration
 {
 	public static function init()
 	{
+		global $txt, $sourcedir;
+
+		loadLanguage('Quiz/Quiz');
+		loadLanguage('Quiz/Common');
+		if (!empty($_REQUEST['action']) && is_string($_REQUEST['action']) && $_REQUEST['action'] == 'admin') {
+			loadLanguage('Quiz/Admin');
+		}
+
 		self::setVersion();
-		self::loadScheduledClass();
+		self::loadClasses();
 
 		add_integration_function('integrate_autoload', __CLASS__ . '::autoload', false);
 		add_integration_function('integrate_admin_areas', __CLASS__ . '::admin_areas', false);
@@ -18,8 +28,22 @@ class Integration
 		add_integration_function('integrate_actions', __CLASS__ . '::actions', false);
 		add_integration_function('integrate_load_permissions', __CLASS__ . '::permissions', false);
 		add_integration_function('integrate_load_illegal_guest_permissions', __CLASS__ . '::illegal_guest_permissions', false);
-		add_integration_function('integrate_load_permissions', __CLASS__ . '::permissions', false);
 		add_integration_function('integrate_pre_css_output', __CLASS__ . '::preCSS', false);
+		add_integration_function('integrate_pre_profile_areas', __NAMESPACE__ . '\Profile::profile_areas', false);
+		add_integration_function('integrate_user_info', __NAMESPACE__ . '\Profile::user_info', false);
+	}
+
+	public static function loadClasses()
+	{
+		global $sourcedir;
+
+		// Ensure the Quiz classes are available
+		$neededClasses = ['Tasks\Scheduled', 'Helper'];
+		foreach ($neededClasses as $class) {
+			if (!class_exists(__NAMESPACE__  . '\\' . $class)) {
+				require_once($sourcedir . '/' . __NAMESPACE__  . '/' . (str_replace('\\', '/', $class)) . '.php');
+			}
+		}
 	}
 
 	public static function setVersion()
@@ -43,16 +67,6 @@ class Integration
 			'SMFQuiz_99to100' => 'WOW - You are simply amazing. That is a Perfect Score! Did you Google those answers?',
 		];
 		$modSettings = array_merge($defaults, $modSettings);
-	}
-
-	public static function loadScheduledClass()
-	{
-		global $sourcedir;
-
-		// Ensure the task class is available
-		if (!class_exists(__NAMESPACE__  . '\Tasks\Scheduled')) {
-			require_once($sourcedir . '/' . __NAMESPACE__  . '/Tasks/Scheduled.php');
-		}
 	}
 
 	public static function autoload(&$classMap)
@@ -80,6 +94,7 @@ class Integration
 		$permissionList['membergroup']['quiz_view'] = array(false, 'quiz');
 		$permissionList['membergroup']['quiz_play'] = array(false, 'quiz');
 		$permissionList['membergroup']['quiz_submit'] = array(false, 'quiz');
+		$permissionList['membergroup']['quiz_profile'] = array(false, 'quiz');
 		$permissionList['membergroup']['quiz_admin'] = array(false, 'quiz');
 	}
 
@@ -90,15 +105,16 @@ class Integration
 		$context['non_guest_permissions'][] = 'quiz_play';
 		$context['non_guest_permissions'][] = 'quiz_submit';
 		$context['non_guest_permissions'][] = 'quiz_admin';
+		$context['non_guest_permissions'][] = 'quiz_profile';
 	}
 
 	public static function admin_areas(&$admin_areas)
 	{
 		global $txt, $modSettings, $scripturl;
 
-		loadLanguage('Quiz/Admin');
 		loadLanguage('Quiz/Quiz');
 		loadLanguage('Quiz/Common');
+		loadLanguage('Quiz/Admin');
 
 		$admin_areas['quiz'] = array(
 			'title' => $txt['SMFQuiz'],
@@ -130,8 +146,6 @@ class Integration
 	public static function menu_buttons(&$buttons)
 	{
 		global $txt, $modSettings, $scripturl;
-
-		loadLanguage('Quiz/Quiz');
 
 		$before = 'mlist';
 		$temp_buttons = array();

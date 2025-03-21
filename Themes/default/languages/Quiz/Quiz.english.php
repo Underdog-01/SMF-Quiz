@@ -2,6 +2,7 @@
 
 // @TODO to remove
 // Load the common language file
+global $txt;
 loadLanguage('Quiz/Common');
 
 $txt['SMFQuiz'] = 'Quiz';
@@ -85,7 +86,7 @@ $txt['SMFQuiz_QuizDetails_Page'] = array(
 	'Title' => 'SMFQuiz - Quiz Details',
 	'GeneralInformation' => 'General Information',
 );
-	
+
 // Language text located in the statistics page
 $txt['SMFQuiz_Statistics_Page'] = array(
 	'Title' => 'SMFQuiz - Statistics Center',
@@ -166,6 +167,8 @@ $txt['SMFQuiz_Javascript'] = array(
 	'BrowserNotSupportHttp' => 'Browser does not support HTTP Request',
 	'MustBeLoggedIn' => 'You must be logged in to play the quiz',
 	'SessionTime' => 'You cannot continue playing the quiz yet, you must wait for the specified period to elapse before playing the quiz again',
+	'QuizLimit' => 'You have already played this quiz over the maximum amount of times allowed.',
+	'QuizHiScore' => 'You currently have the hi score for this quiz and cannot replay it while holding that position.',
 );
 
 // Language text located in the quiz end page
@@ -184,4 +187,18 @@ $txt['SMFQuiz_QuizEnd_Page'] = array(
 
 $txt['quiz_xml_error_no_id'] = 'No id_quiz_league or id_quiz specified';
 $txt['quiz_xml_error_no_quizzes'] = 'There are no Quizzes defined';
+
+// Quiz profile
+$txt['quiz_profileSettings_title'] = 'SMF-Quiz Profile Settings';
+$txt['quiz_profileSettings'] = 'Quiz Settings';
+$txt['quiz_pm_report'] = 'Receive PM for Quiz reports';
+$txt['quiz_pm_alert'] = 'Receive PM for Quiz notifications';
+
+// Quiz Dispute
+$txt['quiz_dispute_userpm_subject'] = 'Quiz Dispute Response #%d';
+$txt['quiz_dipute_userpm_message'] = "Your dispute [b]%s[/b] against the question [b]%s[/b] in the quiz [b]%s[/b] has had the following response from the Quiz Administrator:\r\r[i]%s[/i]";
+$txt['quiz_dipute_userpm_msg_del'] = '\r\rThis dispute has now been removed';
+$txt['quiz_dispute_pmtitle'] = 'New Quiz Dispute!';
+$txt['quiz_dispute_report'] = 'There is a new quiz dispute awaiting a response.\r\rLink to the dispute: %s';
+
 ?>

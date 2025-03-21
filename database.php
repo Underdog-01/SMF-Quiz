@@ -2,7 +2,7 @@
 
 /**
  * @package SMF Quiz
- * @version 2.0 RC 1.1
+ * @version 2.0.3
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -15,8 +15,13 @@ elseif (!defined('SMF'))
 
 global $smcFunc;
 
+$quizVersion = '2.0.3-BETA2';
+
+
 if (!isset($smcFunc['db_create_table']))
 	db_extend('packages');
+
+updateSettings(['smf_quiz_version' => $quizVersion]);
 
 // Adding the schedule task
 $smcFunc['db_insert'](
@@ -292,7 +297,7 @@ $tables = [
 				'size' => 255,
 				'not_null' => true,
 				'default' => 'Question Text'
-			], 
+			],
 			[
 				'name' => 'id_question_type',
 				'type' => 'int',
@@ -616,7 +621,7 @@ $tables = [
 				'type' => 'mediumint',
 				'not_null' => true,
 				'unsigned' => true,
-				'default' => 0	
+				'default' => 0
 			],
 			[
 				'name' => 'round',
@@ -902,6 +907,13 @@ $tables = [
 				'unsigned' => true,
 				'default' => 0
 			],
+			[
+				'name' => 'player_limit',
+				'type' => 'smallint',
+				'not_null' => true,
+				'unsigned' => true,
+				'default' => 0
+			],
 		],
 		'indexes' => [
 			[
@@ -1079,6 +1091,45 @@ $tables = [
 			],
 		],
 	],
+	'quiz_members' => [
+		'columns' => [
+			[
+				'name' => 'id_member',
+				'type' => 'mediumint',
+				'size' => 8,
+				'not_null' => true,
+				'unsigned' => true,
+				'auto' => false
+			],
+			[
+				'name' => 'quiz_pm_report',
+				'type' => 'smallint',
+				'not_null' => true,
+				'unsigned' => true,
+				'default' => 0
+			],
+			[
+				'name' => 'quiz_pm_alert',
+				'type' => 'smallint',
+				'not_null' => true,
+				'unsigned' => true,
+				'default' => 1
+			],
+			[
+				'name' => 'quiz_count',
+				'type' => 'int',
+				'not_null' => true,
+				'unsigned' => true,
+				'default' => 0
+			],
+		],
+		'indexes' => [
+			[
+				'type' => 'primary',
+				'columns' => ['id_member']
+			],
+		],
+	],
 ];
 
 foreach ($tables AS $table_name => $data)
@@ -1088,7 +1139,7 @@ foreach ($tables AS $table_name => $data)
 $smcFunc['db_insert']('ignore',
 	'{db_prefix}quiz_question_type',
 	[
-		'id_question_type' => 'int', 
+		'id_question_type' => 'int',
 		'description' => 'string',
 	],
 	[

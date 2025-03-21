@@ -91,7 +91,7 @@ function template_main()
 	}
 
 	echo '
-		<table width="100%"><tr><td align="center"><a href="http://custom.simplemachines.org/mods/index.php?mod=1650" title="Free SMF Mods" target="_blank" class="smalltext">SMFQuiz ' , isset($modSettings["SMFQuiz_version"]) ? $modSettings["SMFQuiz_version"] : '' , ' &copy; 2009, SMFModding</a></td></tr></table>
+		<table width="100%"><tr><td align="center"><a href="http://custom.simplemachines.org/mods/index.php?mod=1650" title="Free SMF Mods" target="_blank" class="smalltext">SMFQuiz ' , isset($modSettings["smf_quiz_version"]) ? $modSettings["smf_quiz_version"] : '' , ' &copy; 2009, SMFModding</a></td></tr></table>
 		</form>'
 	;
 }
@@ -100,16 +100,25 @@ function template_quiz_play()
 {
 	global $settings, $boardurl, $modSettings, $txt, $context, $scripturl;
 
+	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? rand(999, 999999) : 'stable';
+	$quizDialogButtons = 'let smfQuizVersion = "' . $modSettings['smf_quiz_version'] . '",';
+	foreach ($txt['quizDialogButtons'] as $key => $val) {
+		$quizDialogButtons .= ' ' . $key . ' = "' . $val . '",';
+	}
 	echo '
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/jquery-ui-1.7.1.custom.css"/>
-		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/quiz.css"/>
-		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/lightbox.css" />
-		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-1.3.2.min.js"></script>
-		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-ui-1.7.1.custom.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/jquery-ui-1.14.1.css?v=' . $qv . '"/>
+		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/quiz.css?v=' . $qv . '"/>
+		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/lightbox.css?v=' . $qv . '" />
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-3.7.0.min.js?v=' . $qv . '"></script>
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-ui-1.14.1.min.js?v=' . $qv . '"></script>
 		<script>
+			' . (rtrim($quizDialogButtons, ',')) . ';
+			if (typeof smf_scripturl === "undefined") {
+				let smf_scripturl = "' . $scripturl . '";
+			}
 			var id_user = "' . $context['user']['id'] . '";
 			var SMFQuiz_0to19 = "' . $modSettings['SMFQuiz_0to19'] . '";
 			var SMFQuiz_20to39 = "' . $modSettings['SMFQuiz_20to39'] . '";
@@ -126,6 +135,8 @@ function template_quiz_play()
 			var textBrowserNotSupportHttp = \'' . $txt['SMFQuiz_Javascript']['BrowserNotSupportHttp'] . '\';
 			var textNoLeagueOrQuizSpecified = \'' . $txt['SMFQuiz_Javascript']['NoQuizSpecified'] . '\';
 			var textPlayedQuizOverMaximum = \'' . $txt['SMFQuiz_Javascript']['QuizMaximum'] . '\';
+			var textPlayedQuizOverLimit = \'' . $txt['SMFQuiz_Javascript']['QuizLimit'] . '\';
+			var textPlayedQuizTopScore = \'' . $txt['SMFQuiz_Javascript']['QuizHiScore'] . '\';
 			var textPlayedQuizLeagueOverMaximum = \'' . $txt['SMFQuiz_Javascript']['QuizLeagueMaximum'] . '\';
 			var textBrowserBroke = \'' . $txt['SMFQuiz_Javascript']['BrowserBroke'] . '\';
 			var textProblemGettingQuestion = \'' . $txt['SMFQuiz_Javascript']['ProblemGettingQuestions'] . '\';
@@ -134,15 +145,12 @@ function template_quiz_play()
 			function quizPageTitle() {
 				document.title = "' . $txt['SMFQuiz_Common']['Quiz'] . '";
 			}
-			if (window.addEventListener) {
-				window.addEventListener("load", quizPageTitle, false);
-			}
-			else {
-				window.attachEvent("onload", quizPageTitle);
-			}
+			$(document).ready(function(){
+				quizPageTitle();
+			});
 		</script>
-		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizClient.js"></script>
-		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.lightbox.js"></script>
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizClient.js?v=' . rand(999,999999) . '"></script>
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.lightbox.js?v=' . rand(999, 999999) . '"></script>
 	</head>';
 
 	echo '
@@ -1710,11 +1718,10 @@ function template_categories()
 					<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
 						', $column['label'], '</td>';
 				// This is a selected solumn, so underline it or some such.
-				elseif ($column['selected'])
-					echo '
-					<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-						<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
-				// This is just some column... show the link and be done with it.
+elseif ($column['selected'])
+            echo '
+            <td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
+                <a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <span class="main_icons sort_' . (!empty($context['sort_direction']) ? $context['sort_direction'] : 'down') . '"></span></a></td>';				// This is just some column... show the link and be done with it.
 				else
 					echo '
 					<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
@@ -2535,10 +2542,9 @@ function template_quiz_scores()
 				', $column['label'], '</td>';
 		// This is a selected solumn, so underline it or some such.
 		elseif ($column['selected'])
-			echo '
-			<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
-		// This is just some column... show the link and be done with it.
+            echo '
+            <td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
+                <a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <span class="main_icons sort_' . (!empty($context['sort_direction']) ? $context['sort_direction'] : 'down') . '"></span></a></td>';		// This is just some column... show the link and be done with it.
 		else
 			echo '
 			<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
@@ -2628,10 +2634,9 @@ function template_show_quizes()
 				', $column['label'], '</td>';
 		// This is a selected solumn, so underline it or some such.
 		elseif ($column['selected'])
-			echo '
-			<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
-		// This is just some column... show the link and be done with it.
+            echo '
+            <td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
+                <a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <span class="main_icons sort_' . (!empty($context['sort_direction']) ? $context['sort_direction'] : 'down') . '"></span></a></td>';		// This is just some column... show the link and be done with it.
 		else
 			echo '
 			<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
@@ -2718,10 +2723,9 @@ function template_played_quizes()
 				', $column['label'], '</td>';
 		// This is a selected solumn, so underline it or some such.
 		elseif ($column['selected'])
-			echo '
-			<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
-		// This is just some column... show the link and be done with it.
+            echo '
+            <td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
+                <a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <span class="main_icons sort_' . (!empty($context['sort_direction']) ? $context['sort_direction'] : 'down') . '"></span></a></td>';		// This is just some column... show the link and be done with it.
 		else
 			echo '
 			<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
@@ -2782,10 +2786,9 @@ function template_quiz_masters()
 				', $column['label'], '</td>';
 		// This is a selected solumn, so underline it or some such.
 		elseif ($column['selected'])
-			echo '
-			<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
-		// This is just some column... show the link and be done with it.
+            echo '
+            <td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
+                <a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <span class="main_icons sort_' . (!empty($context['sort_direction']) ? $context['sort_direction'] : 'down') . '"></span></a></td>';		// This is just some column... show the link and be done with it.
 		else
 			echo '
 			<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
@@ -2848,10 +2851,9 @@ function template_quiz_league_table()
 				', $column['label'], '</td>';
 		// This is a selected solumn, so underline it or some such.
 		elseif ($column['selected'])
-			echo '
-			<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
-		// This is just some column... show the link and be done with it.
+            echo '
+            <td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
+                <a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <span class="main_icons sort_' . (!empty($context['sort_direction']) ? $context['sort_direction'] : 'down') . '"></span></a></td>';		// This is just some column... show the link and be done with it.
 		else
 			echo '
 			<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
@@ -2953,10 +2955,9 @@ function template_quiz_league_results()
 				', $column['label'], '</td>';
 		// This is a selected solumn, so underline it or some such.
 		elseif ($column['selected'])
-			echo '
-			<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
-		// This is just some column... show the link and be done with it.
+            echo '
+            <td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
+                <a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <span class="main_icons sort_' . (!empty($context['sort_direction']) ? $context['sort_direction'] : 'down') . '"></span></a></td>';		// This is just some column... show the link and be done with it.
 		else
 			echo '
 			<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>

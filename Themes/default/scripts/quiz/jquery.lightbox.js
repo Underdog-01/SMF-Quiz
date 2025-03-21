@@ -1,440 +1,508 @@
 /**
  * jQuery Lightbox
- * Version 0.5 - 11/29/2007
  * @author Warren Krewenki
  *
- * Changes by:
- * @author Krzysztof Kotowicz <koto at webworkers dot pl>:
- *  - bugfix: multiple instances of Lightbox galleries allowed
- *    (using opts variable instead of $.fn.lightbox.defaults)
- *  - bugfix: use var for local variables in a few functions
- *  - added support for navbarOnTop setting
- *  - added support for displayTitle setting
- *  - added support for slideNavBar setting (with slideNavBarSpeed)
- *  - added support for displayHelp setting
- *  - added support for fitToScreen setting (ported Lightbox VinDSL hack)
- *    (see http://www.huddletogether.com/forum/comments.php?DiscussionID=307)
- *  - plugin now uses jQuery.width() and jQuery.height()
- *  - removed eval() calls
- *  - removed destroyElement - uses jQuery.remove()
- *  - use of prevLinkText, nextLinkText and help
- *  - all strings are now placed in opts.strings to allow for customization/translation
+ * This package is distributed under the BSD license.
+ * For full license information, see LICENSE.TXT
  *
  * Based on Lightbox 2 by Lokesh Dhakar (http://www.huddletogether.com/projects/lightbox2/)
- * Originally written to make use of the Prototype framework, and Script.acalo.us, now altered to use jQuery.
+ *
  *
  **/
 
 (function($) {
-    var opts;
+	$.fn.lightbox = function(options) {
+		// build main options
+		var opts = $.extend({}, $.fn.lightbox.defaults, options);
+        
+		$(window).resize(resizeOverlayToFitWindow);
+        
+		return $(this).on(opts.triggerEvent,function(){
+			// initialize the lightbox
+			initialize();
+			showLightbox(this);
+			return false;
+		});
+		/*
+		# Initialize the lightbox by creating our html and reading some image data
+		# This method is called by the constructor after any click events trigger it
+		# You will never call it by itself, to my knowledge.
+		*/
+		function initialize() {
+			$('#overlay, #lightbox').remove();
+			opts.inprogress = false;
 
-    $.fn.lightbox = function(options) {
-        // build main options
-        opts = $.extend({}, $.fn.lightbox.defaults, options);
+			// if jsonData, build the imageArray from data provided in JSON format
+			if (opts.jsonData && opts.jsonData.length > 0) {
+				var parser = opts.jsonDataParser ? opts.jsonDataParser : $.fn.lightbox.parseJsonData;                
+				opts.imageArray = [];
+				opts.imageArray = parser(opts.jsonData);
+			}
+    
+			var outerImage = '<div id="outerImageContainer"><div id="imageContainer"><iframe id="lightboxIframe"></iframe><img id="lightboxImage" /><div id="hoverNav"><a href="javascript://" title="' + opts.strings.prevLinkTitle + '" id="prevLink"></a><a href="javascript://" id="nextLink" title="' + opts.strings.nextLinkTitle + '"></a></div><div id="loading"><a href="javascript://" id="loadingLink"><img src="'+opts.fileLoadingImage+'"></a></div></div></div>';
+			var imageData = '<div id="imageDataContainer" class="clearfix"><div id="imageData"><div id="imageDetails"><span id="caption"></span><span id="numberDisplay"></span></div><div id="bottomNav">';
 
-        // initalize the lightbox
-        $.fn.lightbox.initialize();
-        return this.each(function() {
-            $(this).click(function() {
-                $(this).lightbox.start(this);
-                return false;
-            });
-        });
-    };
+			if (opts.displayHelp) {
+				imageData += '<span id="helpDisplay">' + opts.strings.help + '</span>';
+			}
 
-    // lightbox functions
-    $.fn.lightbox.initialize = function() {
-        $('#overlay').remove();
-        $('#lightbox').remove();
-        opts.inprogress = false;
-        var outerImage = '<div id="outerImageContainer"><div id="imageContainer"><img id="lightboxImage"><div id="hoverNav"><a href="javascript://" title="' + opts.strings.prevLinkTitle + '" id="prevLink"></a><a href="javascript://" id="nextLink" title="' + opts.strings.nextLinkTitle + '"></a></div><div id="loading"><a href="javascript://" id="loadingLink"><img src="' + opts.fileLoadingImage + '"></a></div></div></div>';
-        var imageData = '<div id="imageDataContainer" class="clearfix"><div id="imageData"><div id="imageDetails"><span id="caption"></span><span id="numberDisplay"></span></div><div id="bottomNav">'
+			imageData += '<a href="javascript://" id="bottomNavClose" title="' + opts.strings.closeTitle + '"><img src="'+opts.fileBottomNavCloseImage+'"></a></div></div></div>';
 
-        if (opts.displayHelp)
-            imageData += '<span id="helpDisplay">' + opts.strings.help + '</span>';
+			var string;
 
-        imageData += '<a href="javascript://" id="bottomNavClose" title="' + opts.strings.closeTitle + '"><img src="' + opts.fileBottomNavCloseImage + '"></a></div></div></div>';
+			if (opts.navbarOnTop) {
+				string = '<div id="overlay"></div><div id="lightbox">' + imageData + outerImage + '</div>';
+				$("body").append(string);
+				$("#imageDataContainer").addClass('ontop');
+			} else {
+				string = '<div id="overlay"></div><div id="lightbox">' + outerImage + imageData + '</div>';
+				$("body").append(string);
+			}
 
-        var string;
+			if (opts.imageScroll === true) {
+        $('#lightbox').css('position', 'fixed')
+      }
 
-        if (opts.navbarOnTop) {
-            string = '<div id="overlay"></div><div id="lightbox">' + imageData + outerImage + '</div>';
-            $("body").append(string);
-            $("#imageDataContainer").addClass('ontop');
-        } else {
-            string = '<div id="overlay"></div><div id="lightbox">' + outerImage + imageData + '</div>';
-            $("body").append(string);
-        }
+			$("#overlay, #lightbox").click(function(){ end(); }).hide();
+			$("#loadingLink, #bottomNavClose").click(function(){ end(); return false;});
+			$('#outerImageContainer').width(opts.widthCurrent).height(opts.heightCurrent);
+			$('#imageDataContainer').width(opts.widthCurrent);
 
-        $("#overlay").click(function() { $.fn.lightbox.end(); }).hide();
-        $("#lightbox").click(function() { $.fn.lightbox.end(); }).hide();
-        $("#loadingLink").click(function() { $.fn.lightbox.end(); return false; });
-        $("#bottomNavClose").click(function() { $.fn.lightbox.end(); return false; });
-        $('#outerImageContainer').width(opts.widthCurrent).height(opts.heightCurrent);
-        $('#imageDataContainer').width(opts.widthCurrent);
-    };
+			if (!opts.imageClickClose) {
+				$("#lightboxImage").click(function(){ return false; });
+				$("#hoverNav").click(function(){ return false; });
+			}
+			
+			return true;
+		};
 
-    $.fn.lightbox.getPageSize = function() {
-        var xScroll, yScroll;
+		/*
+		# Get the document and window width/heigh
+		#
+		# Examples
+		#
+		#	getPageSize()
+		#	# => [1024,768,1024,768]
+		#
+		# Returns a numerically indexed array of document width/height and window width/height
+		*/
+		function getPageSize() {
+			var jqueryPageSize = new Array($(document).width(),$(document).height(), $(window).width(), $(window).height());
+			return jqueryPageSize;
+		};
+	    
+		function getPageScroll() {
+			var xScroll, yScroll;
 
-        if (window.innerHeight && window.scrollMaxY) {
-            xScroll = window.innerWidth + window.scrollMaxX;
-            yScroll = window.innerHeight + window.scrollMaxY;
-        } else if (document.body.scrollHeight > document.body.offsetHeight) { // all but Explorer Mac
-            xScroll = document.body.scrollWidth;
-            yScroll = document.body.scrollHeight;
-        } else { // Explorer Mac...would also work in Explorer 6 Strict, Mozilla and Safari
-            xScroll = document.body.offsetWidth;
-            yScroll = document.body.offsetHeight;
-        }
+			if (self.pageYOffset) {
+				yScroll = self.pageYOffset;
+				xScroll = self.pageXOffset;
+			} else if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft)){  // Explorer 6 Strict, Firefox
+				yScroll = document.documentElement.scrollTop;
+				xScroll = document.documentElement.scrollLeft;
+			} else if (document.body) {// all other Explorers
+				yScroll = document.body.scrollTop;
+				xScroll = document.body.scrollLeft;
+			}
 
-        var windowWidth, windowHeight;
+			var arrayPageScroll = new Array(xScroll,yScroll);
+			return arrayPageScroll;
+		};
 
-        if (self.innerHeight) { // all except Explorer
-            if (document.documentElement.clientWidth) {
-                windowWidth = document.documentElement.clientWidth;
-            } else {
-                windowWidth = self.innerWidth;
-            }
-            windowHeight = self.innerHeight;
-        } else if (document.documentElement && document.documentElement.clientHeight) { // Explorer 6 Strict Mode
-            windowWidth = document.documentElement.clientWidth;
-            windowHeight = document.documentElement.clientHeight;
-        } else if (document.body) { // other Explorers
-            windowWidth = document.body.clientWidth;
-            windowHeight = document.body.clientHeight;
-        }
+		/*
+		# Deploy the sexy overlay and display the lightbox
+		#
+		# imageObject - the jQuery object passed via the click event in the constructor
+		#
+		# Examples
+		#
+		#	showLightbox($('#CheesusCrust'))
+		#
+		# Returns a boolean true, because it's got nothing else to return. It should give visual feedback when run
+		*/
+		function showLightbox(imageObject) {
+			/**
+			* select, embed and object tags render over the lightbox in some browsers
+			* Right now, the best way to fix it is to hide them, but that can trigger reloading of some flash content
+			* I don't have a better fix for this right now, but I want ot leave this comment here so you and I both 
+			* know that i'm aware of it, and I would love to fix it, if you have any suggestions.
+			**/
+			$("select, embed, object").hide();
 
-        // for small pages with total height less then height of the viewport
-        if (yScroll < windowHeight) {
-            pageHeight = windowHeight;
-        } else {
-            pageHeight = yScroll;
-        }
+			// Resize and display the sexy, sexy overlay.
+			resizeOverlayToFitWindow();
+			$("#overlay").hide().css({ opacity : opts.overlayOpacity }).fadeIn();
+			imageNum = 0;
 
+			// if data is not provided by jsonData parameter
+			if (!opts.jsonData) {
+				opts.imageArray = [];
+				// if image is NOT part of a set..
+                if ((!getImageSetOf(imageObject) || (getImageSetOf(imageObject) == '')) && !opts.allSet) {
+					// add single image to Lightbox.imageArray
+					opts.imageArray.push(new Array(imageObject.href, opts.displayTitle ? imageObject.title : ''));
+				} else {
+					// if image is part of a set..
+					$("a").each(function() {
+                        if(this.href && (getImageSetOf(this) == getImageSetOf(imageObject))) {
+							opts.imageArray.push(new Array(this.href, opts.displayTitle ? this.title : ''));
+						}
+					});
+				}
+			}
+	
+			if (opts.imageArray.length > 1) {
+				for (i = 0; i < opts.imageArray.length; i++) {
+					for (j = opts.imageArray.length - 1; j > i; j--) {
+						if (opts.imageArray[i][0] == opts.imageArray[j][0]) {
+							opts.imageArray.splice(j, 1);
+						}
+					}
+				}
 
-        // for small pages with total width less then width of the viewport
-        if (xScroll < windowWidth) {
-            pageWidth = xScroll;
-        } else {
-            pageWidth = windowWidth;
-        }
+				while (opts.imageArray[imageNum][0] != imageObject.href) { 
+					imageNum++;
+				}
+			}
 
-        var arrayPageSize = new Array(pageWidth, pageHeight, windowWidth, windowHeight);
-        return arrayPageSize;
-    };
+			// calculate top and left offset for the lightbox
+			var arrayPageScroll = getPageScroll();
+			var lightboxTop = arrayPageScroll[1] + ($(window).height() / 10);
+			var lightboxLeft = arrayPageScroll[0];
+			$('#lightbox').css({top: lightboxTop+'px', left: lightboxLeft+'px'}).show();
 
+			if (!opts.slideNavBar) {
+				$('#imageData').hide();
+			}
 
-    $.fn.lightbox.getPageScroll = function() {
-        var xScroll, yScroll;
+			changeImage(imageNum);
+		};
+	    
+		function changeImage(imageNum) {
+			if (opts.inprogress == false) {
+				opts.inprogress = true;
 
-        if (self.pageYOffset) {
-            yScroll = self.pageYOffset;
-            xScroll = self.pageXOffset;
-        } else if (document.documentElement && document.documentElement.scrollTop) {  // Explorer 6 Strict
-            yScroll = document.documentElement.scrollTop;
-            xScroll = document.documentElement.scrollLeft;
-        } else if (document.body) {// all other Explorers
-            yScroll = document.body.scrollTop;
-            xScroll = document.body.scrollLeft;
-        }
+				// update global var
+				opts.activeImage = imageNum;	
 
-        var arrayPageScroll = new Array(xScroll, yScroll);
-        return arrayPageScroll;
-    };
+				// hide elements during transition
+				$('#loading').show();
+				$('#lightboxImage, #hoverNav, #prevLink, #nextLink').hide();
 
-    $.fn.lightbox.pause = function(ms) {
-        var date = new Date();
-        var curDate = null;
-        do { curDate = new Date(); }
-        while (curDate - date < ms);
-    };
+				// delay preloading image until navbar will slide up
+				if (opts.slideNavBar) { 
+					$('#imageDataContainer').hide();
+					$('#imageData').hide();
+				}
+				doChangeImage();
+			}
+		};
 
-    $.fn.lightbox.start = function(imageLink) {
+		function doChangeImage() {
+			var imgPreloader = new Image();
 
-        $("select, embed, object").hide();
-        var arrayPageSize = $.fn.lightbox.getPageSize();
-        $("#overlay").hide().css({ width: '100%', height: arrayPageSize[1] + 'px', opacity: opts.overlayOpacity }).fadeIn();
-        opts.imageArray = [];
-        imageNum = 0;
+			// once image is preloaded, resize image container
+			imgPreloader.onload = function() {
+				var newWidth = imgPreloader.width;
+				var newHeight = imgPreloader.height;
 
-        var anchors = document.getElementsByTagName(imageLink.tagName);
+				if (opts.scaleImages) {
+					newWidth = parseInt(opts.xScale * newWidth);
+					newHeight = parseInt(opts.yScale * newHeight);
+				}
 
-        // if image is NOT part of a set..
-        if (!imageLink.rel || (imageLink.rel == '')) {
-            // add single image to Lightbox.imageArray
-            opts.imageArray.push(new Array(imageLink.href, opts.displayTitle ? imageLink.title : ''));
-        } else {
-            // if image is part of a set..
-            $("a").each(function() {
-                if (this.href && (this.rel == imageLink.rel)) {
-                    opts.imageArray.push(new Array(this.href, opts.displayTitle ? this.title : ''));
+				if (opts.fitToScreen) {
+					var arrayPageSize = getPageSize();
+					var ratio;
+					var initialPageWidth = arrayPageSize[2] - 2 * opts.borderSize;
+					var initialPageHeight = arrayPageSize[3] - 200;
+
+					var dI = initialPageWidth/initialPageHeight;
+					var dP = imgPreloader.width/imgPreloader.height;
+
+					if ((imgPreloader.height > initialPageHeight) || (imgPreloader.width > initialPageWidth)) {
+						if (dI > dP) {
+							newWidth = parseInt((initialPageHeight/imgPreloader.height) * imgPreloader.width);
+							newHeight = initialPageHeight;
+						} else {
+							newHeight = parseInt((initialPageWidth/imgPreloader.width) * imgPreloader.height);
+							newWidth = initialPageWidth;
+						}
+					}
+				}
+
+				$('#lightboxImage').
+					attr('src', opts.imageArray[opts.activeImage][0]).
+					width(newWidth).
+					height(newHeight);
+
+					resizeImageContainer(newWidth, newHeight);
+				};
+
+				imgPreloader.src = opts.imageArray[opts.activeImage][0];
+			};
+
+			function end() {
+				disableKeyboardNav();
+				$('#lightbox').hide();
+				$('#overlay').fadeOut();
+				$('select, object, embed').show();
+			};
+
+			function preloadNeighborImages() {
+				var preloadPrevImage, preloadNextImage;
+				if (opts.loopImages && opts.imageArray.length > 1) {
+					preloadNextImage = new Image();
+					preloadNextImage.src = opts.imageArray[(opts.activeImage == (opts.imageArray.length - 1)) ? 0 : opts.activeImage + 1][0];
+
+					preloadPrevImage = new Image();
+					preloadPrevImage.src = opts.imageArray[(opts.activeImage == 0) ? (opts.imageArray.length - 1) : opts.activeImage - 1][0];
+				} else {
+					if ((opts.imageArray.length - 1) > opts.activeImage) {
+						preloadNextImage = new Image();
+						preloadNextImage.src = opts.imageArray[opts.activeImage + 1][0];
+					}
+					if (opts.activeImage > 0) {
+						preloadPrevImage = new Image();
+						preloadPrevImage.src = opts.imageArray[opts.activeImage - 1][0];
+					}
+				}
+			};
+
+			function resizeImageContainer(imgWidth, imgHeight) {
+				// get current width and height
+				opts.widthCurrent = $("#outerImageContainer").outerWidth();
+				opts.heightCurrent = $("#outerImageContainer").outerHeight();
+
+				// get new width and height
+				var widthNew = Math.max(350, imgWidth  + (opts.borderSize * 2));
+				var heightNew = (imgHeight  + (opts.borderSize * 2));
+
+				// calculate size difference between new and old image, and resize if necessary
+				wDiff = opts.widthCurrent - widthNew;
+				hDiff = opts.heightCurrent - heightNew;
+
+				$('#imageDataContainer').animate({width: widthNew},opts.resizeSpeed,'linear');
+				$('#outerImageContainer').animate({width: widthNew},opts.resizeSpeed,'linear', function() {
+					$('#outerImageContainer').animate({height: heightNew},opts.resizeSpeed,'linear', function() {
+						showImage();
+					});
+				});
+				
+				afterTimeout = function () {
+    				$('#prevLink').height(imgHeight);
+    				$('#nextLink').height(imgHeight);
+				};
+
+				// if new and old image are same size and no scaling transition is necessary,
+				// do a quick pause to prevent image flicker.
+				if((hDiff == 0) && (wDiff == 0)) {
+					setTimeout(afterTimeout, 100);
+				} else {
+				    // otherwise just trigger the height and width change
+				    afterTimeout();
+				}
+
+			};
+
+			function showImage() {
+				$('#loading').hide();
+				$('#lightboxImage').fadeIn("fast");
+				updateDetails();
+				preloadNeighborImages();
+
+				opts.inprogress = false;
+			};
+
+			function updateDetails() {
+				$('#numberDisplay').html('');
+
+				if (opts.imageArray[opts.activeImage][1]) {
+					$('#caption').html(opts.imageArray[opts.activeImage][1]).show();
+				}
+
+				// if image is part of set display 'Image x of x'
+				if (opts.imageArray.length > 1) {
+					var nav_html;
+
+					nav_html = opts.strings.image + (opts.activeImage + 1) + opts.strings.of + opts.imageArray.length;
+
+					if (opts.displayDownloadLink) {
+						nav_html += "<a href='" + opts.imageArray[opts.activeImage][0] + "'>" + opts.strings.download + "</a>";
+					}				
+
+					if (!opts.disableNavbarLinks) {
+						// display previous / next text links
+						if ((opts.activeImage) > 0 || opts.loopImages) {
+							nav_html = '<a title="' + opts.strings.prevLinkTitle + '" href="#" id="prevLinkText">' + opts.strings.prevLinkText + "</a>" + nav_html;
+						}
+
+						if (((opts.activeImage + 1) < opts.imageArray.length) || opts.loopImages) {
+							nav_html += '<a title="' + opts.strings.nextLinkTitle + '" href="#" id="nextLinkText">' + opts.strings.nextLinkText + "</a>";
+						}
+					}
+
+					$('#numberDisplay').html(nav_html).show();
+				}
+
+				if (opts.slideNavBar) {
+					$("#imageData").slideDown(opts.navBarSlideSpeed);
+				} else {
+					$("#imageData").show();
+				}
+
+				resizeOverlayToFitWindow();
+				updateNav();
+			};
+
+			/*
+			# Resize the sexy overlay to fit the constraints of your current viewing environment
+			# 
+			# This should now happen whenever a window is resized, so you should always see a full overlay
+			*/
+			function resizeOverlayToFitWindow(){
+				$('#overlay').css({width: $(document).width(), height: $(document).height()});
+				//  ^^^^^^^ <- sexy!
+			};
+
+			function updateNav() {
+				if (opts.imageArray.length > 1) {
+					$('#hoverNav').show();
+
+					// if loopImages is true, always show next and prev image buttons 
+					if(opts.loopImages) {
+						$('#prevLink,#prevLinkText').show().click(function() {
+							changeImage((opts.activeImage == 0) ? (opts.imageArray.length - 1) : opts.activeImage - 1); 
+							return false;
+						});
+
+						$('#nextLink,#nextLinkText').show().click(function() {
+							changeImage((opts.activeImage == (opts.imageArray.length - 1)) ? 0 : opts.activeImage + 1); 
+							return false;
+						});
+
+					} else {
+						// if not first image in set, display prev image button
+						if(opts.activeImage != 0) {
+							$('#prevLink,#prevLinkText').show().click(function() {
+								changeImage(opts.activeImage - 1); 
+								return false;
+							});
+						}
+
+						// if not last image in set, display next image button
+						if(opts.activeImage != (opts.imageArray.length - 1)) {
+							$('#nextLink,#nextLinkText').show().click(function() {
+								changeImage(opts.activeImage +1); 
+								return false;
+							});
+						}
+					}
+
+				}
+				enableKeyboardNav();
+
+			};
+
+			function keyboardAction(e) {
+				var o = e.data.opts;
+				var keycode = e.keyCode;
+				var escapeKey = 27;
+
+				var key = String.fromCharCode(keycode).toLowerCase();
+
+				// close lightbox
+				if ((key == 'x') || (key == 'o') || (key == 'c') || (keycode == escapeKey)) { 
+					end();
+
+					// display previous image	
+				} else if ((key == 'p') || (keycode == 37)) {  
+					if(o.loopImages) {
+						disableKeyboardNav();
+						changeImage((o.activeImage == 0) ? (o.imageArray.length - 1) : o.activeImage - 1);
+					} else if (o.activeImage != 0) {
+						disableKeyboardNav();
+						changeImage(o.activeImage - 1);
+					}
+
+					// display next image
+				} else if ((key == 'n') || (keycode == 39)) { 
+					if (opts.loopImages) {
+						disableKeyboardNav();
+						changeImage((o.activeImage == (o.imageArray.length - 1)) ? 0 : o.activeImage + 1);
+					} else if (o.activeImage != (o.imageArray.length - 1)) {
+						disableKeyboardNav();
+						changeImage(o.activeImage + 1);
+					}
+				}
+			};
+
+			function enableKeyboardNav() {
+				$(document).bind('keydown', {opts: opts}, keyboardAction);
+			};
+
+			function disableKeyboardNav() {
+				$(document).unbind('keydown');
+			};
+
+            function getImageSetOf(imageObject) {
+                var set_name = imageObject.rel;
+                if (!set_name || set_name == '') {
+                    set_name = $(imageObject).attr('data-lightbox-set');
                 }
-            })
+                return set_name;
+            };
+		};
 
+		$.fn.lightbox.parseJsonData = function(data) {
+			var imageArray = [];
 
-            for (i = 0; i < opts.imageArray.length; i++) {
-                for (j = opts.imageArray.length - 1; j > i; j--) {
-                    if (opts.imageArray[i][0] == opts.imageArray[j][0]) {
-                        opts.imageArray.splice(j, 1);
-                    }
-                }
-            }
-            while (opts.imageArray[imageNum][0] != imageLink.href) { imageNum++; }
-        }
+			$.each(data, function() {
+				imageArray.push(new Array(this.url, this.title));
+			});
 
-        // calculate top and left offset for the lightbox
-        var arrayPageScroll = $.fn.lightbox.getPageScroll();
-        var lightboxTop = arrayPageScroll[1] + (arrayPageSize[3] / 10);
-        var lightboxLeft = arrayPageScroll[0];
-        $('#lightbox').css({ top: lightboxTop + 'px', left: lightboxLeft + 'px' }).show();
+			return imageArray;
+		};
 
-
-        if (!opts.slideNavBar)
-            $('#imageData').hide();
-
-        $.fn.lightbox.changeImage(imageNum);
-
-    };
-
-    $.fn.lightbox.changeImage = function(imageNum) {
-        if (opts.inprogress == false) {
-            opts.inprogress = true;
-            opts.activeImage = imageNum; // update global var
-
-            // hide elements during transition
-            $('#loading').show();
-            $('#lightboxImage').hide();
-            $('#hoverNav').hide();
-            $('#prevLink').hide();
-            $('#nextLink').hide();
-
-            if (opts.slideNavBar) { // delay preloading image until navbar will slide up
-                // $('#imageDataContainer').slideUp(opts.navBarSlideSpeed, $.fn.doChangeImage);
-                $('#imageDataContainer').hide();
-                $('#imageData').hide();
-                $.fn.doChangeImage();
-            } else {
-                $.fn.doChangeImage();
-            }
-        }
-    };
-
-    $.fn.doChangeImage = function() {
-
-        imgPreloader = new Image();
-
-        // once image is preloaded, resize image container
-        imgPreloader.onload = function() {
-            var newWidth = imgPreloader.width;
-            var newHeight = imgPreloader.height;
-
-
-            if (opts.fitToScreen) {
-                var arrayPageSize = $.fn.lightbox.getPageSize();
-                var ratio;
-                var initialPageWidth = arrayPageSize[2] - 2 * opts.borderSize;
-                var initialPageHeight = arrayPageSize[3] - 200;
-
-                if (imgPreloader.height > initialPageHeight) {
-                    newWidth = parseInt((initialPageHeight / imgPreloader.height) * imgPreloader.width);
-                    newHeight = initialPageHeight;
-                }
-                else if (imgPreloader.width > initialPageWidth) {
-                    newHeight = parseInt((initialPageWidth / imgPreloader.width) * imgPreloader.height);
-                    newWidth = initialPageWidth;
-                }
-            }
-
-            $('#lightboxImage').attr('src', opts.imageArray[opts.activeImage][0])
-							   .width(newWidth).height(newHeight);
-            $.fn.lightbox.resizeImageContainer(newWidth, newHeight);
-        }
-
-        imgPreloader.src = opts.imageArray[opts.activeImage][0];
-    }
-
-    $.fn.lightbox.end = function() {
-        $.fn.lightbox.disableKeyboardNav();
-        $('#lightbox').hide();
-        $('#overlay').fadeOut();
-        $('select, object, embed').show();
-    };
-
-    $.fn.lightbox.preloadNeighborImages = function() {
-        if ((opts.imageArray.length - 1) > opts.activeImage) {
-            preloadNextImage = new Image();
-            preloadNextImage.src = opts.imageArray[opts.activeImage + 1][0];
-        }
-        if (opts.activeImage > 0) {
-            preloadPrevImage = new Image();
-            preloadPrevImage.src = opts.imageArray[opts.activeImage - 1][0];
-        }
-    };
-
-    $.fn.lightbox.keyboardAction = function(e) {
-        if (e == null) { // ie
-            var keycode = event.keyCode;
-            var escapeKey = 27;
-        } else { // mozilla
-            var keycode = e.keyCode;
-            var escapeKey = e.DOM_VK_ESCAPE;
-        }
-
-        var key = String.fromCharCode(keycode).toLowerCase();
-
-        if ((key == 'x') || (key == 'o') || (key == 'c') || (keycode == escapeKey)) { // close lightbox
-            $.fn.lightbox.end();
-        } else if ((key == 'p') || (keycode == 37)) { // display previous image
-            if (opts.activeImage != 0) {
-                $.fn.lightbox.disableKeyboardNav();
-                $.fn.lightbox.changeImage(opts.activeImage - 1);
-            }
-        } else if ((key == 'n') || (keycode == 39)) { // display next image
-            if (opts.activeImage != (opts.imageArray.length - 1)) {
-                $.fn.lightbox.disableKeyboardNav();
-                $.fn.lightbox.changeImage(opts.activeImage + 1);
-            }
-        }
-    };
-
-    $.fn.lightbox.resizeImageContainer = function(imgWidth, imgHeight) {
-        // get current width and height
-        opts.widthCurrent = document.getElementById('outerImageContainer').offsetWidth;
-        opts.heightCurrent = document.getElementById('outerImageContainer').offsetHeight;
-
-        // get new width and height
-        var widthNew = (imgWidth + (opts.borderSize * 2));
-        var heightNew = (imgHeight + (opts.borderSize * 2));
-
-        // scalars based on change from old to new
-        opts.xScale = (widthNew / opts.widthCurrent) * 100;
-        opts.yScale = (heightNew / opts.heightCurrent) * 100;
-
-        // calculate size difference between new and old image, and resize if necessary
-        wDiff = opts.widthCurrent - widthNew;
-        hDiff = opts.heightCurrent - heightNew;
-
-        $('#imageDataContainer').animate({ width: widthNew }, opts.resizeSpeed, 'linear');
-        $('#outerImageContainer').animate({ width: widthNew }, opts.resizeSpeed, 'linear', function() {
-            $('#outerImageContainer').animate({ height: heightNew }, opts.resizeSpeed, 'linear', function() {
-                $.fn.lightbox.showImage();
-            });
-        });
-
-
-        // if new and old image are same size and no scaling transition is necessary,
-        // do a quick pause to prevent image flicker.
-        if ((hDiff == 0) && (wDiff == 0)) {
-            if (jQuery.browser.msie) { $.fn.lightbox.pause(250); } else { $.fn.lightbox.pause(100); }
-        }
-
-        $('#prevLink').height(imgHeight);
-        $('#nextLink').height(imgHeight);
-    };
-
-    $.fn.lightbox.showImage = function() {
-        $('#loading').hide();
-        $('#loadingLink').hide();
-        $('#lightboxImage').fadeIn("fast");
-        $.fn.lightbox.updateDetails();
-        $.fn.lightbox.preloadNeighborImages();
-        opts.inprogress = false;
-    };
-
-    $.fn.lightbox.updateDetails = function() {
-
-        if (opts.imageArray[opts.activeImage][1]) {
-            $('#caption').html(opts.imageArray[opts.activeImage][1]).show();
-        }
-
-        // if image is part of set display 'Image x of x'
-        if (opts.imageArray.length > 1) {
-            var nav_html;
-
-            nav_html = opts.strings.image + (opts.activeImage + 1) + opts.strings.of + opts.imageArray.length;
-
-            // display previous / next text links
-            if ((opts.activeImage) > 0) {
-                nav_html = '<a title="' + opts.strings.prevLinkTitle + '" href="#" id="prevLinkText">' + opts.strings.prevLinkText + "</a>" + nav_html;
-            }
-
-            if ((opts.activeImage + 1) < opts.imageArray.length) {
-                nav_html += '<a title="' + opts.strings.nextLinkTitle + '" href="#" id="nextLinkText">' + opts.strings.nextLinkText + "</a>";
-            }
-
-            $('#numberDisplay').html(nav_html).show();
-        }
-
-        if (opts.slideNavBar) {
-            $("#imageData").slideDown(opts.navBarSlideSpeed);
-        } else {
-            $("#imageData").show();
-        }
-
-        var arrayPageSize = $.fn.lightbox.getPageSize();
-        $('#overlay').height(arrayPageSize[1]);
-        $.fn.lightbox.updateNav();
-    };
-
-    $.fn.lightbox.updateNav = function() {
-        $('#hoverNav').show();
-
-        // if not first image in set, display prev image button
-        if (opts.activeImage != 0) {
-            $('#prevLink,#prevLinkText').show().click(function() {
-                $.fn.lightbox.changeImage(opts.activeImage - 1); return false;
-            });
-        }
-
-        // if not last image in set, display next image button
-        if (opts.activeImage != (opts.imageArray.length - 1)) {
-            $('#nextLink,#nextLinkText').show().click(function() {
-
-                $.fn.lightbox.changeImage(opts.activeImage + 1); return false;
-            });
-        }
-
-        $.fn.lightbox.enableKeyboardNav();
-    };
-
-
-    $.fn.lightbox.enableKeyboardNav = function() {
-        document.onkeydown = $.fn.lightbox.keyboardAction;
-    };
-
-    $.fn.lightbox.disableKeyboardNav = function() {
-        document.onkeydown = '';
-    };
-
-    $.fn.lightbox.defaults = {
-        fileLoadingImage: 'images/loading.gif',
-        fileBottomNavCloseImage: 'images/closelabel.gif',
-        overlayOpacity: 0.8,
-        borderSize: 10,
-        imageArray: new Array,
-        activeImage: null,
-        inprogress: false,
-        resizeSpeed: 350,
-        widthCurrent: 250,
-        heightCurrent: 250,
-        xScale: 1,
-        yScale: 1,
-        displayTitle: true,
-        navbarOnTop: false,
-        slideNavBar: false, // slide nav bar up/down between image resizing transitions
-        navBarSlideSpeed: 350,
-        displayHelp: false,
-        strings: {
-            help: ' \u2190 / P - previous image\u00a0\u00a0\u00a0\u00a0\u2192 / N - next image\u00a0\u00a0\u00a0\u00a0ESC / X - close image gallery',
-            prevLinkTitle: 'previous image',
-            nextLinkTitle: 'next image',
-            prevLinkText: '&laquo; Previous',
-            nextLinkText: 'Next &raquo;',
-            closeTitle: 'close image gallery',
-            image: 'Image ',
-            of: ' of '
-        },
-        fitToScreen: false		// resize images if they are bigger than window
-    };
+		$.fn.lightbox.defaults = {
+		  triggerEvent: "click",
+			allSet: false,
+			fileLoadingImage: 'images/loading.gif',
+			fileBottomNavCloseImage: 'images/closelabel.gif',
+			overlayOpacity: 0.6,
+			borderSize: 10,
+			imageArray: new Array,
+			activeImage: null,
+			imageScroll: false,
+			inprogress: false,
+			resizeSpeed: 350,
+			widthCurrent: 250,
+			heightCurrent: 250,
+			scaleImages: false,
+			xScale: 1,
+			yScale: 1,
+			displayTitle: true,
+			navbarOnTop: false,
+			displayDownloadLink: false,
+			slideNavBar: false, 
+			navBarSlideSpeed: 350,
+			displayHelp: false,
+			strings: {
+				help: ' \u2190 / P - previous image\u00a0\u00a0\u00a0\u00a0\u2192 / N - next image\u00a0\u00a0\u00a0\u00a0ESC / X - close image gallery',
+				prevLinkTitle: 'previous image',
+				nextLinkTitle: 'next image',
+				prevLinkText:  '&laquo; Previous',
+				nextLinkText:  'Next &raquo;',
+				closeTitle: 'close image gallery',
+				image: 'Image ',
+				of: ' of ',
+				download: 'Download'
+			},
+			fitToScreen: false,		
+			disableNavbarLinks: false,
+			loopImages: false,
+			imageClickClose: true,
+			jsonData: null,
+			jsonDataParser: null
+		};	
 })(jQuery);

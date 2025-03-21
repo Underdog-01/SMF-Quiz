@@ -58,7 +58,7 @@ function template_main()
 
 	if ($context['current_subaction'] != 'quizimporter')
 		echo '	</form>
-<table width="100%"><tr><td align="center"><a href="http://custom.simplemachines.org/mods/index.php?mod=1650" title="Free SMF Mods" target="_blank" class="smalltext">SMFQuiz ' . $modSettings["SMFQuiz_version"] . ' &copy; 2009, SMFModding</a></td></tr></table>';
+<table width="100%"><tr><td align="center"><a href="http://custom.simplemachines.org/mods/index.php?mod=1650" title="Free SMF Mods" target="_blank" class="smalltext">SMFQuiz ' . $modSettings["smf_quiz_version"] . ' &copy; 2009, SMFModding</a></td></tr></table>';
 }
 
 function template_maintenance()
@@ -92,7 +92,7 @@ function template_maintenance()
 
 		if ($orphanCount > 0)
 		{
-			echo '						
+			echo '
 											<tr>
 												<td><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['QuestionId'] , '</b></td>
 												<td><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['QuizId'] , '</b></td>
@@ -119,7 +119,7 @@ function template_maintenance()
 			';
 		}
 		else
-			echo '							
+			echo '
 											<tr>
 												<td colspan="4">' , $txt['SMFQuizAdmin_Maintenance_Page']['NoOrphansFound'] , '</td>
 											</tr>';
@@ -135,7 +135,7 @@ function template_maintenance()
 
 		if ($orphanCount > 0)
 		{
-			echo '						
+			echo '
 											<tr>
 												<td><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['AnswerId'] , '</b></td>
 												<td><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['QuestionId'] , '</b></td>
@@ -162,7 +162,7 @@ function template_maintenance()
 			';
 		}
 		else
-			echo '							
+			echo '
 											<tr>
 												<td colspan="4">' , $txt['SMFQuizAdmin_Maintenance_Page']['NoOrphansFound'] , '</td>
 											</tr>';
@@ -178,7 +178,7 @@ function template_maintenance()
 
 		if ($orphanCount > 0)
 		{
-			echo '						
+			echo '
 											<tr>
 												<td><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['QuizResultId'] , '</b></td>
 												<td><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['QuizId'] , '</b></td>
@@ -205,7 +205,7 @@ function template_maintenance()
 			';
 		}
 		else
-			echo '							
+			echo '
 											<tr>
 												<td colspan="4">' , $txt['SMFQuizAdmin_Maintenance_Page']['NoOrphansFound'] , '</td>
 											</tr>';
@@ -221,7 +221,7 @@ function template_maintenance()
 
 		if ($orphanCount > 0)
 		{
-			echo '						
+			echo '
 											<tr>
 												<td><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['CategoryId'] , '</b></td>
 												<td><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['ParentId'] , '</b></td>
@@ -248,7 +248,7 @@ function template_maintenance()
 			';
 		}
 		else
-			echo '							
+			echo '
 											<tr>
 												<td colspan="4">' , $txt['SMFQuizAdmin_Maintenance_Page']['NoOrphansFound'] , '</td>
 											</tr>
@@ -345,7 +345,7 @@ function template_questions()
 {
 	global $context;
 
-	// Although we know we are in the category section, we need to see what action is being taken to determine which template to 
+	// Although we know we are in the category section, we need to see what action is being taken to determine which template to
 	// show in the category section
 	switch ($context['SMFQuiz']['Action'])
 	{
@@ -367,7 +367,7 @@ function template_categories()
 {
 	global $context;
 
-	// Although we know we are in the category section, we need to see what action is being taken to determine which template to 
+	// Although we know we are in the category section, we need to see what action is being taken to determine which template to
 	// show in the category section
 	$context['SMFQuiz']['Action'] = isset($context['SMFQuiz']['Action']) ? $context['SMFQuiz']['Action'] : 'default';
 	switch ($context['SMFQuiz']['Action'])
@@ -711,7 +711,7 @@ function template_show_questions()
 	global $txt, $context, $settings, $scripturl, $smcFunc;
 	$pageCount = 1;
 	$page = isset($context['SMFQuiz']['page']) ? $context['SMFQuiz']['page'] : 1;
-	$orderDir = isset(	$context['SMFQuiz']['orderDir']) ? $context['SMFQuiz']['orderDir'] : 0;
+	$orderDir = isset(	$context['SMFQuiz']['orderDir']) ? $context['SMFQuiz']['orderDir'] : 'down';
 
 	if (isset($context['SMFQuiz']['questionCount']))
 		foreach ($context['SMFQuiz']['questionCount'] as $row)
@@ -726,9 +726,9 @@ function template_show_questions()
 							<tbody>
 								<tr class="titlebg">
 									<td align="center"><input type="checkbox" name="chkAll" onclick="checkAll(this.form, this.form.chkAll.checked);"/></td>
-									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderBy=Question;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'Question' ? '<img alt="" src="' . $settings['images_url'] . '/sort_' . $orderDir . '.gif"/> ' : '' , $txt['SMFQuiz_Common']['Question'] , '</a></td>
-									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderBy=Type;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'Type' ? '<img alt="" src="' . $settings['images_url'] . '/sort_' . $orderDir . '.gif"/> ' : '' , $txt['SMFQuiz_Common']['Type'] , '</a></td>
-									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderBy=Quiz;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'Quiz' ? '<img alt="" src="' . $settings['images_url'] . '/sort_' . $orderDir . '.gif"/> ' : '' , $txt['SMFQuiz_Common']['Quiz'] , '</a></td>
+									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderBy=Question;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'Question' ? '<img alt="" src="' . $settings['default_images_url'] . '/quiz_images/sort_' . $orderDir . '.png"/> ' : '' , $txt['SMFQuiz_Common']['Question'] , '</a></td>
+									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderBy=Type;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'Type' ? '<img alt="" src="' . $settings['default_images_url'] . '/quiz_images/sort_' . $orderDir . '.png"/> ' : '' , $txt['SMFQuiz_Common']['Type'] , '</a></td>
+									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderBy=Quiz;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'Quiz' ? '<img alt="" src="' . $settings['default_images_url'] . '/quiz_images/sort_' . $orderDir . '.png"/> ' : '' , $txt['SMFQuiz_Common']['Quiz'] , '</a></td>
 								</tr>
 	';
 	echo '
@@ -736,16 +736,16 @@ function template_show_questions()
 										<td colspan="8">
 											<b>' , $txt['SMFQuiz_Common']['Page'] , ':</b> ' , $page , '/' , $pageCount , ' ';
 	if ($pageCount > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';page=1;orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '"><<</a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';page=1;orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&lt;&lt;</a> ';
 
 	if ($page > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';page=' , $page - 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '"><</a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';page=' , $page - 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&lt;</a> ';
 
 	if ($page < $pageCount)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';page=' , $page + 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">></a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';page=' , $page + 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&gt;</a> ';
 
 	if ($pageCount > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';page=' , $pageCount , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">>></a>';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';page=' , $pageCount , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&gt;&gt;</a>';
 
 	echo '
 										</td>
@@ -769,16 +769,16 @@ function template_show_questions()
 										<td colspan="8">
 											<b>' , $txt['SMFQuiz_Common']['Page'] , ':</b> ' , $page , '/' , $pageCount , ' ';
 	if ($pageCount > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=1;orderBy=' , $context['SMFQuiz']['orderBy'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '"><<</a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=1;orderBy=' , $context['SMFQuiz']['orderBy'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&lt;&lt;</a> ';
 
 	if ($page > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page - 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '"><</a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page - 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&lt;</a> ';
 
 	if ($page < $pageCount)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page + 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">></a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page + 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&gt;</a> ';
 
 	if ($pageCount > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $pageCount , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">>></a>';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $pageCount , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';id_quiz=' , $context['SMFQuiz']['id_quiz'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&gt;&gt;</a>';
 
 	echo '
 										</td>
@@ -801,7 +801,7 @@ function template_show_categories()
 
 	$pageCount = 1;
 	$page = isset($context['SMFQuiz']['page']) ? $context['SMFQuiz']['page'] : 1;
-	$orderDir = isset($context['SMFQuiz']['orderDir']) ? $context['SMFQuiz']['orderDir'] : 0;
+	$orderDir = isset($context['SMFQuiz']['orderDir']) ? $context['SMFQuiz']['orderDir'] : 'down';
 
 	if (isset($context['SMFQuiz']['categoryCount']))
 		foreach ($context['SMFQuiz']['categoryCount'] as $row)
@@ -815,9 +815,9 @@ function template_show_categories()
 							<tbody>
 								<tr class="titlebg">
 									<td align="center"><input type="checkbox" name="chkAll" onclick="checkAll(this.form, this.form.chkAll.checked);"/></td>
-									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';orderBy=Name;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'name' ? '<img src="' . $settings['images_url'] . '/sort_' . $orderDir . '.gif"/> ' : '' , $txt['SMFQuiz_Common']['Title'] , '</a></td>
-									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';orderBy=Description;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'description' ? '<img src="' . $settings['images_url'] . '/sort_' . $orderDir . '.gif"/> ' : '' , $txt['SMFQuiz_Common']['Description'] , '</a></td>
-									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';orderBy=Parent;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'Parent' ? '<img src="' . $settings['images_url'] . '/sort_' . $orderDir . '.gif"/> ' : '' , $txt['SMFQuiz_Common']['Parent'] , '</a></td>
+									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';orderBy=Name;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'name' ? '<img src="' . $settings['default_images_url'] . '/quiz_images/sort_' . $orderDir . '.png"/> ' : '' , $txt['SMFQuiz_Common']['Title'] , '</a></td>
+									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';orderBy=Description;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'description' ? '<img src="' . $settings['default_images_url'] . '/quiz_images/sort_' . $orderDir . '.png"/> ' : '' , $txt['SMFQuiz_Common']['Description'] , '</a></td>
+									<td align="left"><a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page , ';orderBy=Parent;orderDir=' , $orderDir , '">', isset($context['SMFQuiz']['orderBy']) && $context['SMFQuiz']['orderBy'] == 'Parent' ? '<img src="' . $settings['default_images_url'] . '/quiz_images/sort_' . $orderDir . '.png"/> ' : '' , $txt['SMFQuiz_Common']['Parent'] , '</a></td>
 								</tr>
 	';
 	echo '
@@ -825,16 +825,16 @@ function template_show_categories()
 										<td colspan="4">
 											<b>' , $txt['SMFQuiz_Common']['Page'] , ':</b> ' , $page , '/' , $pageCount , ' ';
 	if ($pageCount > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=1;orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '"><<</a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=1;orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&lt;&lt;</a> ';
 
 	if ($page > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page - 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '"><</a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page - 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&lt;</a> ';
 
 	if ($page < $pageCount)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page + 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">></a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page + 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&gt;</a> ';
 
 	if ($pageCount > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $pageCount , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">>></a>';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $pageCount , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&gt;&gt;</a>';
 
 	echo '
 										</td>
@@ -858,16 +858,16 @@ function template_show_categories()
 										<td colspan="4">
 											<b>' , $txt['SMFQuiz_Common']['Page'] , ':</b> ' , $page , '/' , $pageCount , ' ';
 	if ($pageCount > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=1;orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '"><<</a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=1;orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&lt;&lt;</a> ';
 
 	if ($page > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page - 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '"><</a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page - 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&lt;</a> ';
 
 	if ($page < $pageCount)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page + 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">></a> ';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $page + 1 , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&gt;</a> ';
 
 	if ($pageCount > 1)
-		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $pageCount , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">>></a>';
+		echo '<a href="' , $scripturl , '?action=' , $context['current_action'] , ';area=' , $context['admin_area'] , ';sa=' , $context['current_subaction'] , ';page=' , $pageCount , ';orderBy=' , $context['SMFQuiz']['orderBy'] , ';orderDir=' , $orderDir == 'up' ? 'down' : 'up' , '">&gt;&gt;</a>';
 
 	echo '
 										</td>
@@ -893,7 +893,7 @@ function template_quizes()
 {
 	global $context;
 
-	// Although we know we are in the quiz section, we need to see what action is being taken to determine which template to 
+	// Although we know we are in the quiz section, we need to see what action is being taken to determine which template to
 	// show in the quiz section
 	switch ($context['SMFQuiz']['Action'])
 	{
@@ -916,7 +916,7 @@ function template_quiz_leagues()
 {
 	global $context;
 
-	// Although we know we are in the quiz section, we need to see what action is being taken to determine which template to 
+	// Although we know we are in the quiz section, we need to see what action is being taken to determine which template to
 	// show in the quiz section
 	switch ($context['SMFQuiz']['Action'])
 	{
@@ -1111,7 +1111,7 @@ function template_new_quiz_league()
 									<td>
 										<select name="categories[]" multiple="multiple" size="10">
 											<option value="0" selected="selected">All</option>
-	';		
+	';
 	foreach ($context['SMFQuiz']['categories'] as $row)
 		echo '<option value="' , $row['id_category'] , '">' , format_string($row['name']) , ' (' , $row['parent_name'] , ')</option>';
 
@@ -1172,7 +1172,7 @@ function template_edit_quiz_league()
 
 	foreach ($context['SMFQuiz']['quizLeague'] as $row)
 	{
-		$categoriesArray = explode(',', $row['categories']); 
+		$categoriesArray = explode(',', $row['categories']);
 		echo '
                 <input type="hidden" name="id_quiz_league" value="\' , $_GET[\'id\'] , \'"/>
 			<table width="90%" border="0" cellspacing="0" cellpadding="0" class="tborder" align="center">
@@ -1196,7 +1196,7 @@ function template_edit_quiz_league()
 										<td>
 											<select name="categories[]" multiple="multiple" size="10">
 												<option value="0" ' , in_array(0, $categoriesArray) ? 'selected' : '' , '>All</option>
-		';		
+		';
 		foreach ($context['SMFQuiz']['categories'] as $categoryRow)
 			echo '<option value="' , $categoryRow['id_category'] , '" ' , in_array($categoryRow['id_category'], $categoriesArray) ? 'selected' : '' , '>' , format_string($categoryRow['name']) , ' (' , format_string($categoryRow['parent_name']) , ')</option>';
 
@@ -1291,7 +1291,7 @@ function template_show_quizes()
 		elseif ($column['selected'])
 			echo '
 			<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
+				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['default_images_url'] . '/quiz_images/sort_' . $context['sort_direction'] . '.png" alt="" /></a></td>';
 		// This is just some column... show the link and be done with it.
 		else
 			echo '
@@ -1368,9 +1368,9 @@ function template_show_disputes()
 
 	echo '
 	<div id="disputeDialog" title="Dispute Response" style="display:none; font-size: 65%" class="ui-dialog-content ui-widget-content">
-			<p>Enter your response in the area below and click the appropriate button. A PM will be sent to the member.</p>
+			<p>' . $txt['SMFQuizAdmin_QuizDisputes_Page']['DisputeQuizAdmin'] . '</p>
 			<!-- @TODO localization + action for the form! -->
-			<form>
+			<form id="QuizDisputeResponseForm">
 				<label for="disputeText">Response:</label>
 				<textarea rows="10" cols="40" id="disputeText"></textarea>
 				<input type="hidden" id="disputeId"/>
@@ -1384,10 +1384,10 @@ function template_show_disputes()
 	';
 
 	echo '
-		<table class="bordercolor" border="0" cellpadding="4" cellspacing="1" width="100%">
-			<tbody>
-				<tr class="', empty($settings['use_tabs']) ? 'titlebg' : 'catbg3', '">
-	';
+		<form id="QuizDisputeDelForm" action="' . $scripturl . '?action=admin;area=quiz;sa=deldisputes">
+			<table class="bordercolor" border="0" cellpadding="4" cellspacing="1" width="100%">
+				<tbody>
+					<tr class="', empty($settings['use_tabs']) ? 'titlebg' : 'catbg3', '">';
 
 	// Display each of the column headers of the table.
 	foreach ($context['columns'] as $column)
@@ -1395,46 +1395,60 @@ function template_show_disputes()
 		// We're not able (through the template) to sort the search disputes right now...
 		if (isset($context['old_search']))
 			echo '
-			<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
-				', $column['label'], '</td>';
+						<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
+							', $column['label'], '
+						</td>';
 		// This is a selected solumn, so underline it or some such.
 		elseif ($column['selected'])
 			echo '
-			<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
+						<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
+							<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['default_images_url'] . '/quiz_images/sort_' . $context['sort_direction'] . '.png" alt="" /></a>
+						</td>';
 		// This is just some column... show the link and be done with it.
 		else
 			echo '
-			<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
-				', $column['link'], '</td>';
+						<td', isset($column['width']) ? ' width="' . $column['width'] . '"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
+							', $column['link'], '
+						</td>';
 	}
-	echo '</tr>';
+	echo '
+					</tr>';
 	if (sizeof($context['SMFQuiz']['disputes']) > 0)
 	{
-		foreach ($context['SMFQuiz']['disputes'] as $row)
-			echo '					<tr class="windowbg">
-										<td align="center" width="5%"><input type="checkbox" name="quiz_dispute' , $row['id_quiz_dispute'] , '"/></td>
-										<td align="left">' , date("M j, H:i", $row['updated']) , '</td>
-										<td align="left"><a href="' , $scripturl , '?action=SMFQuiz;sa=userdetails;id_user=' , $row['id_member'] , '">' , $row['real_name'] , '</a></td>
-										<td align="left"><a href="' , $scripturl , '?action=admin;area=quiz;sa=quizes;id=' , $row['id_quiz'] , '">' , format_string($row['title']) , '</a></td>
-										<td align="left"><a href="' , $scripturl , '?action=admin;area=quiz;sa=questions;id=' , $row['id_question'] , '">' , format_string($row['question_text']) , '</a></td>
-										<td align="left" id="reason' , $row['id_quiz_dispute'] , '">' , format_string($row['reason']) , '</td>
-										<td align="left" width="4%"><img id="' , $row['id_quiz_dispute'] , '" src="' , $settings['default_images_url'] , '/quiz_images/comments.png" class="disputeDialog" style="cursor:pointer" alt="respond" title="' , $txt['SMFQuizAdmin_QuizDisputes_Page']['RespondToDispute'] , '" align="top" /></td>
-									</tr>';
+		foreach ($context['SMFQuiz']['disputes'] as $row) {
+			echo '
+					<tr class="windowbg">
+						<td align="center" width="5%">
+							<input class="quiz_disputes" type="checkbox" id="' . $row['id_quiz_dispute'] . '" name="quiz_dispute' . $row['id_quiz_dispute'] . '"/>
+						</td>
+						<td align="left">' , date("M j, H:i", $row['updated']) , '</td>
+						<td align="left"><a href="' , $scripturl , '?action=SMFQuiz;sa=userdetails;id_user=' , $row['id_member'] , '">' , $row['real_name'] , '</a></td>
+						<td align="left"><a href="' , $scripturl , '?action=admin;area=quiz;sa=quizes;id=' , $row['id_quiz'] , '">' , format_string($row['title']) , '</a></td>
+						<td align="left"><a href="' , $scripturl , '?action=admin;area=quiz;sa=questions;id=' , $row['id_question'] , '">' , format_string($row['question_text']) , '</a></td>
+						<td align="left" id="reason' , $row['id_quiz_dispute'] , '">' , format_string($row['reason']) , '</td>
+						<td align="left" width="4%">
+							<img id="' , $row['id_quiz_dispute'] , '" src="' , $settings['default_images_url'] , '/quiz_images/comments.png" class="disputeDialog" style="cursor:pointer" alt="respond" title="' , $txt['SMFQuizAdmin_QuizDisputes_Page']['RespondToDispute'] , '" align="top" />
+						</td>
+					</tr>';
+		}
 	}
 	// @TODO localization
 	else
-		echo ' 						<tr class="windowbg"><td colspan="10" align="left">There are no Quiz Disputes</td></tr>';
+		echo '
+					<tr class="windowbg"><td colspan="10" align="left">There are no Quiz Disputes</td></tr>';
 
 	echo '
-									<tr class="windowbg">
-										<td colspan="10">
-											<input type="submit" class="button" name="DeleteQuizDispute" value="' , $txt['SMFQuizAdmin_QuizDisputes_Page']['DeleteQuizDispute'] , '"/>
-										</td>
-									</tr>
-							</tbody>
-						</table>
-	';
+				</tbody>
+			</table>
+			<div style="height: 4rem;min-height: 2rem;max-height: 2rem;">
+				<div id="DeleteQuizDispute" class="button">' , $txt['SMFQuizAdmin_QuizDisputes_Page']['DeleteQuizDispute'] , '</div>
+			</div>
+			<input type="hidden" name="DeleteQuizDispute" value="' , $txt['SMFQuizAdmin_QuizDisputes_Page']['DeleteQuizDispute'] , '">
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			<div style="display: none;" id="quizReportDialog" title="Confirmation Required">
+				' . $txt['SMFQuizAdmin_QuizDisputes_Page']['DeleteQuizDisputeConfirm'] . '
+			</div>
+		</form>';
 }
 
 function template_show_results()
@@ -1467,7 +1481,7 @@ function template_show_results()
 		elseif ($column['selected'])
 			echo '
 			<td style="width: auto;"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . ' nowrap="nowrap">
-				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></td>';
+				<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['default_images_url'] . '/quiz_images/sort_' . $context['sort_direction'] . '.png" alt="" /></a></td>';
 		// This is just some column... show the link and be done with it.
 		else
 			echo '
@@ -1695,15 +1709,15 @@ function template_admin_center()
 						<div id="version_details">
 							<b>' , $txt['SMFQuizAdmin_AdminCenter_Page']['Statistics'] , ':</b><br />
 							' , $txt['SMFQuizAdmin_AdminCenter_Page']['TotalQuizes'] , ':
-							<i id="yourVersion" style="white-space: nowrap;">' , $context['SMFQuiz_totalQuizes']  , '</i><br />
+							<i id="yourVersion" style="white-space: nowrap;">' . (!empty($context['SMFQuiz_totalQuizes']) ? $context['SMFQuiz_totalQuizes'] : '0') . '</i><br />
 							' , $txt['SMFQuizAdmin_AdminCenter_Page']['QuizesNotEnabled'] , ':
-							<i id="yourVersion" style="white-space: nowrap;">' , $context['SMFQuiz_totalDisabledQuizes'] > 0 ? '<font color="red">' . $context['SMFQuiz_totalDisabledQuizes'] . '</font> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;disabled">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<font color="green">0</font>' , '</i><br />
+							<i id="yourVersion" style="white-space: nowrap;">' . (!empty($context['SMFQuiz_totalDisabledQuizes']) ? '<font color="red">' . $context['SMFQuiz_totalDisabledQuizes'] . '</font> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;disabled">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<font color="green">0</font>') . '</i><br />
 							' , $txt['SMFQuizAdmin_AdminCenter_Page']['QuizesWaitingReview'] , ':
-							<i id="yourVersion" style="white-space: nowrap;">' , $context['SMFQuiz_totalQuizesWaitingReview'] > 0 ? '<font color="red">' . $context['SMFQuiz_totalQuizesWaitingReview'] . '</font> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;review">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<font color="green">0</font>' , '</i><br />
+							<i id="yourVersion" style="white-space: nowrap;">' . (!empty($context['SMFQuiz_totalQuizesWaitingReview']) ? '<font color="red">' . $context['SMFQuiz_totalQuizesWaitingReview'] . '</font> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;review">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<font color="green">0</font>') . '</i><br />
 							' , $txt['SMFQuizAdmin_AdminCenter_Page']['TotalResults'] , ':
-							<i id="yourVersion" style="white-space: nowrap;">' , $context['SMFQuiz_totalResults']  , '</i><br />
+							<i id="yourVersion" style="white-space: nowrap;">' . (!empty($context['SMFQuiz_totalResults']) ? $context['SMFQuiz_totalResults'] : '0') . '</i><br />
 							' , $txt['SMFQuizAdmin_AdminCenter_Page']['OutstandingDisputes'] , ':
-							<i id="yourVersion" style="white-space: nowrap;">' , $context['SMFQuiz_totalDisputes'] > 0 ? '<font color="red">' . $context['SMFQuiz_totalDisputes'] . '</font> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=disputes">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<font color="green">0</font>' , '</i><br />
+							<i id="yourVersion" style="white-space: nowrap;">' , !empty($context['SMFQuiz_totalDisputes']) ? '<font color="red">' . $context['SMFQuiz_totalDisputes'] . '</font> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=disputes">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<font color="green">0</font>' , '</i><br />
 						</div>
 					</div>
 					<span class="botslice"><span></span></span>
@@ -1722,7 +1736,7 @@ function template_admin_center()
 							<b>' , $txt['SMFQuizAdmin_AdminCenter_Page']['VersionInformation'] , ':</b><br />
 							' , $txt['SMFQuizAdmin_AdminCenter_Page']['ModVersion'] , ':
 							<i id="yourVersion" style="white-space: nowrap;">' , $modSettings['SMFQuiz_version'] , '</i><br />
-							' , !empty($context['SMFQuiz_currentVersion']) ? $txt['SMFQuizAdmin_AdminCenter_Page']['CurrentSMFQuizVersion'] . ': 
+							' , !empty($context['SMFQuiz_currentVersion']) ? $txt['SMFQuizAdmin_AdminCenter_Page']['CurrentSMFQuizVersion'] . ':
 							<i id="smfVersion" style="white-space: nowrap;">' . ($context['SMFQuiz_currentVersion'] == $modSettings['SMFQuiz_version'] ? '<font color="green">' : '<font color="red">') . $context['SMFQuiz_currentVersion'] . '</font>' . '</i>' : '', '
 						</div>
 					</div>

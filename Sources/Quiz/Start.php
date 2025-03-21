@@ -82,6 +82,7 @@ function loadQuiz ()
 	$xmlReturn .= '</smfQuiz>';
 
 	header("Content-Type: text/xml");
+
 	echo $xmlReturn;
 	die();
 }
@@ -153,7 +154,7 @@ function QuizSessionExists($id_user, $id_quiz)
 			//				question_count = question_count + 1
 			//	WHERE		id_quiz_session = '{$sessionRow['id_quiz_session']}'
 			//";
-			//$smcFunc['db_query']('', $updateSessionQuery);	
+			//$smcFunc['db_query']('', $updateSessionQuery);
 		}
 	}
 	$smcFunc['db_free_result']($sessionResult);
@@ -257,6 +258,7 @@ function GetQuizLeagueDetails($id_quiz_league, $id_user, $id_session, $debugOn)
 		$xmlFragment .= '<show_answers>' . $leagueRow["show_answers"] . '</show_answers>';
 		$xmlFragment .= '<current_round>' . $leagueRow["current_round"] . '</current_round>';
 		$xmlFragment .= '<image></image>';
+
 	}
 	$smcFunc['db_free_result']($leagueResult);
 	$xmlFragment .= '
@@ -272,10 +274,11 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 {
 	global $smcFunc;
 
+	//$timesPlayed['player_limit'] = 0;
 	// Get the quiz details, but only if they have not gone beyond the count of plays
 	$leagueResult = $smcFunc['db_query']('', '
 		SELECT Q.title, Q.description, Q.play_limit, Q.seconds_per_question, Q.show_answers, Q.image,
-			Q.creator_id
+			Q.creator_id, Q.enabled, Q.play_limit, Q.top_user_id
 		FROM {db_prefix}quiz Q
 		WHERE Q.id_quiz = {int:id_quiz}',
 		array(
@@ -299,21 +302,22 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 		$smcFunc['db_free_result']($questionsData);
 
 		$quizPlays = $smcFunc['db_query']('', '
-			SELECT COUNT(*) AS user_plays
+			SELECT player_limit
 			FROM {db_prefix}quiz_result
 			WHERE id_quiz = {int:id_quiz}
-				AND id_user = {int:id_user}',
+				AND id_user = {int:id_user}
+			LIMIT 1',
 			array(
 				'id_user' => $id_user,
 				'id_quiz' => $id_quiz,
 			)
 		);
-		list($timesPlayed) = $smcFunc['db_fetch_row']($quizPlays);
+		$timesPlayed = $smcFunc['db_fetch_row']($quizPlays);
 		$smcFunc['db_free_result']($quizPlays);
 	}
 
 	$smcFunc['db_free_result']($leagueResult);
-
+	
 	// Firstly, build the league details
 	// @TODO move to a template!
 	$xmlFragment = '<quizDetail>';
@@ -323,15 +327,19 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 		$xmlFragment .= '<id_session>' . $id_session . '</id_session>';
 		$xmlFragment .= '<creator_id>' . $leagueRow["creator_id"] . '</creator_id>';
 		$xmlFragment .= '<description>' . xmlencode(ajax_format_string($leagueRow["description"])) . '</description>';
-		$xmlFragment .= '<play_limit>' . $leagueRow["play_limit"] . 	'</play_limit>';
 		$xmlFragment .= '<questions_per_session>' . $questions_per_session . '</questions_per_session>';
 		$xmlFragment .= '<seconds_per_question>' . $leagueRow["seconds_per_question"] . '</seconds_per_question>';
 		$xmlFragment .= '<show_answers>' . $leagueRow["show_answers"] . '</show_answers>';
 		$xmlFragment .= '<image>' . $leagueRow["image"] . '</image>';
+		$xmlFragment .= '<enabled>' . (!empty($leagueRow["enabled"]) ? '1' : '0') . '</enabled>';
+		$xmlFragment .= '<play_limit>' . $leagueRow["play_limit"] . 	'</play_limit>';
 	}
 
 	$xmlFragment .= '</quizDetail>';
-	if ($rows > 0 && (empty($timesPlayed) || ($leagueRow['play_limit'] > $timesPlayed)))
+	if ($leagueRow["top_user_id"] == (int)$id_user) {
+		$xmlFragment .= '<quizResults><topReached>1</topReached></quizResults>';
+	}
+	elseif ($rows > 0 && (empty($timesPlayed) || ($leagueRow['play_limit'] > $timesPlayed[0])))
 	{
 		$xmlFragment .= '<quizResults>';
 
@@ -364,6 +372,9 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 		$smcFunc['db_free_result']($resultsResult);
 
 		$xmlFragment .= '</quizResults>';
+	}	
+	else {
+		$xmlFragment .= '<quizResults><limitReached>1</limitReached></quizResults>';
 	}
 
 	return $xmlFragment;

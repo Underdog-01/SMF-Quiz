@@ -6,9 +6,10 @@ if (!defined('SMF'))
 
 // @TODO to remove
 // Load the common language file
+global $txt;
 loadLanguage('Quiz/Common');
 
-$txt['SMFQuiz'] = 'SMF Quiz';
+$txt['SMFQuiz'] = 'Quiz';
 $txt['SMFQuizMod'] = 'The SMF Quiz Mod';
 $txt['SMFQuizModDescription'] = 'This page allows you to configure the SMF Quiz modification';
 $txt['AlertOnePackage'] = 'You must select at least one Quiz to package';
@@ -65,6 +66,8 @@ $txt['SMFQuizAdmin_AdminCenter_Page'] = array(
 $txt['SMFQuizAdmin_QuizDisputes_Page'] = array(
 	'DeleteQuizDispute' => 'Delete Quiz Dispute',
 	'RespondToDispute' => 'Respond to Dispute',
+	'DisputeQuizAdmin' => 'Enter your response in the area below and click the appropriate button. A PM will be sent to the member if Quiz PMs are enabled in their profile.',
+	'DeleteQuizDisputeConfirm' => 'Are you sure you want to delete the selected reports?',
 );
 
 // Language text located in the quizzes page
@@ -278,6 +281,8 @@ $txt['permissionname_quiz_submit'] = 'Create Quiz';
 $txt['permissionhelp_quiz_submit'] = 'Allows users to create quizzes';
 $txt['permissionname_quiz_admin'] = 'Administrate Quiz';
 $txt['permissionhelp_quiz_admin'] = 'Quiz Administrator can Install/Edit/Delete quizzes from the admin screen';
+$txt['permissionname_quiz_profile'] = 'Quiz Profile';
+$txt['permissionhelp_quiz_profile'] = 'Access Quiz profile settings';
 
 // Errors if they can't do something
 $txt['cannot_quiz_view'] = 'You are not allowed to access the Quiz.';
@@ -298,7 +303,7 @@ $txt['SMFQuiz_InfoBoardItemsToDisplay'] = 'The number of InfoBoard items to disp
 $txt['SMFQuiz_showUserRating'] = 'This setting determines whether the user rating should be displayed or not';
 $txt['SMFQuiz_SessionTimeLimit'] = 'This is the value in minutes before a user can resume playing a quiz. This is to discourage cheating, so the user does not keep closing the quiz window to obtain the answer each time.';
 $txt['SMFQuiz_ImportQuizesAsUserId'] = 'When importing quizzes the mod needs to set the owner of the quiz. The ID you specify here is the ID for the user you wish to make the owner of the imported quizzes. You may wish to create a special user for quiz importing so that you can play the imported quizzes as well.';
-$txt['SMFQuiz_SendPMOnBrokenTopScore'] = 'When checked a PM will be sent to the person who had the top score when their top score is broken. You can control the message sent to them in the next setting.';
+$txt['SMFQuiz_SendPMOnBrokenTopScore'] = 'When checked a PM will be sent to the person who had the top score when their top score is broken and if Quiz PMs are enabled in their profile. You can control the message sent to them in the next setting.';
 $txt['SMFQuiz_AutoClean'] = 'When this option is selected the quiz scheduled task that updates the league will also automatically clean up the data in the database';
 $txt['SMFQuiz_PMBrokenTopScoreMsg'] = 
 '
@@ -341,7 +346,7 @@ Use the following placeholders in your message for the real values to be replace
 		<td>The Image for the Quiz</td>
 	</tr>
 </table>';
-$txt['SMFQuiz_SendPMOnLeagueRoundUpdate'] = 'When checked a PM will be sent to each member participating in the quiz league that the round has been updated.';
+$txt['SMFQuiz_SendPMOnLeagueRoundUpdate'] = 'When checked a PM will be sent to each member participating in the quiz league that the round has been updated if Quiz PMs are enabled in their profile.';
 $txt['SMFQuiz_PMLeagueRoundUpdateMsg'] = 'Use the following placeholders in your message for the real values to be replaced when the message is sent
 <table>
 	<tr class="windowbg">

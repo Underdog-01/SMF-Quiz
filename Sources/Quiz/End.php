@@ -16,22 +16,17 @@ function endQuiz()
 
 	// Get passed variables from client
 	// @TODO sanitize
+	// @TODO figure out enabled & play_limit not passed from XML
 	// @TODO move a lot to template
 	// @TODO permission check needed
-	$id_quiz_league = isset($_GET["id_quiz_league"]) ? (int) $_GET["id_quiz_league"] : 0;
-	$id_quiz = isset($_GET["id_quiz"]) ? (int) $_GET["id_quiz"] : 0;
+	$quizData = ["id_quiz_league", "id_quiz", "id_session", "questions", "correct", "incorrect", "timeouts", "total_seconds", "creator_id", "points", "round", "totalResumes", "enabled", "play_limit"];
 	$id_user = $context['user']['id'];
 	$name = $context['user']['name'];
-	$id_session = isset($_GET["id_session"]) ? $_GET["id_session"] : '';
-	$questions = isset($_GET["questions"]) ? (int) $_GET["questions"] : 0;
-	$correct = isset($_GET["correct"]) ? (int) $_GET["correct"] : 0;
-	$incorrect = isset($_GET["incorrect"]) ? (int) $_GET["incorrect"] : 0;
-	$timeouts = isset($_GET["timeouts"]) ? (int) $_GET["timeouts"] : 0;
-	$total_seconds = isset($_GET["total_seconds"]) ? (int) $_GET["total_seconds"] : 0;
-	$creatorId = isset($_GET["creator_id"]) ? (int) $_GET["creator_id"] : 0;
-	$points = isset($_GET["points"]) ?(int)  $_GET["points"] : 0;
-	$round = isset($_GET["round"]) ? (int) $_GET["round"] : 0;
-	$totalResumes = isset($_GET["totalResumes"]) ? (int) $_GET["totalResumes"] : 0;
+	foreach ($quizData as $key => $quizDatum) {
+		$$quizDatum = isset($_POST[$quizDatum]) && !in_array($quizDatum, array('id_session')) ? (int)$_POST[$quizDatum] : (isset($_POST[$quizDatum]) ? (string)$_POST[$quizDatum] : 0);
+	}
+
+	//log_error(json_encode($_POST));
 
 	// Load the language file
 	loadLanguage('Quiz/Quiz');
@@ -39,10 +34,10 @@ function endQuiz()
 	if (!empty($id_quiz))
 	{
 		// Don't make these changes if the user playing is the creator of the quiz, only kill the session
-		if ($creatorId != $id_user)
+		if ($creator_id != $id_user)
 		{
-			// Only add result if one doesn't already exist for this user and quiz
-			if (CheckResultExists($id_quiz, $id_user) == false)
+			// Only add result if the quiz is enabled and the user is below the play limit
+			if (CheckQuizLimit($id_quiz, $id_user))
 			{
 				InsertQuizEnd($id_quiz, $id_user, $questions, $correct, $incorrect, $timeouts, $total_seconds, $totalResumes);
 				UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $name);
@@ -63,46 +58,100 @@ function endQuiz()
 }
 
 /*
-Check whether the specified quiz result already has an entry. We also check
-whether the quiz is enabled here, as we don't want results being submitted
-if the quiz is not enabled
+Check whether the player has exceeded the play limit for this specific quiz
 */
-function CheckResultExists($id_quiz, $id_user)
+function CheckQuizLimit($id_quiz, $id_user)
 {
 	global $smcFunc;
+	list($enabled, $play_limit, $userLimit) = array(0, 0, 0);
 
 	$result = $smcFunc['db_query']('','
-		SELECT id_quiz_result
-		FROM {db_prefix}quiz_result QR
-		RIGHT JOIN {db_prefix}quiz Q
-			ON QR.id_quiz = Q.id_quiz
-		WHERE (QR.id_quiz = {int:id_quiz} AND QR.id_user = {int:id_user})
-			OR (Q.id_quiz = {int:id_quiz} AND Q.enabled = {int:quiz_disabled})',
-		array(
-			'id_quiz' => $id_quiz,
-			'id_user' => $id_user,
-			'quiz_disabled' => 0
-		)
+		SELECT Q.id_quiz, Q.play_limit, Q.enabled
+		FROM {db_prefix}quiz Q
+		WHERE Q.id_quiz = {int:id_quiz}
+		LIMIT 1',
+		[
+			'id_quiz' => $id_quiz
+		]
 	);
 
-	$count = $smcFunc['db_num_rows']($result);
+	$rows = $smcFunc['db_num_rows']($result);
+	if ($rows > 0) {
+		while ($quizLimit = $smcFunc['db_fetch_assoc']($result)) {
+			$play_limit = $quizLimit['play_limit'];
+			$enabled = $quizLimit['enabled'];
+		}
+	}
 
 	$smcFunc['db_free_result']($result);
 
-	if ($count > 0)
-		return true;
-	else
+	if (empty($enabled)) {
 		return false;
+	}
+
+	$result = $smcFunc['db_query']('','
+		SELECT QR.id_quiz_result, QR.player_limit
+		FROM {db_prefix}quiz_result QR
+		WHERE QR.id_quiz = {int:id_quiz} AND QR.id_user = {int:id_user}
+		LIMIT 1',
+		[
+			'id_quiz' => $id_quiz,
+			'id_user' => $id_user
+		]
+	);
+
+	$rows = $smcFunc['db_num_rows']($result);
+	if ($rows > 0) {
+		while ($quizLimit = $smcFunc['db_fetch_assoc']($result)) {
+			$userLimit = $quizLimit['player_limit'];
+		}
+	}
+
+	$smcFunc['db_free_result']($result);
+
+	if (!empty($play_limit) && $userLimit >= $play_limit)
+		return false;
+
+	return true;
 }
 
 function InsertQuizEnd($id_quiz, $id_user, $questions, $correct, $incorrect, $timeouts, $total_seconds, $totalResumes)
 {
 	global $smcFunc, $db_prefix;
 
-	$result_date = time();
+	list($result_date, $quizResultData) = array(time(), array('id_quiz_result' => 0, 'player_limit' => 0));
 
 	// Create a session for this quiz play in the database
-	$smcFunc['db_insert']('', 
+	$result = $smcFunc['db_query']('', '
+		SELECT 		id_quiz_result,	id_quiz, id_user, player_limit
+		FROM 		{db_prefix}quiz_result
+		WHERE 		id_quiz = {int:id_quiz} AND id_user = {int:id_user}',
+		[
+			'id_quiz' => $id_quiz, 'id_user' => $id_user
+		]
+	);
+
+	while ($row = $smcFunc['db_fetch_assoc']($result)) {
+		$quizResultData = [
+			'id_quiz_result' => $row['id_quiz_result'],
+			'player_limit' => $row['player_limit'],
+		];
+	}
+
+	// Free the database
+	$smcFunc['db_free_result']($result);
+
+	if (!empty($quizResultData['id_quiz_result'])) {
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}quiz_result
+			WHERE id_quiz_result = {int:id_result}',
+			array(
+				'id_result' => $quizResultData['id_quiz_result'],
+			)
+		);
+	}
+
+	$smcFunc['db_insert']('',
 		'{db_prefix}quiz_result',
 		array(
 			'id_quiz' => 'int',
@@ -114,6 +163,7 @@ function InsertQuizEnd($id_quiz, $id_user, $questions, $correct, $incorrect, $ti
 			'timeouts' => 'int',
 			'total_seconds' => 'int',
 			'total_resumes' => 'int',
+			'player_limit' => 'int',
 		),
 		array(
 			$id_quiz,
@@ -125,6 +175,7 @@ function InsertQuizEnd($id_quiz, $id_user, $questions, $correct, $incorrect, $ti
 			$timeouts,
 			$total_seconds,
 			$totalResumes,
+			($quizResultData['player_limit']+1)
 		),
 		array(
 			'id_quiz_result'
@@ -165,7 +216,7 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 	);
 
 	// Coming in next release
-	$total_points = 0; 
+	$total_points = 0;
 	$top_points = 0;
 
 	// Set defaults
@@ -214,34 +265,37 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 
 		// Add entry for infoboard
 		AddInfoBoardentry($id_user, $name, $id_quiz, $correct, $total_seconds, false, $quizTitle, $quizImage);
-	
+
 	// Otherwise a top score
 	}
 	else
 	{
 		// Only send PM if set to do so
-		if ($modSettings['SMFQuiz_SendPMOnBrokenTopScore'])
+		if (!empty($modSettings['SMFQuiz_SendPMOnBrokenTopScore']))
 		{
 			// PM the user who had the top score
 			require_once($sourcedir . '/Subs-Post.php');
+			$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
 
-			$pmto = array(
-				'to' => array(),
-				'bcc' => array($top_id_user)
-			);
+			if (in_array($top_id_user, $userPrefs)) {
+				$pmto = array(
+					'to' => array(),
+					'bcc' => array($top_id_user)
+				);
 
-			$subject = ParseMessage($modSettings['SMFQuiz_PMBrokenTopScoreSubject'], $quizTitle, $total_seconds, $correct, $top_time, $top_correct, $quizImage, $scripturl, $id_quiz, $top_user_name);
-			$message = ParseMessage($modSettings['SMFQuiz_PMBrokenTopScoreMsg'], $quizTitle, $total_seconds, $correct, $top_time, $top_correct, $quizImage, $scripturl, $id_quiz, $top_user_name);
+				$subject = ParseMessage($modSettings['SMFQuiz_PMBrokenTopScoreSubject'], $quizTitle, $total_seconds, $correct, $top_time, $top_correct, $quizImage, $scripturl, $id_quiz, $top_user_name);
+				$message = ParseMessage($modSettings['SMFQuiz_PMBrokenTopScoreMsg'], $quizTitle, $total_seconds, $correct, $top_time, $top_correct, $quizImage, $scripturl, $id_quiz, $top_user_name);
 
-			$pmfrom = array(
-				'id' => $user_settings['id_member'],
-				'name' => $user_settings['real_name'],
-				'username' => $user_settings['member_name']
-			);
-			
-			// Send message
-			sendpm($pmto, $subject, $message, 0, $pmfrom);
-				
+				$pmfrom = array(
+					'id' => $user_settings['id_member'],
+					'name' => $user_settings['real_name'],
+					'username' => $user_settings['member_name']
+				);
+
+				// Send message
+				sendpm($pmto, $subject, $message, 0, $pmfrom);
+			}
+
 		}
 
 		// Update top score too
@@ -407,15 +461,15 @@ function ParseMessage($message, $quiztitle, $total_seconds, $total_points, $top_
 	global $user_settings;
 
 // @TODO single replace
-	$message = str_replace("{quiz_name}", $quiztitle, $message); 
-	$message = str_replace("{new_score_seconds}", $total_seconds, $message); 
-	$message = str_replace("{new_score}", $total_points, $message); 
-	$message = str_replace("{old_score_seconds}", $top_time, $message); 
-	$message = str_replace("{old_score}", $top_points, $message); 
-	$message = str_replace("{member_name}", $user_settings['real_name'], $message); 
-	$message = str_replace("{old_member_name}", $old_member_name, $message); 
-	$message = str_replace("{quiz_image}", "[img]" . $quizImage . "[/img]", $message); 
-	$message = str_replace("{quiz_link}", $scripturl . '?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz, $message); 
+	$message = str_replace("{quiz_name}", $quiztitle, $message);
+	$message = str_replace("{new_score_seconds}", $total_seconds, $message);
+	$message = str_replace("{new_score}", $total_points, $message);
+	$message = str_replace("{old_score_seconds}", $top_time, $message);
+	$message = str_replace("{old_score}", $top_points, $message);
+	$message = str_replace("{member_name}", $user_settings['real_name'], $message);
+	$message = str_replace("{old_member_name}", $old_member_name, $message);
+	$message = str_replace("{quiz_image}", "[img]" . $quizImage . "[/img]", $message);
+	$message = str_replace("{quiz_link}", $scripturl . '?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz, $message);
 	return $message;
 }
 
