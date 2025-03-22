@@ -69,7 +69,7 @@ class Helper
 	{
 		// Strip all tags then convert line breaks to &#13; entity
 		$msg = str_replace(array('\r', ''), array('__CR__', '\n'), $msg);
-		$msg = str_replace("'", "\'", stripcslashes(html_entity_decode($msg, ENT_QUOTES, 'UTF-8')));
+		$msg = stripcslashes(html_entity_decode($msg, ENT_QUOTES, 'UTF-8'));
 		$msg = str_replace('__CR__', '\n', $msg);
 
 		return $msg;
