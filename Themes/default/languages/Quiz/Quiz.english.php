@@ -196,9 +196,9 @@ $txt['quiz_pm_alert'] = 'Receive PM for Quiz notifications';
 
 // Quiz Dispute
 $txt['quiz_dispute_userpm_subject'] = 'Quiz Dispute Response #%d';
-$txt['quiz_dipute_userpm_message'] = "Your dispute [b]%s[/b] against the question [b]%s[/b] in the quiz [b]%s[/b] has had the following response from the Quiz Administrator:\r\r[i]%s[/i]";
-$txt['quiz_dipute_userpm_msg_del'] = '\r\rThis dispute has now been removed';
+$txt['quiz_dipute_userpm_message'] = "Your dispute [b]%s[/b] against the question [b]%s[/b] in the quiz [b]%s[/b] has had the following response from the Quiz Administrator:\n\n[i]%s[/i]";
+$txt['quiz_dipute_userpm_msg_del'] = '\n\nThis dispute has now been removed';
 $txt['quiz_dispute_pmtitle'] = 'New Quiz Dispute!';
-$txt['quiz_dispute_report'] = 'There is a new quiz dispute awaiting a response.\r\rLink to the dispute: %s';
+$txt['quiz_dispute_report'] = 'There is a new quiz dispute awaiting a response.\n\nLink to the dispute: %s';
 
 ?>
