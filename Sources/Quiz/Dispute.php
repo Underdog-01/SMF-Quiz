@@ -11,21 +11,20 @@ function quizDispute()
 	// Get passed variables from client
 	// @TODO sanitize (check reason)
 	loadLanguage('Quiz/Quiz');
-
 	$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
 	list($sentTo, $admins) = [[], []];
-	$id_quiz_question = isset($_GET["id_quiz_question"]) ? (int) $_GET["id_quiz_question"] : 0;
-	$id_quiz = isset($_GET["id_quiz"]) ? (int) $_GET["id_quiz"] : 0;
-	$reason = isset($_GET["reason"]) ? $smcFunc['htmlspecialchars']($_GET["reason"], ENT_QUOTES) : '';
+	$id_quiz_question = isset($_POST["id_quiz_question"]) ? (int)$_POST["id_quiz_question"] : 0;
+	$id_quiz = isset($_POST["id_quiz"]) ? (int) $_POST["id_quiz"] : 0;
+	$reason = isset($_POST["reason"]) ? $smcFunc['htmlspecialchars']($_POST["reason"], ENT_QUOTES) : '';
 	$id_user = $context['user']['id'];
-	$id_dispute = isset($_GET["id_dispute"]) ? (int) $_GET["id_dispute"] : 0;
-	// If the id_dispute is set then the admin is reponding
+	$id_dispute = isset($_POST["id_dispute"]) ? (int) $_POST["id_dispute"] : 0;
 
-	if ($id_dispute != 0)
+	// If the id_dispute is set then the admin is reponding
+	if ($id_dispute != 0 && allowedTo('quiz_admin'))
 	{
 		require_once($sourcedir . '/Subs-Post.php');
 
-		$remove = isset($_GET["remove"]) ? (int) $_GET["remove"] : 0;
+		$remove = isset($_POST["remove"]) ? (int) $_POST["remove"] : 0;
 
 		$result = $smcFunc['db_query']('', '
 			SELECT QD.id_user, Q.title, M.real_name,

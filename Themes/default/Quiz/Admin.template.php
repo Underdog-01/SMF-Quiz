@@ -1367,23 +1367,20 @@ function template_show_disputes()
 	global $txt, $context, $settings, $scripturl, $smcFunc;
 
 	echo '
-	<div id="disputeDialog" title="Dispute Response" style="display:none; font-size: 65%" class="ui-dialog-content ui-widget-content">
-			<p>' . $txt['SMFQuizAdmin_QuizDisputes_Page']['DisputeQuizAdmin'] . '</p>
-			<!-- @TODO localization + action for the form! -->
-			<form id="QuizDisputeResponseForm">
-				<label for="disputeText">Response:</label>
-				<textarea rows="10" cols="40" id="disputeText"></textarea>
-				<input type="hidden" id="disputeId"/>
-			</form>
-		</div>
-		<table width="100%" cellpadding="0" cellspacing="0" border="0">
-			<tr>
-				<td>', $txt['pages'], ': ', $context['page_index'], '</td>
-			</tr>
-		</table>
-	';
-
-	echo '
+		<form id="QuizDisputeResponseForm" action="' . $scripturl . '?action=admin;area=quiz;sa=disputes">
+			<div id="disputeDialog" title="Dispute Response" style="display:none; font-size: 65%" class="ui-dialog-content ui-widget-content">
+				<p>' . $txt['SMFQuizAdmin_QuizDisputes_Page']['DisputeQuizAdmin'] . '</p>
+				<label for="disputeText">' . $txt['SMFQuizAdmin_QuizDisputes_Page']['TitleQuizAdminDisputeResponse'] . '</label>
+				<textarea cols="40" rows="10" wrap="hard" maxlength="400" id="disputeText" name="disputeText"></textarea>
+				<input type="hidden" id="disputeId">
+				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
+				<table width="100%" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td>', $txt['pages'], ': ', $context['page_index'], '</td>
+					</tr>
+				</table>
+			</div>
+		</form>
 		<form id="QuizDisputeDelForm" action="' . $scripturl . '?action=admin;area=quiz;sa=deldisputes">
 			<table class="bordercolor" border="0" cellpadding="4" cellspacing="1" width="100%">
 				<tbody>

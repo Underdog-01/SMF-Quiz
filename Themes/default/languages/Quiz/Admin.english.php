@@ -13,7 +13,7 @@ $txt['SMFQuiz'] = 'Quiz';
 $txt['SMFQuizMod'] = 'The SMF Quiz Mod';
 $txt['SMFQuizModDescription'] = 'This page allows you to configure the SMF Quiz modification';
 $txt['AlertOnePackage'] = 'You must select at least one Quiz to package';
-	
+
 // Text for any titles that appear in the admin section
 $txt['SMFQuizAdmin_Titles'] = array(
 	'Settings' => 'Settings',
@@ -64,6 +64,7 @@ $txt['SMFQuizAdmin_AdminCenter_Page'] = array(
 
 // Language text located in the disputes page
 $txt['SMFQuizAdmin_QuizDisputes_Page'] = array(
+	'TitleQuizAdminDisputeResponse' => 'Dispute Response',
 	'DeleteQuizDispute' => 'Delete Quiz Dispute',
 	'RespondToDispute' => 'Respond to Dispute',
 	'DisputeQuizAdmin' => 'Enter your response in the area below and click the appropriate button. A PM will be sent to the member if Quiz PMs are enabled in their profile.',
@@ -221,7 +222,7 @@ $txt['SMFQuizAdmin_QuizExport_Page'] = array(
 	'NoDescriptionEntered' => 'No Description Entered',
 	'NoAuthorEntered' => 'No Author Entered',
 	'NoSiteEntererd' => 'No Site Entered',
-	
+
 );
 
 // Language text located in the settings page
@@ -277,7 +278,7 @@ $txt['permissionname_quiz_view'] = 'View Quiz';
 $txt['permissionhelp_quiz_view'] = 'May access Quiz';
 $txt['permissionname_quiz_play'] = 'Play the Quiz';
 $txt['permissionhelp_quiz_play'] = 'Allows member to play the quiz';
-$txt['permissionname_quiz_submit'] = 'Create Quiz'; 
+$txt['permissionname_quiz_submit'] = 'Create Quiz';
 $txt['permissionhelp_quiz_submit'] = 'Allows users to create quizzes';
 $txt['permissionname_quiz_admin'] = 'Administrate Quiz';
 $txt['permissionhelp_quiz_admin'] = 'Quiz Administrator can Install/Edit/Delete quizzes from the admin screen';
@@ -305,7 +306,7 @@ $txt['SMFQuiz_SessionTimeLimit'] = 'This is the value in minutes before a user c
 $txt['SMFQuiz_ImportQuizesAsUserId'] = 'When importing quizzes the mod needs to set the owner of the quiz. The ID you specify here is the ID for the user you wish to make the owner of the imported quizzes. You may wish to create a special user for quiz importing so that you can play the imported quizzes as well.';
 $txt['SMFQuiz_SendPMOnBrokenTopScore'] = 'When checked a PM will be sent to the person who had the top score when their top score is broken and if Quiz PMs are enabled in their profile. You can control the message sent to them in the next setting.';
 $txt['SMFQuiz_AutoClean'] = 'When this option is selected the quiz scheduled task that updates the league will also automatically clean up the data in the database';
-$txt['SMFQuiz_PMBrokenTopScoreMsg'] = 
+$txt['SMFQuiz_PMBrokenTopScoreMsg'] =
 '
 Use the following placeholders in your message for the real values to be replaced when the message is sent
 <table>

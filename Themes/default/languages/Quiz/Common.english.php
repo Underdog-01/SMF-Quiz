@@ -180,12 +180,21 @@ $txt['SMFQuiz_Common'] = array(
 $txt['SMFQuiz_n_a'] = 'Not applicable';
 $txt['SMFQuiz_Upload'] = 'Upload';
 
-// Dialog buttons ~ key/val pairs are literal JavaScript variables
-$txt['quizDialogButtons'] = [
-	"quizCancelButton" => "Cancel",
-	"quizConfirmButton" => "Confirm",
-	"quizSendButton" => "Send",
-	"quizSendRemoveButton" => "Send and Remove",
+// Dialog/JS localization ~ key/val pairs are literal JavaScript variables
+$txt['quizLocalizationTextJS'] = [
+	'quizCancelButton' => 'Cancel',
+	'quizConfirmButton' => 'Confirm',
+	'quizSendButton' => 'Send',
+	'quizSendRemoveButton' => 'Send and Remove',
+	'quizSubmittedDisputeTitle' => 'Submit Response',
+	'quizSubmittedDisputeSuccess' => 'Dispute submitted successfully',
+	'quizSubmittedDisputeError' => 'Error ~ dispute was not submitted',
+	'quizSubmittedDisputeFinish' => 'Finished',
+	'quizTimeoutErrorData' => 'A timeout has occurred attempting to retrieve data, retrying (attempt %ATTEMPTS%) ...',
+	'quizTimeoutErrorDataMax' => 'You have reached the maximum number of retries which is set to %ATTEMPTS%\nThe quiz will now close, please try and play again later as there may be connection issues at the moment',
+	'quizAjaxErrorTimeout' => 'An unexpected parsing error has occurred while retrieving data from the server. Please contact the server administrator and inform them of this error.',
+	'quizAjaxErrorDataLoad' => 'Data Load Error',
+	'quizAjaxErrorGeneral' => 'An unexpected error has occurred while retrieving data from the server. Please contact the server administrator and inform them of this error.',
 ];
 
 ?>

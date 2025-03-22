@@ -1661,7 +1661,7 @@ function GetShowDisputesData()
 
 	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? rand(999, 999999) : 'stable';
 	$quizDialogButtons = 'let smfQuizVersion = "' . $modSettings['smf_quiz_version'] . '",';
-	foreach ($txt['quizDialogButtons'] as $key => $val) {
+	foreach ($txt['quizLocalizationTextJS'] as $key => $val) {
 		$quizDialogButtons .= ' ' . $key . ' = "' . $val . '",';
 	}
 

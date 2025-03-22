@@ -10,25 +10,18 @@ $(document).ready(function() {
 
 function submitResponse(remove)
 {
-	/* Get the reason entered */
-	var reason = $("#disputeText").val();
-
-	$.ajax({
-		type: "GET",
-		/* @TODO move to an action and allow js-less (that will fix the form validation too) */
-		url: smf_scripturl + "?action=SMFQuizDispute;id_dispute=" + id_dispute + ";reason=" + reason + ";remove=" + remove,
-		cache: false,
-		dataType: "xml",
-		timeout: 5000,
-		success: function(xml) {
-/* @TODO localization */
-			alert('Dispute response submitted successfully');
-			window.location.reload();
-		},
-		error: function(XMLHttpRequest, textStatus, errorThrown) {
-/* @TODO localization */
-			alert('Timeout occurred sending response');
-		}
+	$("#disputeDialog").wrap('<form id="QuizDisputeResponseForm" action=smf_scripturl+"?action=admin;area=quiz;sa=disputes">');
+	$("#disputeText").after('<input type="hidden" name="reason" value="' + $("#disputeText").val() + '"><input type="hidden" name="id_dispute" value="' + id_dispute + '"><input type="hidden" name="remove" value="' + remove + '">');
+	$.post(smf_scripturl + "?action=SMFQuizDispute", $("#QuizDisputeResponseForm").serialize())
+	.done(function( resultData ) {
+		alert('Dispute response submitted successfully');
+		console.log("Dispute response submitted successfully ~ " + resultData);
+		setTimeout(function(){window.location.href = window.location.href;}, 500);
+	}).fail(function() {
+		alert("Error occurred sending response ~ " + errorThrown);
+	})
+	.always(function() {
+		console.log( "finished" );
 	});
 }
 function showDisputeDialog()

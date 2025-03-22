@@ -1016,13 +1016,11 @@ function handleAjaxError(XMLHttpRequest, textStatus, errorThrown, functionToCall
 		case "timeout": // Timeout
 			handleTimeout(functionToCall);
 			break;
-		case "parsererror": // Error with parsing document
-// @TODO localization
-			showErrorDialogAndCloseWindow("An unexpected parser error has occurred while retrieving data from the server. Please contact the server administrator and inform them of this error.", "Data Load Error");
+		case "parsererror":
+			showErrorDialogAndCloseWindow(quizAjaxErrorTimeout, quizAjaxErrorDataLoad);
 			break;
 		default:
-// @TODO localization
-			showErrorDialogAndCloseWindow("An unexpected error has occurred while retrieving data from the server. Please contact the server administrator and inform them of this error.", "Data Load Error");
+			showErrorDialogAndCloseWindow(quizAjaxErrorGeneral, quizAjaxErrorDataLoad);
 			break;
 	}
 }
@@ -1042,11 +1040,10 @@ Function to handle a timeout error when one is raised during the AJAX call
 */
 function handleTimeout(functionToCall)
 {
-// @TODO localization?
-	alert('A timeout has occurred attempting to retrieve data, retrying (attempt ' + ajaxRetries + ') ...');
+	alert(quizTimeoutErrorData.replace('%ATTEMPTS%', String(ajaxRetries)));
 	if (ajaxRetries >= ajaxMaxRetries)
 	{
-		alert('You have reached the maximum number of retries which is set to ' + ajaxMaxRetries + '\nThe quiz will now close, please try and play again later as there may be connection issues at the moment');
+		alert(quizTimeoutErrorDataMax.replace('%ATTEMPTS%', String(ajaxMaxRetries)));
 		window.close();
 	}
 	else
@@ -1070,7 +1067,7 @@ function showDispute()
 		modal: false,
 		resizable: false,
 		show: { effect: "blind", duration: 400 },
-		title: "Submit response",
+		title: quizSubmittedDisputeTitle,
 		create: function(event, ui) {
 			var widget = $(this).dialog("widget");
 			$(".ui-dialog-titlebar-close span", widget)
@@ -1101,20 +1098,18 @@ Function that submits the Ajax dispute data
 */
 function submitDispute()
 {
-	// Get the reason entered
-	var reason = $("#disputeText").val();
-	$.ajax({
-		type: "GET",
-		url: smf_scripturl + "?action=SMFQuizDispute;id_quiz=" + id_quiz + ";id_user=" + id_user + ";id_quiz_question=" + currentid_question + ";reason=" + reason,
-		cache: false,
-		dataType: "xml",
-		timeout: ajaxTimeout,
-		success: function(xml) {
-// @TODO localization
-			alert('Dispute submitted successfully');
-		},
-		error: function(XMLHttpRequest, textStatus, errorThrown) {
-			handleAjaxError(XMLHttpRequest, textStatus, errorThrown, "submitDispute()");
-		}
+	/* Get the reason entered */
+	let quizInputs = $('<input type="hidden" name="reason" value="' + $("#disputeText").val() + '"><input type="hidden" name="id_quiz" value="' + id_quiz + '"><input type="hidden" name="id_user" value="' + id_user + '"><input type="hidden" name="id_quiz_question" value="' + currentid_question + '">');
+	$("#disputeTextReason").append(quizInputs);
+	$.post(smf_scripturl + "?action=SMFQuizDispute", $("#disputeTextReason").serialize())
+	.done(function( resultData ) {
+		alert(quizSubmittedDisputeSuccess);
+		console.log(quizSubmittedDisputeSuccess + " ~ " + resultData);
+	}).fail(function() {
+		alert(quizSubmittedDisputeError + " ~ " + errorThrown);
+	})
+	.always(function() {
+		console.log(quizSubmittedDisputeFinish);
+		exit(quizSubmittedDisputeFinish);
 	});
 }
