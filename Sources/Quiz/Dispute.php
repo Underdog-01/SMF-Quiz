@@ -10,7 +10,7 @@ function quizDispute()
 
 	// Get passed variables from client
 	// @TODO sanitize (check reason)
-	loadLanguage('Quiz/Quiz');
+
 	$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
 	list($sentTo, $admins) = [[], []];
 	$id_quiz_question = isset($_POST["id_quiz_question"]) ? (int)$_POST["id_quiz_question"] : 0;

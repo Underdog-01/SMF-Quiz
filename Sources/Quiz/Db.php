@@ -2571,7 +2571,7 @@ function ResetQuizResults()
 		$smcFunc['db_query']('', '
 			TRUNCATE TABLE {db_prefix}quiz_result'
 		);
-	}	
+	}
 }
 
 function DeleteInfoBoardEntries($date)
@@ -2588,7 +2588,7 @@ function DeleteInfoBoardEntries($date)
 				'date' => $date
 			)
 		);
-	}	
+	}
 }
 
 function CompleteQuizSessions($date)

@@ -11,9 +11,6 @@ function SMFQuiz()
 {
 	global $context, $txt, $sourcedir;
 
-	// Load the language file
-	loadLanguage('Quiz/Quiz');
-	loadLanguage('Quiz/Admin');
 	isAllowedTo('quiz_view');
 	$context['page_title'] = $txt['SMFQuiz'];
 	addJavaScriptVar('id_user', $context['user']['id'], false);

@@ -8,11 +8,8 @@ function SMFQuizAdmin()
 {
 	global $context, $modSettings, $boardurl, $scripturl, $txt, $sourcedir, $settings;
 
-	isAllowedTo('quiz_admin');
-
-	// Load the language file
-	loadLanguage('Quiz/Admin');
-	loadLanguage('Quiz/Quiz');
+	isAllowedTo('quiz_admin');	
+	
 	// @TODO are both needed?
 	require_once($sourcedir . '/Quiz/Db.php');
 	require_once($sourcedir . '/Quiz/Load.php');

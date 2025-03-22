@@ -6,9 +6,7 @@ if (!defined('SMF'))
 function loadQuiz ()
 {
 	global $context, $txt;
-
 	loadTemplate('Quiz/Admin');
-	loadLanguage('Quiz/Quiz');
 
 	if (!allowedTo('quiz_play'))
 	{
@@ -316,7 +314,7 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 	}
 
 	$smcFunc['db_free_result']($leagueResult);
-	
+
 	// Firstly, build the league details
 	// @TODO move to a template!
 	$xmlFragment = '<quizDetail>';
@@ -371,7 +369,7 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 		$smcFunc['db_free_result']($resultsResult);
 
 		$xmlFragment .= '</quizResults>';
-	}	
+	}
 	else {
 		$xmlFragment .= '<quizResults><limitReached>1</limitReached></quizResults>';
 	}

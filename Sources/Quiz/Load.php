@@ -68,7 +68,7 @@ function load($url, $options=array())
 				if(count($parts) == 2) $headers[$parts[0]] = chop($parts[1]);
 			}
 			$headers['cached'] = true;
-			
+
 			if (!$options['return_info'])
 				return $body;
 			else

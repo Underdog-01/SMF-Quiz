@@ -65,7 +65,7 @@ function PackageQuiz()
 		foreach ($quizRows as $row)
 		{
 // @TODO double quotes
-			echo " 				
+			echo "
 				<quiz>
 					<title><![CDATA[{$row['title']}]]></title>
 					<categoryName><![CDATA[{$row['category_name']}]]></categoryName>

@@ -123,7 +123,7 @@ function GetQuizQuestion($id_quiz, $questionNum, $debugOn)
 
 	// Finally, just update a few counts
 	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}quiz_question 
+		UPDATE {db_prefix}quiz_question
 		SET plays = plays + 1
 		WHERE id_question = {int:id_question}',
 		array(
@@ -164,7 +164,7 @@ function GetQuizLeagueQuestion($id_quiz_league, $debugOn)
 	// We now either get a random question from all quizzes or the categories returned
 	// TODO: It might be worth to return all the questions and answers back to the client in one go
 	// instead of one-by-one like we do here?
-	
+
 	$categories = $categories == null ? '' : $smcFunc['db_quote']('WHERE Q.id_category IN ({string:categories})', array('categories' => $categories));
 	$questionResult = $smcFunc['db_query']('', '
 		SELECT QQ.id_question, QQ.question_text, QQ.id_question_type,
@@ -236,7 +236,7 @@ function GetQuizLeagueQuestion($id_quiz_league, $debugOn)
 
 	// Finally, just update a few counts
 	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}quiz_question 
+		UPDATE {db_prefix}quiz_question
 		SET plays = plays + 1
 		WHERE id_question = {int:id_question}',
 		array(
@@ -246,7 +246,7 @@ function GetQuizLeagueQuestion($id_quiz_league, $debugOn)
 
 // @TODO query
 	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}quiz_league 
+		UPDATE {db_prefix}quiz_league
 		SET question_plays = question_plays + 1
 		WHERE id_quiz_league = {int:id_quiz_league}',
 		array(

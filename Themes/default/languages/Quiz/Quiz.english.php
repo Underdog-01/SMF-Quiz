@@ -3,7 +3,6 @@
 // @TODO to remove
 // Load the common language file
 global $txt;
-loadLanguage('Quiz/Common');
 
 $txt['SMFQuiz'] = 'Quiz';
 

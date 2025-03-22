@@ -14,9 +14,9 @@
 	$.fn.lightbox = function(options) {
 		// build main options
 		var opts = $.extend({}, $.fn.lightbox.defaults, options);
-        
+
 		$(window).resize(resizeOverlayToFitWindow);
-        
+
 		return $(this).on(opts.triggerEvent,function(){
 			// initialize the lightbox
 			initialize();
@@ -34,11 +34,11 @@
 
 			// if jsonData, build the imageArray from data provided in JSON format
 			if (opts.jsonData && opts.jsonData.length > 0) {
-				var parser = opts.jsonDataParser ? opts.jsonDataParser : $.fn.lightbox.parseJsonData;                
+				var parser = opts.jsonDataParser ? opts.jsonDataParser : $.fn.lightbox.parseJsonData;
 				opts.imageArray = [];
 				opts.imageArray = parser(opts.jsonData);
 			}
-    
+
 			var outerImage = '<div id="outerImageContainer"><div id="imageContainer"><iframe id="lightboxIframe"></iframe><img id="lightboxImage" /><div id="hoverNav"><a href="javascript://" title="' + opts.strings.prevLinkTitle + '" id="prevLink"></a><a href="javascript://" id="nextLink" title="' + opts.strings.nextLinkTitle + '"></a></div><div id="loading"><a href="javascript://" id="loadingLink"><img src="'+opts.fileLoadingImage+'"></a></div></div></div>';
 			var imageData = '<div id="imageDataContainer" class="clearfix"><div id="imageData"><div id="imageDetails"><span id="caption"></span><span id="numberDisplay"></span></div><div id="bottomNav">';
 
@@ -72,7 +72,7 @@
 				$("#lightboxImage").click(function(){ return false; });
 				$("#hoverNav").click(function(){ return false; });
 			}
-			
+
 			return true;
 		};
 
@@ -90,7 +90,7 @@
 			var jqueryPageSize = new Array($(document).width(),$(document).height(), $(window).width(), $(window).height());
 			return jqueryPageSize;
 		};
-	    
+
 		function getPageScroll() {
 			var xScroll, yScroll;
 
@@ -124,7 +124,7 @@
 			/**
 			* select, embed and object tags render over the lightbox in some browsers
 			* Right now, the best way to fix it is to hide them, but that can trigger reloading of some flash content
-			* I don't have a better fix for this right now, but I want ot leave this comment here so you and I both 
+			* I don't have a better fix for this right now, but I want ot leave this comment here so you and I both
 			* know that i'm aware of it, and I would love to fix it, if you have any suggestions.
 			**/
 			$("select, embed, object").hide();
@@ -150,7 +150,7 @@
 					});
 				}
 			}
-	
+
 			if (opts.imageArray.length > 1) {
 				for (i = 0; i < opts.imageArray.length; i++) {
 					for (j = opts.imageArray.length - 1; j > i; j--) {
@@ -160,7 +160,7 @@
 					}
 				}
 
-				while (opts.imageArray[imageNum][0] != imageObject.href) { 
+				while (opts.imageArray[imageNum][0] != imageObject.href) {
 					imageNum++;
 				}
 			}
@@ -177,20 +177,20 @@
 
 			changeImage(imageNum);
 		};
-	    
+
 		function changeImage(imageNum) {
 			if (opts.inprogress == false) {
 				opts.inprogress = true;
 
 				// update global var
-				opts.activeImage = imageNum;	
+				opts.activeImage = imageNum;
 
 				// hide elements during transition
 				$('#loading').show();
 				$('#lightboxImage, #hoverNav, #prevLink, #nextLink').hide();
 
 				// delay preloading image until navbar will slide up
-				if (opts.slideNavBar) { 
+				if (opts.slideNavBar) {
 					$('#imageDataContainer').hide();
 					$('#imageData').hide();
 				}
@@ -288,7 +288,7 @@
 						showImage();
 					});
 				});
-				
+
 				afterTimeout = function () {
     				$('#prevLink').height(imgHeight);
     				$('#nextLink').height(imgHeight);
@@ -329,7 +329,7 @@
 
 					if (opts.displayDownloadLink) {
 						nav_html += "<a href='" + opts.imageArray[opts.activeImage][0] + "'>" + opts.strings.download + "</a>";
-					}				
+					}
 
 					if (!opts.disableNavbarLinks) {
 						// display previous / next text links
@@ -357,7 +357,7 @@
 
 			/*
 			# Resize the sexy overlay to fit the constraints of your current viewing environment
-			# 
+			#
 			# This should now happen whenever a window is resized, so you should always see a full overlay
 			*/
 			function resizeOverlayToFitWindow(){
@@ -369,15 +369,15 @@
 				if (opts.imageArray.length > 1) {
 					$('#hoverNav').show();
 
-					// if loopImages is true, always show next and prev image buttons 
+					// if loopImages is true, always show next and prev image buttons
 					if(opts.loopImages) {
 						$('#prevLink,#prevLinkText').show().click(function() {
-							changeImage((opts.activeImage == 0) ? (opts.imageArray.length - 1) : opts.activeImage - 1); 
+							changeImage((opts.activeImage == 0) ? (opts.imageArray.length - 1) : opts.activeImage - 1);
 							return false;
 						});
 
 						$('#nextLink,#nextLinkText').show().click(function() {
-							changeImage((opts.activeImage == (opts.imageArray.length - 1)) ? 0 : opts.activeImage + 1); 
+							changeImage((opts.activeImage == (opts.imageArray.length - 1)) ? 0 : opts.activeImage + 1);
 							return false;
 						});
 
@@ -385,7 +385,7 @@
 						// if not first image in set, display prev image button
 						if(opts.activeImage != 0) {
 							$('#prevLink,#prevLinkText').show().click(function() {
-								changeImage(opts.activeImage - 1); 
+								changeImage(opts.activeImage - 1);
 								return false;
 							});
 						}
@@ -393,7 +393,7 @@
 						// if not last image in set, display next image button
 						if(opts.activeImage != (opts.imageArray.length - 1)) {
 							$('#nextLink,#nextLinkText').show().click(function() {
-								changeImage(opts.activeImage +1); 
+								changeImage(opts.activeImage +1);
 								return false;
 							});
 						}
@@ -412,11 +412,11 @@
 				var key = String.fromCharCode(keycode).toLowerCase();
 
 				// close lightbox
-				if ((key == 'x') || (key == 'o') || (key == 'c') || (keycode == escapeKey)) { 
+				if ((key == 'x') || (key == 'o') || (key == 'c') || (keycode == escapeKey)) {
 					end();
 
-					// display previous image	
-				} else if ((key == 'p') || (keycode == 37)) {  
+					// display previous image
+				} else if ((key == 'p') || (keycode == 37)) {
 					if(o.loopImages) {
 						disableKeyboardNav();
 						changeImage((o.activeImage == 0) ? (o.imageArray.length - 1) : o.activeImage - 1);
@@ -426,7 +426,7 @@
 					}
 
 					// display next image
-				} else if ((key == 'n') || (keycode == 39)) { 
+				} else if ((key == 'n') || (keycode == 39)) {
 					if (opts.loopImages) {
 						disableKeyboardNav();
 						changeImage((o.activeImage == (o.imageArray.length - 1)) ? 0 : o.activeImage + 1);
@@ -484,7 +484,7 @@
 			displayTitle: true,
 			navbarOnTop: false,
 			displayDownloadLink: false,
-			slideNavBar: false, 
+			slideNavBar: false,
 			navBarSlideSpeed: 350,
 			displayHelp: false,
 			strings: {
@@ -498,11 +498,11 @@
 				of: ' of ',
 				download: 'Download'
 			},
-			fitToScreen: false,		
+			fitToScreen: false,
 			disableNavbarLinks: false,
 			loopImages: false,
 			imageClickClose: true,
 			jsonData: null,
 			jsonDataParser: null
-		};	
+		};
 })(jQuery);

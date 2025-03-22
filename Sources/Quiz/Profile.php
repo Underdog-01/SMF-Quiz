@@ -53,8 +53,6 @@ class Profile
 	{
 		global $modSettings, $txt;
 
-		loadLanguage('Quiz/Quiz');
-
 		$profile_areas['edit_profile']['areas'] += array(
 			'quizProfileSettings' => array(
 				'label' => $txt['quiz_profileSettings'],
@@ -80,8 +78,6 @@ class Profile
 		foreach (array('quiz_count') as $key => $userSet) {
 			$user_info[$userSet] = !empty($user_info[$userSet]) ? $user_info[$userSet] : '';
 		}
-
-		loadLanguage('Quiz/Quiz');
 		$context['profile_fields'] += array(
 			'quiz_pm_report' => array(
 				'type' => 'check',

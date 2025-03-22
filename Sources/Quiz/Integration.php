@@ -11,14 +11,9 @@ class Integration
 {
 	public static function init()
 	{
-		global $txt, $sourcedir;
+		global $txt, $sourcedir, $context;
 
-		loadLanguage('Quiz/Quiz');
-		loadLanguage('Quiz/Common');
-		if (!empty($_REQUEST['action']) && is_string($_REQUEST['action']) && $_REQUEST['action'] == 'admin') {
-			loadLanguage('Quiz/Admin');
-		}
-
+		loadLanguage('Quiz/Common+Quiz/Quiz+Quiz/Admin');
 		self::setVersion();
 		self::loadClasses();
 
@@ -51,7 +46,7 @@ class Integration
 		global $modSettings;
 
 		$defaults = [
-			'SMFQuiz_version' => '2.0 Beta 1',
+			'SMFQuiz_version' => $modSettings['smf_quiz_version'],
 			'SMFQuiz_ListPageSizes' => 20,
 			'SMFQuiz_InfoBoardItemsToDisplay' => 20,
 			'SMFQuiz_showUserRating' => 1,
@@ -111,10 +106,6 @@ class Integration
 	public static function admin_areas(&$admin_areas)
 	{
 		global $txt, $modSettings, $scripturl;
-
-		loadLanguage('Quiz/Quiz');
-		loadLanguage('Quiz/Common');
-		loadLanguage('Quiz/Admin');
 
 		$admin_areas['quiz'] = array(
 			'title' => $txt['SMFQuiz'],

@@ -9,9 +9,9 @@
  *
  *
  */
- 
+
 ;(function($) {
- 
+
 /**
  * Adds (single/multiple) options to a select box (or series of select boxes)
  *
@@ -45,7 +45,7 @@ $.fn.addOption = function()
 		if (index || index == 0)
 		{
  			// we're going to insert these starting  at a specific index...
-			// this has the side effect of el.cache[v] being the 
+			// this has the side effect of el.cache[v] being the
 			// correct value for the typeof check below
 			var ti = option;
 			for(var ii =index; ii <= oL; ii++)
@@ -57,7 +57,7 @@ $.fn.addOption = function()
 				ti = tmp;
 			}
 		}
-    
+
 		// add to cache if it isn't already
 		if(typeof el.cache[v] == "undefined") el.cache[v] = oL;
 		el.options[el.cache[v]] = option;
@@ -66,7 +66,7 @@ $.fn.addOption = function()
 			option.selected = true;
 		}
 	};
-	
+
 	var a = arguments;
 	if(a.length == 0) return this;
 	// select option when added? default is true
@@ -117,7 +117,7 @@ $.fn.addOption = function()
 						});
 					}
 					add(sel, val, text, sO, startindex);
-					startindex += 1; 
+					startindex += 1;
 				});
 			}
 			else
@@ -164,7 +164,7 @@ $.fn.ajaxAddOption = function(url, params, select, fn, args)
 						if(typeof args == "object")
 						{
 							fn.apply(el, args);
-						} 
+						}
 						else
 						{
 							fn.call(el);
@@ -184,7 +184,7 @@ $.fn.ajaxAddOption = function(url, params, select, fn, args)
  * @author   Sam Collett (http://www.texotela.co.uk)
  * @type     jQuery
  * @param    String|RegExp|Number what  Option to remove
- * @param    Boolean selectedOnly       (optional) Remove only if it has been selected (default false)   
+ * @param    Boolean selectedOnly       (optional) Remove only if it has been selected (default false)
  * @example  $("#myselect").removeOption("Value"); // remove by value
  * @example  $("#myselect").removeOption(/^val/i); // remove options with a value starting with 'val'
  * @example  $("#myselect").removeOption(/./); // remove all options
@@ -209,7 +209,7 @@ $.fn.removeOption = function()
 			var l = v.length;
 			for(var i = 0; i<l; i++)
 			{
-				this.removeOption(v[i], a[1]); 
+				this.removeOption(v[i], a[1]);
 			}
 			return this;
 		}

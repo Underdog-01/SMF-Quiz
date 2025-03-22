@@ -28,9 +28,6 @@ function endQuiz()
 
 	//log_error(json_encode($_POST));
 
-	// Load the language file
-	loadLanguage('Quiz/Quiz');
-
 	if (!empty($id_quiz))
 	{
 		// Don't make these changes if the user playing is the creator of the quiz, only kill the session
