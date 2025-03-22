@@ -14,7 +14,7 @@ class Scheduled
 	{
 		global $smcFunc, $modSettings, $sourcedir;
 
-		require_once($sourcedir . '/Quiz/Admin.php');		
+		require_once($sourcedir . '/Quiz/Admin.php');
 
 		// Get leagues dates to check for update required
 		$getLeagueDatesResult = $smcFunc['db_query']('', '
