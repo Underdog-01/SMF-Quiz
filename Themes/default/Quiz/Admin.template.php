@@ -1367,7 +1367,7 @@ function template_show_disputes()
 	global $txt, $context, $settings, $scripturl, $smcFunc;
 
 	echo '
-		<form id="QuizDisputeResponseForm" action="' . $scripturl . '?action=admin;area=quiz;sa=disputes">
+		<form>
 			<div id="disputeDialog" title="Dispute Response" style="display:none; font-size: 65%" class="ui-dialog-content ui-widget-content">
 				<p>' . $txt['SMFQuizAdmin_QuizDisputes_Page']['DisputeQuizAdmin'] . '</p>
 				<label for="disputeText">' . $txt['SMFQuizAdmin_QuizDisputes_Page']['TitleQuizAdminDisputeResponse'] . '</label>
