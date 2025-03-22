@@ -16,7 +16,7 @@ function submitResponse(remove)
 	$.ajax({
 		type: "GET",
 		/* @TODO move to an action and allow js-less (that will fix the form validation too) */
-		url: smf_scripturl + "action=SMFQuizDispute;id_dispute=" + id_dispute + ";reason=" + reason + ";remove=" + remove,
+		url: smf_scripturl + "?action=SMFQuizDispute;id_dispute=" + id_dispute + ";reason=" + reason + ";remove=" + remove,
 		cache: false,
 		dataType: "xml",
 		timeout: 5000,
@@ -31,7 +31,6 @@ function submitResponse(remove)
 		}
 	});
 }
-
 function showDisputeDialog()
 {
 	$("#disputeText").val("");
