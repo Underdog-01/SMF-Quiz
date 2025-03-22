@@ -14,7 +14,7 @@ class Scheduled
 	{
 		global $smcFunc, $modSettings, $sourcedir;
 
-		require_once($sourcedir . '/Quiz/Admin.php');
+		require_once($sourcedir . '/Quiz/Admin.php');		
 
 		// Get leagues dates to check for update required
 		$getLeagueDatesResult = $smcFunc['db_query']('', '
@@ -267,7 +267,7 @@ class Scheduled
 							);
 
 							// Send message
-							sendpm($pmto, $subject, $message, 0, $pmfrom);
+							sendpm($pmto, $subject, Quiz\Helper::quiz_pmFilter($message), 0, $pmfrom);
 						}
 					}
 					$position++;
