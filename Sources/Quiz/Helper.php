@@ -64,14 +64,14 @@ class Helper
 
 		return array_filter($members);
 	}
-	
-	public static function quiz_pmFilter($message)
+
+	public static function quiz_pmFilter($msg)
 	{
-		// Strip all tags then convert line breaks to <br>
-		$msg = str_replace(array('\r', ''), array('__CR__', '\n'), $message);
+		// Strip all tags then convert line breaks to &#13; entity
+		$msg = str_replace(array('\r', ''), array('__CR__', '\n'), $msg);
 		$msg = str_replace("'", "\'", stripcslashes(html_entity_decode($msg, ENT_QUOTES, 'UTF-8')));
-		$msg = str_replace('__CR__', '<br>', $msg);
-		
+		$msg = str_replace('__CR__', '&#13;', $msg);
+
 		return $msg;
 	}
 }

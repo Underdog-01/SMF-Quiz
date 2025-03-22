@@ -11,7 +11,7 @@
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed admin reported question delete.
 
 #### 2.0.2 - 10 November 2022
-- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Prevent non creators from managing other users quizzes.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Prevent non creators from managing other user quizzes.
 
 #### 2.0.1 - 07 November 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed stats issue when there are no quizzes/questions created.
@@ -34,13 +34,13 @@
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Added compatibility with SMF 2.0.x.
 ---
 #### 1.0.4 - 14 May 2009
-- ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Multiple choice answers can now be added/removed when editing quizes.
+- ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Multiple choice answers can now be added/removed when editing quizzes.
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Ability to have old top score member name in PM template.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) New quiz leagues now show on quiz homepage.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Functionality to modify quiz leagues.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Personal messages can now be automatically sent on league updates.
-- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Import quizes that have question images.
-- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Upload quizes that have question images.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Import quizzes that have question images.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Upload quizzes that have question images.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Preview the personal message in the settings.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Quiz leagues listing page design updated.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Ability to create quiz leagues for specific topics.
@@ -49,7 +49,7 @@
 
 #### 1.0.3 - 30 April 2009
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Added Disputes feature.
-- ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Preview quizes waiting for review.
+- ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Preview quizzes waiting for review.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) User ratings can now be turned off.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Welcome message can now be edited.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Switched from MooTools to jQuery.
@@ -61,7 +61,7 @@
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Improved the Quiz admin center.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Improved the listing page.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Improved the quiz popup.
-- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Users can now view all the quizes they have played.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Users can now view all the quizzes they have played.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Database and performance improvements.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed some characters and codification issues.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Updating a quiz no longer makes it new.
