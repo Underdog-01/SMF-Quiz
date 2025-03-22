@@ -90,7 +90,7 @@ class Profile
 				'enabled' => !empty($modSettings['SMFQuiz_enabled']),
 				'input_attr' => '',
 				'name' => 'quiz_pm_report',
-				'value' => $user_info['quiz_pm_report'],
+				'value' => !empty($user_info['quiz_pm_report']) ? (int)$user_info['quiz_pm_report'] : 0,
 			),
 			'quiz_pm_alert' => array(
 				'type' => 'check',
@@ -99,7 +99,7 @@ class Profile
 				'enabled' => !empty($modSettings['SMFQuiz_enabled']),
 				'input_attr' => '',
 				'name' => 'quiz_pm_alert',
-				'value' => $user_info['quiz_pm_alert'],
+				'value' => !empty($user_info['quiz_pm_alert']) ? (int)$user_info['quiz_pm_alert'] : 0,
 			),
 		);
 
@@ -143,7 +143,7 @@ class Profile
 				['id_member']
 			);
 
-			unset($_REQUEST['save']);			
+			unset($_REQUEST['save']);
 			redirectexit($scripturl . '?action=profile;area=quizProfileSettings;u=' . $memID);
 		}
 
