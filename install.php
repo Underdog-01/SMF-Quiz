@@ -85,7 +85,7 @@ $request = $smcFunc['db_query']('', '
 	SELECT qm.id_member
 	FROM {db_prefix}quiz_members qm
 	LEFT JOIN {db_prefix}members m ON m.id_member = qm.id_member
-	WHERE qm.id_member IS NULL',
+	WHERE m.id_member IS NULL',
 	[]
 );
 
