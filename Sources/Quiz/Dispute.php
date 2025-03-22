@@ -66,7 +66,7 @@ function quizDispute()
 				);
 
 				// Send message
-				sendpm($pmto, $subject, $message, 0, $pmfrom);
+				sendpm($pmto, $subject, Quiz\Helper::quiz_pmFilter($message), 0, $pmfrom);
 				$sentTo[] = $row['id_user'];
 			}
 		}
@@ -131,14 +131,10 @@ function quizDispute()
 			$smcFunc['db_free_result']($adminQuery);
 
 			require_once($sourcedir . '/Subs-Post.php');
-			// Mickey Mouse built a house...
-			$msg = str_replace('__CR__', '\r', $txt['quiz_dispute_report']);
-			$msg = str_replace("'", "\'", stripcslashes(html_entity_decode($txt['quiz_dispute_report'], ENT_QUOTES, 'UTF-8')));
-			$msg = str_replace('\r', '__CR__', $msg);
 			sendpm(
 				array('to' => $admins, 'bcc' => array()),
 				$txt['quiz_dispute_pmtitle'],
-				sprintf($msg, $scripturl . '?action=admin;area=quiz;sa=disputes'),
+				Quiz\Helper::quiz_pmFilter(sprintf($txt['quiz_dispute_report'], $scripturl . '?action=admin;area=quiz;sa=disputes')),
 			);
 		}
 	}

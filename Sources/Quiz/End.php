@@ -293,7 +293,7 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 				);
 
 				// Send message
-				sendpm($pmto, $subject, $message, 0, $pmfrom);
+				sendpm($pmto, $subject, Quiz\Helper::quiz_pmFilter($message), 0, $pmfrom);
 			}
 
 		}

@@ -513,7 +513,7 @@ function GetUserQuizesData()
 			);
 
 			// Send message
-			sendpm($pmto, $subject, $message, 0, $pmfrom);
+			sendpm($pmto, $subject, Quiz\Helper::quiz_pmFilter($message), 0, $pmfrom);
 		}
 	}
 

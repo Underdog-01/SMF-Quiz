@@ -64,4 +64,14 @@ class Helper
 
 		return array_filter($members);
 	}
+	
+	public static function quiz_pmFilter($message)
+	{
+		// Strip all tags then convert line breaks to <br>
+		$msg = str_replace(array('\r', ''), array('__CR__', '\n'), $message);
+		$msg = str_replace("'", "\'", stripcslashes(html_entity_decode($msg, ENT_QUOTES, 'UTF-8')));
+		$msg = str_replace('__CR__', '<br>', $msg);
+		
+		return $msg;
+	}
 }
