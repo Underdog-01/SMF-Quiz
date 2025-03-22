@@ -92,7 +92,7 @@ class Profile
 				'type' => 'check',
 				'label' => $txt['quiz_pm_alert'],
 				'permission' => 'quiz_view',
-				'enabled' => !empty($modSettings['SMFQuiz_enabled']),
+				'enabled' => !empty($modSettings['SMFQuiz_enabled']) && allowedTo('quiz_profile'),
 				'input_attr' => '',
 				'name' => 'quiz_pm_alert',
 				'value' => !empty($user_info['quiz_pm_alert']) ? (int)$user_info['quiz_pm_alert'] : 0,
