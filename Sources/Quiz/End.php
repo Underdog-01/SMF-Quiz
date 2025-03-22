@@ -277,7 +277,7 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 			require_once($sourcedir . '/Subs-Post.php');
 			$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
 
-			if (in_array($top_id_user, $userPrefs)) {
+			if (in_array($top_id_user, $usersPrefs)) {
 				$pmto = array(
 					'to' => array(),
 					'bcc' => array($top_id_user)

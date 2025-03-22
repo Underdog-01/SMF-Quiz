@@ -68,7 +68,7 @@ $txt['SMFQuizAdmin_QuizDisputes_Page'] = array(
 	'DeleteQuizDispute' => 'Delete Quiz Dispute',
 	'RespondToDispute' => 'Respond to Dispute',
 	'DisputeQuizAdmin' => 'Enter your response in the area below and click the appropriate button. A PM will be sent to the member if Quiz PMs are enabled in their profile.',
-	'DeleteQuizDisputeConfirm' => 'Are you sure you want to delete the selected reports?',
+	'DeleteQuizDisputeConfirm' => 'Are you sure you want to delete the selected disputes?',
 );
 
 // Language text located in the quizzes page

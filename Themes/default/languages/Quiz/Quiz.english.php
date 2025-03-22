@@ -191,7 +191,7 @@ $txt['quiz_xml_error_no_quizzes'] = 'There are no Quizzes defined';
 // Quiz profile
 $txt['quiz_profileSettings_title'] = 'SMF-Quiz Profile Settings';
 $txt['quiz_profileSettings'] = 'Quiz Settings';
-$txt['quiz_pm_report'] = 'Receive PM for Quiz reports';
+$txt['quiz_pm_report'] = 'Receive PM for Quiz user disputes';
 $txt['quiz_pm_alert'] = 'Receive PM for Quiz notifications';
 
 // Quiz Dispute

@@ -100,10 +100,11 @@ function template_quiz_play()
 {
 	global $settings, $boardurl, $modSettings, $txt, $context, $scripturl;
 
-	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? rand(999, 999999) : 'stable';
-	$quizDialogButtons = 'let smfQuizVersion = "' . $modSettings['smf_quiz_version'] . '",';
-	foreach ($txt['quizLocalizationTextJS'] as $key => $val) {
-		$quizDialogButtons .= ' ' . $key . ' = "' . $val . '",';
+	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
+	$quizVarsJS = 'let smfQuizVersion = "' . $modSettings['smf_quiz_version'] . '";';
+	foreach ((array_merge($txt['quizLocalizationTextJS'], $txt['quizLocalizationAlertsJS'])) as $key => $val) {
+		$quizVarsJS .= '
+			let ' . $key . ' = "' . $val . '";';
 	}
 	echo '
 <!DOCTYPE html>
@@ -115,7 +116,7 @@ function template_quiz_play()
 		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-3.7.0.min.js?v=' . $qv . '"></script>
 		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-ui-1.14.1.min.js?v=' . $qv . '"></script>
 		<script>
-			' . (rtrim($quizDialogButtons, ',')) . ';
+			' . ($quizVarsJS) . '
 			var id_user = "' . $context['user']['id'] . '";
 			var SMFQuiz_0to19 = "' . $modSettings['SMFQuiz_0to19'] . '";
 			var SMFQuiz_20to39 = "' . $modSettings['SMFQuiz_20to39'] . '";
@@ -146,8 +147,8 @@ function template_quiz_play()
 				quizPageTitle();
 			});
 		</script>
-		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizClient.js?v=' . rand(999,999999) . '"></script>
-		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.lightbox.js?v=' . rand(999, 999999) . '"></script>
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizClient.js?v=' . $qv . '"></script>
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.lightbox.js?v=' .$qv . '"></script>
 	</head>';
 
 	echo '

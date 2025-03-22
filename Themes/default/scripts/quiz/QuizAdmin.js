@@ -1,5 +1,112 @@
 /* SMFQuiz */
 var id_dispute = 0;
+if(typeof jQuery == "undefined") {
+	var headTag = document.getElementsByTagName("head")[0];
+	var jqTag = document.createElement("script");
+	jqTag.src = smf_default_theme_url + "/scripts/quiz/jquery-3.7.0.min.js";
+	jqTag.onload = myJQueryCode;
+	headTag.appendChild(jqTag);
+}
+function submitPreview (item)
+{
+	/* @TODO reimplement the preview */
+	alert(quiz_mod_preview_disabled)
+}
+
+function checkAll(selectedForm, checked)
+{
+	for (var i = 0; i < selectedForm.elements.length; i++)
+	{
+		var e = selectedForm.elements[i];
+		if (e.type == 'checkbox')
+			e.checked = checked;
+	}
+}
+
+function show_image(imgId, selectElement, imageFolder)
+{
+	var imgElement = document.getElementById(imgId);
+	var selectedValue = selectElement[selectElement.selectedIndex].text;
+	var imageUrl = smf_default_theme_url + "/images/quiz_images/blank.gif"
+	if (selectedValue != "-")
+		imageUrl = smf_default_theme_url + "/images/quiz_images/" + imageFolder + "/" + selectedValue;
+
+	imgElement.src = imageUrl;
+ }
+
+function changeQuestionType(selectedForm)
+{
+	var selection = selectedForm.options[selectedForm.options.selectedIndex].value;
+
+	document.getElementById("freeTextAnswer").style.display = selection == 2 ? 'block' : 'none';
+	document.getElementById("multipleChoiceAnswer").style.display = selection == 1 ? 'block' : 'none';
+	document.getElementById("trueFalseAnswer").style.display = selection == 3 ? 'block' : 'none';
+}
+
+function addRow()
+{
+	var rowCount = document.getElementById("answerTable").rows.length;
+	var radioElement = document.createElement("input");
+
+	radioElement.setAttribute("name", "correctAnswer");
+	radioElement.setAttribute("value", rowCount);
+	radioElement.setAttribute("type", "radio");
+
+	var answerElement = document.createElement("input");
+	answerElement.setAttribute("name", "answer" + rowCount);
+	answerElement.setAttribute("size", "50");
+	answerElement.setAttribute("type", "text");
+
+// @TODO check tags case
+	var tbody = document.getElementById("answerTable").getElementsByTagName("TBODY")[0];
+	var row = document.createElement("TR");
+	var td1 = document.createElement("TD");
+	td1.appendChild(radioElement);
+	var td2 = document.createElement("TD");
+	td2.appendChild (answerElement);
+	row.appendChild(td1);
+	row.appendChild(td2);
+	tbody.appendChild(row);
+}
+
+function deleteRow()
+{
+	var rowCount = document.getElementById("answerTable").rows.length-1;
+	if (rowCount > 1)
+		document.getElementById("answerTable").deleteRow(rowCount);
+}
+
+function verifyQuizesChecked(selectedForm)
+{
+	var foundChecked = false;
+	var quizIds = "";
+	for (var i = 0; i < selectedForm.elements.length; i++)
+	{
+		var e = selectedForm.elements[i];
+		if (e.type == 'checkbox')
+		{
+			if (e.checked)
+			{
+				quizIds = quizIds + e.name.substr(4) + ",";
+				foundChecked = true;
+			}
+		}
+	}
+	if (foundChecked == true)
+	{
+		var packageName = document.getElementById("packageName").value;
+		var packageDescription = document.getElementById("packageDescription").value;
+		var packageAuthor = document.getElementById("packageAuthor").value;
+		var packageSiteAddress = document.getElementById("packageSiteAddress").value;
+// @TODO replace with POSTed data
+		location.href = smf_scripturl + "?action=SMFQuizExport;quizIds=" + escape(quizIds) + ";packageName=" + escape(packageName) + ";packageDescription=" + escape(packageDescription) + ";packageAuthor=" + escape(packageAuthor) + ";packageSiteAddress=" + escape(packageSiteAddress);
+	}
+	else
+	{
+		alert(quizAlertOnePackage);
+		return false;
+	}
+}
 
 $(document).ready(function() {
 	$(".disputeDialog").click(function() {

@@ -1,0 +1,10 @@
+/* SMF-Quiz Admin style sheet */
+
+.nobr
+{
+	white-space:nowrap
+}
+#SMFQuiz_PMBrokenTopScoreMsg, #SMFQuiz_PMLeagueRoundUpdateMsg
+{
+	width: 85%;
+}

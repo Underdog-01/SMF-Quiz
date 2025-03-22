@@ -8,7 +8,6 @@ function loadQuiz ()
 	global $context, $txt;
 
 	loadTemplate('Quiz/Admin');
-
 	loadLanguage('Quiz/Quiz');
 
 	if (!allowedTo('quiz_play'))

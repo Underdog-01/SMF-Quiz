@@ -17,19 +17,21 @@ function SMFQuizAdmin()
 	require_once($sourcedir . '/Quiz/Db.php');
 	require_once($sourcedir . '/Quiz/Load.php');
 	require_once($sourcedir . '/ManageServer.php');
+	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
+	$quizVarsJS = 'let smfQuizVersion = "' . $modSettings['smf_quiz_version'] . '";';
+	foreach ((array_merge($txt['quizLocalizationTextJS'], $txt['quizLocalizationAdminAlertsJS'])) as $key => $val) {
+		$quizVarsJS .= '
+			let ' . $key . ' = "' . $val . '";';
+	}
 
 	$context['html_headers'] .= '
-		<style type="text/css">
-			/* replacement for nobr tag */
-			.nobr
-			{
-				white-space:nowrap
-			}
-			#SMFQuiz_PMBrokenTopScoreMsg, #SMFQuiz_PMLeagueRoundUpdateMsg
-			{
-				width: 85%;
-			}
-		</style>';
+		<script>
+			' . ($quizVarsJS) . '
+		</script>';
+
+	$context['html_headers'] .= '
+		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/QuizAdmin.css?v=' . $qv . '"/>
+		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizAdmin.js?v=' . $qv . '"></script>';
 
 	// This uses admin tabs - as it should!
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -39,122 +41,6 @@ function SMFQuizAdmin()
 	);
 
 	$modSettings['disableQueryCheck'] = 1;
-
-	// Add javascript for multiple checkbox selection
-	// TODO: Make this dependant on what we are showing
-	// @TODO move as much as possible to a file
-	$context['html_headers'] .= '
-		<script>
-			if(typeof jQuery == "undefined") {
-				var headTag = document.getElementsByTagName("head")[0];
-				var jqTag = document.createElement("script");
-				jqTag.src = "' . $settings['default_theme_url'] . '/scripts/quiz/jquery-3.7.0.min.js";
-				jqTag.onload = myJQueryCode;
-				headTag.appendChild(jqTag);
-			}
-			function submitPreview (item)
-			{
-				// @TODO reimplement the preview
-				alert(\'' . $txt['quiz_mod_preview_disabled'] . '\')
-			}
-
-			function checkAll(selectedForm, checked)
-			{
-				for (var i = 0; i < selectedForm.elements.length; i++)
-				{
-					var e = selectedForm.elements[i];
-					if (e.type==\'checkbox\')
-						e.checked = checked;
-				}
-			}
-
-			function show_image(imgId, selectElement, imageFolder)
-			{
-				var imgElement = document.getElementById(imgId);
-				var selectedValue = selectElement[selectElement.selectedIndex].text;
-				var imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/blank.gif"
-				if (selectedValue != "-")
-					imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/" + imageFolder + "/" + selectedValue;
-
-				imgElement.src = imageUrl;
-			 }
-
-			function changeQuestionType(selectedForm)
-			{
-				var selection = selectedForm.options[selectedForm.options.selectedIndex].value;
-
-				document.getElementById("freeTextAnswer").style.display = selection == 2 ? \'block\' : \'none\';
-				document.getElementById("multipleChoiceAnswer").style.display = selection == 1 ? \'block\' : \'none\';
-				document.getElementById("trueFalseAnswer").style.display = selection == 3 ? \'block\' : \'none\';
-			}
-
-			function addRow()
-			{
-				var rowCount = document.getElementById("answerTable").rows.length;
-				var radioElement = document.createElement("input");
-
-				radioElement.setAttribute("name", "correctAnswer");
-				radioElement.setAttribute("value", rowCount);
-				radioElement.setAttribute("type", "radio");
-
-				var answerElement = document.createElement("input");
-				answerElement.setAttribute("name", "answer" + rowCount);
-				answerElement.setAttribute("size", "50");
-				answerElement.setAttribute("type", "text");
-
-		// @TODO check tags case
-				var tbody = document.getElementById("answerTable").getElementsByTagName("TBODY")[0];
-				var row = document.createElement("TR");
-				var td1 = document.createElement("TD");
-				td1.appendChild(radioElement);
-				var td2 = document.createElement("TD");
-				td2.appendChild (answerElement);
-				row.appendChild(td1);
-				row.appendChild(td2);
-				tbody.appendChild(row);
-			}
-
-			function deleteRow()
-			{
-				var rowCount = document.getElementById("answerTable").rows.length-1;
-				if (rowCount > 1)
-					document.getElementById("answerTable").deleteRow(rowCount);
-			}
-
-			function verifyQuizesChecked(selectedForm)
-			{
-				var foundChecked = false;
-				var quizIds = "";
-				for (var i = 0; i < selectedForm.elements.length; i++)
-				{
-					var e = selectedForm.elements[i];
-					if (e.type==\'checkbox\')
-					{
-						if (e.checked)
-						{
-							quizIds = quizIds + e.name.substr(4) + ",";
-							foundChecked = true;
-						}
-					}
-				}
-				if (foundChecked == true)
-				{
-					var packageName = document.getElementById("packageName").value;
-					var packageDescription = document.getElementById("packageDescription").value;
-					var packageAuthor = document.getElementById("packageAuthor").value;
-					var packageSiteAddress = document.getElementById("packageSiteAddress").value;
-// @TODO replace with POSTed data
-					location.href = "' . $scripturl . '?action=SMFQuizExport;quizIds=" + escape(quizIds) + ";packageName=" + escape(packageName) + ";packageDescription=" + escape(packageDescription) + ";packageAuthor=" + escape(packageAuthor) + ";packageSiteAddress=" + escape(packageSiteAddress);
-				}
-				else
-				{
-					alert("' . $txt['AlertOnePackage'] . '");
-					return false;
-				}
-			}
-		</script>
-	';
-
 	$subActions = array(
 		'settings' => array(
 			'function' => 'GetSettingsData',
@@ -615,7 +501,7 @@ function SetImageUploadJavascript()
 	global $context, $boardurl, $settings, $modSettings;
 
 		// @TODO update jQuery + CDN + local loading, etc.
-	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? rand(999, 999999) : 'stable';
+	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
 	$context['html_headers'] .= '
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.selectboxes.js?v=' . $qv . '"></script>
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/ajaxfileupload.js?v=' . $qv . '"></script>
@@ -1659,7 +1545,7 @@ function GetShowDisputesData()
 {
 	global $context, $scripturl, $smcFunc, $txt, $modSettings, $settings, $boardurl;
 
-	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? rand(999, 999999) : 'stable';
+	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
 	$quizDialogButtons = 'let smfQuizVersion = "' . $modSettings['smf_quiz_version'] . '",';
 	foreach ($txt['quizLocalizationTextJS'] as $key => $val) {
 		$quizDialogButtons .= ' ' . $key . ' = "' . $val . '",';
@@ -1670,8 +1556,7 @@ function GetShowDisputesData()
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-ui-1.14.1.min.js?v=' . $qv . '"></script>
 		<script>
 			' . (rtrim($quizDialogButtons, ',')) . ';
-		</script>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizAdmin.js?v=' . $qv . '"></script>';
+		</script>';
 
 	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
 	$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'updated';

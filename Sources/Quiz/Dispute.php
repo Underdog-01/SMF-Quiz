@@ -87,7 +87,7 @@ function quizDispute()
 	}
 	elseif (!empty($reason) && !empty($id_quiz_question))
 	{
-		// Gather the user ids of Quiz admins that want report PM's
+		// Gather the user ids of Quiz admins that want dispute PM's
 		$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_report');
 		$quizAdmins = array_filter(array_merge(Quiz\Helper::quiz_usersAllowedTo('quiz_admin'), $usersPrefs));
 

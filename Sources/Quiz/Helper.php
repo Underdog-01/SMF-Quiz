@@ -67,7 +67,7 @@ class Helper
 
 	public static function quiz_pmFilter($msg)
 	{
-		// Strip all tags then convert line breaks to &#13; entity
+		// Strip all tags then convert line breaks to \n
 		$msg = str_replace(array('\r', ''), array('__CR__', '\n'), $msg);
 		$msg = stripcslashes(html_entity_decode($msg, ENT_QUOTES, 'UTF-8'));
 		$msg = str_replace('__CR__', '\n', $msg);

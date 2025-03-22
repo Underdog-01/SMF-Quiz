@@ -35,7 +35,7 @@ $txt['SMFQuiz_Common'] = array(
 	'Disabled' => 'Disabled',
 	'Dispute' => 'Dispute',
 	'DisputeQuizQuestion' => 'Dispute Quiz Question',
-	'DisputeQuizQuestionDesc' => 'This is used to report an inaccuracy with the answer to the last question you have just played. Please enter the reason why you believe there was an error below with as much information as possible so the quiz admin can investigate.',
+	'DisputeQuizQuestionDesc' => 'This is used to dispute an inaccuracy with the answer to the last question you have just played. Please enter the reason why you believe there was an error below with as much information as possible so the quiz admin can investigate.',
 	'DoingSomethingUnknown' => 'Doing something unknown in the Quiz',
 	'Done' => 'Done',
 	'EasiestQuizes' => 'Easiest Quizzes',
@@ -190,6 +190,14 @@ $txt['quizLocalizationTextJS'] = [
 	'quizSubmittedDisputeSuccess' => 'Dispute submitted successfully',
 	'quizSubmittedDisputeError' => 'Error ~ dispute was not submitted',
 	'quizSubmittedDisputeFinish' => 'Finished',
+];
+
+$txt['quizLocalizationAdminAlertsJS'] = [
+	'quiz_mod_preview_disabled' => 'Sorry at the moment the preview is disabled, it will be back at a later stage of development',
+	'quizAlertOnePackage' => 'You must select at least one Quiz to package',
+];
+
+$txt['quizLocalizationAlertsJS'] = [
 	'quizTimeoutErrorData' => 'A timeout has occurred attempting to retrieve data, retrying (attempt %ATTEMPTS%) ...',
 	'quizTimeoutErrorDataMax' => 'You have reached the maximum number of retries which is set to %ATTEMPTS%\nThe quiz will now close, please try and play again later as there may be connection issues at the moment',
 	'quizAjaxErrorTimeout' => 'An unexpected parsing error has occurred while retrieving data from the server. Please contact the server administrator and inform them of this error.',
