@@ -108,10 +108,10 @@ $(document).ready(function() {
 
 	// Bind the AJAX send and complete functions so that when we are retrieving data the
 	// AJAX loading image is shown
-	$("#ajaxLoading").bind("ajaxSend", function() {
-		$(this).show();
-	}).bind("ajaxComplete", function() {
-		$(this).hide();
+	$(document).on("ajaxSend", function() {
+		$("#ajaxLoading").show();
+	}).on("ajaxComplete", function() {
+		$("#ajaxLoading").hide();
 	});
 
 	// Wire up the click event of the get next question button

@@ -503,32 +503,32 @@ function SetImageUploadJavascript()
 		// @TODO update jQuery + CDN + local loading, etc.
 	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
 	$context['html_headers'] .= '
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.selectboxes.js?v=' . $qv . '"></script>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/ajaxfileupload.js?v=' . $qv . '"></script>
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.selectboxes.js?v=' . $qv . '"></script>
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/ajaxfileupload.js?v=' . $qv . '"></script>
+		<script>
 		$(document).ready(function() {
 		});
 
 		function ajaxFileUpload(subFolder)
 		{
-			//starting setting some animation when the ajax starts and completes
-			$(".preview_loading").each().ajaxStart(function() {
+			/* start setting some animation when the ajax starts and completes */
+			$(".preview_loading").each().on( "ajaxStart", function() {
 				$(this).show();
-			}).ajaxComplete(function() {
-				$(this).hide();
+			}).on( "ajaxComplete", function() {
+				$(this).hide();			
 			});
 			$.ajaxFileUpload
 			(
 				{
-					url:\'' . $boardurl . '/index.php?action=SMFQuizAjax;sa=imageUpload;xml;imageFolder=\'+subFolder,
+					url:"' . $boardurl . '/index.php?action=SMFQuizAjax;sa=imageUpload;xml;imageFolder="+subFolder,
 					secureuri:false,
-					fileElementId:\'fileToUpload\',
-					dataType: \'json\',
+					fileElementId: "fileToUpload",
+					dataType: "json",
 					success: function (data, status)
 					{
-						if(typeof(data.error) != \'undefined\')
+						if(typeof(data.error) != "undefined")
 						{
-							if(data.error != \'\')
+							if(data.error != "")
 							{
 								alert(data.error);
 							}
@@ -548,29 +548,28 @@ function SetImageUploadJavascript()
 			return false;
 		}
 
-		// Refreshes all images in the image dropdown box
+		/* Refreshes all images in the image dropdown box */
 		function refreshImageList(subFolder, sel_file)
 		{
-			// Remove any existing entries
 			$("#imageList").removeOption(/./);
 			$("#imageList").addOption("-", "-", sel_file == undefined);
 			$.ajax({
-				url: \'' . $boardurl . '/index.php?action=SMFQuizAjax;sa=imageList;xml;imageFolder=\'+ subFolder,
-				type: \'GET\',
-				dataType: \'xml\',
+				url: "' . $boardurl . '/index.php?action=SMFQuizAjax;sa=imageList;xml;imageFolder="+ subFolder,
+				type: "GET",
+				dataType: "xml",
 				timeout: 2000,
 				error: function() {
-					alert(\'Error loading XML file list\');
+					alert("Error loading XML file list");
 				},
 				success: function(xml) {
-					$(xml).find(\'file\').each(function() {
+					$(xml).find("file").each(function() {
 						var item_text = $(this).text();
 						$("#imageList").addOption(item_text, item_text, sel_file != undefined && sel_file == item_text);
 					});
 				}
 			});
 		}
-		// ]]></script>
+		</script>
 	';
 }
 
@@ -2684,14 +2683,6 @@ function GetQuizImportData()
 			}
 		}
 
-		/*
-		$files = glob($sourcedir . '/Quiz/Temp/*');
-		foreach ($files as $file) {
-			if (file_exists($file) && !in_array(basename($file), array('index.php', '.htaccess'))) {
-				@unlink($file);
-			}
-		}
-		*/
 		$tempPaths = glob($sourcedir . '/Quiz/Temp/*');
 		foreach ($tempPaths as $tempPath) {
 			if (is_dir($tempPath)) {
