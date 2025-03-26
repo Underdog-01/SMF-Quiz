@@ -16,6 +16,7 @@ class Integration
 		loadLanguage('Quiz/Common+Quiz/Quiz+Quiz/Admin');
 		self::setVersion();
 		self::loadClasses();
+		self::quiz_uninstall_options();
 
 		add_integration_function('integrate_autoload', __CLASS__ . '::autoload', false);
 		add_integration_function('integrate_admin_areas', __CLASS__ . '::admin_areas', false);
@@ -120,7 +121,7 @@ class Integration
 					'subsections' => array(
 						'adminCenter' => array($txt['SMFQuizAdmin_Titles']['AdminCenter']),
 						'settings' => array($txt['SMFQuizAdmin_Titles']['Settings']),
-						'quizes' => array($txt['SMFQuizAdmin_Titles']['Quizes']),
+						'quizzes' => array($txt['SMFQuizAdmin_Titles']['Quizzes']),
 						'quizleagues' => array($txt['SMFQuizAdmin_Titles']['QuizLeagues']),
 						'categories' => array($txt['SMFQuizAdmin_Titles']['Categories']),
 						'questions' => array($txt['SMFQuizAdmin_Titles']['Questions']),
@@ -169,5 +170,27 @@ class Integration
 				background-size: contain;
 			}
 		');
+	}
+
+	public static function quiz_uninstall_options()
+	{
+		global $context, $txt;
+
+		// custom remove all data info
+		foreach(array('action', 'area', 'sa', 'package') as $request) {
+			$$request = !empty($_REQUEST[$request]) && is_string($_REQUEST[$request]) ? $_REQUEST[$request] : '';
+		}
+		$actionCheck = stripos($action, 'admin;area=packages;sa=uninstall;package=') !== FALSE && stripos($action, 'smf-quiz') !== FALSE;
+		if ((array($action, $area, $sa) == array('admin', 'packages', 'uninstall') && stripos($package, 'smf-quiz') !== FALSE) || $actionCheck) {
+			$context['html_headers'] .= '
+			<script>
+				$(document).ready(function(){
+					$("#db_changes_div > ul.normallist li").remove();
+					$("#db_changes_div > ul.normallist").append("<li>' . $txt['quiz_uninstall_db'] . '</li>");
+					$("#db_changes_div > ul.normallist").append("<li>' . $txt['quiz_uninstall_files'] . '</li>");
+					$("#db_changes_div").append(\'<span style="font-weight: bold;">' . $txt['quiz_uninstall_warning'] . '</span>\');
+				});
+			</script>';
+		}
 	}
 }

@@ -15,7 +15,7 @@ elseif (!defined('SMF'))
 
 global $smcFunc;
 
-$quizVersion = '2.0.3-BETA4';
+$quizVersion = '2.0.3-BETA7';
 
 
 if (!isset($smcFunc['db_create_table']))
@@ -293,10 +293,8 @@ $tables = [
 			],
 			[
 				'name' => 'question_text',
-				'type' => 'varchar',
-				'size' => 255,
-				'not_null' => true,
-				'default' => 'Question Text'
+				'type' => 'text',
+				'not_null' => false,
 			],
 			[
 				'name' => 'id_question_type',
@@ -555,10 +553,8 @@ $tables = [
 			],
 			[
 				'name' => 'answer_text',
-				'type' => 'varchar',
-				'size' => 255,
-				'not_null' => true,
-				'default' => 'Answer Text'
+				'type' => 'text',
+				'not_null' => false,
 			],
 			[
 				'name' => 'answer_plays',
@@ -710,7 +706,7 @@ $tables = [
 			[
 				'name' => 'description',
 				'type' => 'varchar',
-				'size' => 100,
+				'size' => 191,
 				'not_null' => true,
 				'default' => 'Description'
 			],
@@ -931,7 +927,7 @@ $tables = [
 			[
 				'name' => 'id_quiz_session',
 				'type' => 'varchar',
-				'size' => 38,
+				'size' => 191,
 				'not_null' => true
 			],
 			[
@@ -1158,3 +1154,51 @@ $smcFunc['db_insert']('ignore',
 	],
 	['id_question_type']
 );
+
+
+// adjust table columns if necessary ~ default is text
+$tables = [
+	'quiz_question_type' => ['description'],
+	'quiz_session' => ['id_quiz_session'],
+	'quiz_question' => ['question_text'],
+	'quiz_answer' => ['answer_text']
+
+];
+
+foreach ($tables as $table => $columns)
+{
+	if (check_table_existsQuizInstall($table)) {
+		$query = $smcFunc['db_list_columns'] ('{db_prefix}' . $table, 'detail');
+
+		switch($table) {
+			case 'quiz_session':
+			case 'quiz_question_type':
+				foreach ($columns as $column) {
+					if (!empty($query[$column]) && !empty($query[$column]['size']) && (int)$query[$column]['size'] != 191) {
+						$smcFunc['db_change_column']('{db_prefix}' . $table, $column, array('size' => 191, 'default' => ''));
+					}
+				}
+				break;
+			default:
+				foreach ($columns as $column) {
+					if (!empty($query[$column]) && !empty($query[$column]['type']) && (int)$query[$column]['type'] != 'text') {
+						$smcFunc['db_change_column']('{db_prefix}' . $table, $column, array('type' => 'text', 'not_null' => false));
+					}
+				}
+
+		}
+
+
+	}
+}
+
+// check if table exists
+function check_table_existsQuizInstall($table)
+{
+	global $db_prefix, $smcFunc;
+
+	if ($smcFunc['db_list_tables'](false, $db_prefix . $table))
+		return true;
+
+	return false;
+}

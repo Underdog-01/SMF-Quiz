@@ -58,10 +58,10 @@ class Profile
 				'label' => $txt['quiz_profileSettings'],
 				'file' => '/Quiz/Profile.php',
 				'function' => 'Quiz\Profile::custom_profile_settings',
-				'icon' => 'portal_profile',
-				'enabled' => !empty($modSettings['SMFQuiz_enabled']),
+				'icon' => '../quiz_images/quiz_profile.png',
+				'enabled' => !empty($modSettings['SMFQuiz_enabled']) ? true : false,
 				'permission' => array(
-					'own' => array('quiz_profile_settings'),
+					'own' => array('quiz_profile'),
 					'any' => array('quiz_admin'),
 				),
 			),
@@ -75,29 +75,36 @@ class Profile
 		$context['profile_fields'] = !empty($context['profile_fields']) ? $context['profile_fields'] : [];
 
 		// Current user settings which are not adjusted in profile ~ (int)'' = 0
-		foreach (array('quiz_count') as $key => $userSet) {
+		foreach (array('quiz_pm_report', 'quiz_pm_alert', 'quiz_count') as $key => $userSet) {
 			$user_info[$userSet] = !empty($user_info[$userSet]) ? $user_info[$userSet] : '';
 		}
-		$context['profile_fields'] += array(
-			'quiz_pm_report' => array(
-				'type' => 'check',
-				'label' => $txt['quiz_pm_report'],
-				'permission' => 'quiz_admin',
-				'enabled' => !empty($modSettings['SMFQuiz_enabled']),
-				'input_attr' => '',
-				'name' => 'quiz_pm_report',
-				'value' => !empty($user_info['quiz_pm_report']) ? (int)$user_info['quiz_pm_report'] : 0,
-			),
-			'quiz_pm_alert' => array(
-				'type' => 'check',
-				'label' => $txt['quiz_pm_alert'],
-				'permission' => 'quiz_view',
-				'enabled' => !empty($modSettings['SMFQuiz_enabled']) && allowedTo('quiz_profile'),
-				'input_attr' => '',
-				'name' => 'quiz_pm_alert',
-				'value' => !empty($user_info['quiz_pm_alert']) ? (int)$user_info['quiz_pm_alert'] : 0,
-			),
-		);
+
+		if (!empty($modSettings['SMFQuiz_enabled']) && allowedTo('quiz_admin')) {
+			$context['profile_fields'] += [
+				'quiz_pm_report' => [
+					'type' => 'check',
+					'label' => $txt['quiz_pm_report'],
+					'permission' => 'quiz_admin',
+					'enabled' => true,
+					'input_attr' => '',
+					'name' => 'quiz_pm_report',
+					'value' => !empty($user_info['quiz_pm_report']) ? (int)$user_info['quiz_pm_report'] : 0,
+				],
+			];
+		}
+		if (!empty($modSettings['SMFQuiz_enabled']) && (allowedTo('quiz_admin') || allowedTo('quiz_profile'))) {
+			$context['profile_fields'] += [
+				'quiz_pm_alert' => [
+					'type' => 'check',
+					'label' => $txt['quiz_pm_alert'],
+					'permission' => 'quiz_view',
+					'enabled' => true,
+					'input_attr' => '',
+					'name' => 'quiz_pm_alert',
+					'value' => !empty($user_info['quiz_pm_alert']) ? (int)$user_info['quiz_pm_alert'] : 0,
+				],
+			];
+		}
 
 		if (isset($_REQUEST['save']))
 		{
@@ -128,13 +135,17 @@ class Profile
 				)
 			);
 
+			foreach (array('quiz_pm_report', 'quiz_pm_alert', 'quiz_count') as $key => $userSet) {
+				$_POST[$userSet] = !empty($_POST[$userSet]) ? $_POST[$userSet] : '';
+			}
+
 			$smcFunc['db_insert']('insert',
 				'{db_prefix}quiz_members',
 				[
 					'id_member' => 'int', 'quiz_pm_report' => 'int', 'quiz_pm_alert' => 'int', 'quiz_count' => 'int',
 				],
 				[
-					$memID, $_POST['quiz_pm_report'], $_POST['quiz_pm_alert'],  (int)$user_info['quiz_count'],
+					$memID, (int)$_POST['quiz_pm_report'], (int)$_POST['quiz_pm_alert'],  (int)$user_info['quiz_count'],
 				],
 				['id_member']
 			);

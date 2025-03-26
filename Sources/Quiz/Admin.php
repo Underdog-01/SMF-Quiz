@@ -8,8 +8,8 @@ function SMFQuizAdmin()
 {
 	global $context, $modSettings, $boardurl, $scripturl, $txt, $sourcedir, $settings;
 
-	isAllowedTo('quiz_admin');	
-	
+	isAllowedTo('quiz_admin');
+
 	// @TODO are both needed?
 	require_once($sourcedir . '/Quiz/Db.php');
 	require_once($sourcedir . '/Quiz/Load.php');
@@ -33,7 +33,7 @@ function SMFQuizAdmin()
 	// This uses admin tabs - as it should!
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['SMFQuiz'],
-		'help' => $txt['SMFQuizMod'],
+		'help' => 'SMFQuizMod',
 		'description' => $txt['SMFQuizModDescription'],
 	);
 
@@ -55,9 +55,9 @@ function SMFQuizAdmin()
 			'function' => 'GetDeleteQuizDisputeData',
 			'text' => $txt['SMFQuizAdmin_Titles']['Disputes'],
 		),
-		'quizes' => array(
+		'quizzes' => array(
 			'function' => 'GetQuizData',
-			'text' => $txt['SMFQuizAdmin_Titles']['Quizes'],
+			'text' => $txt['SMFQuizAdmin_Titles']['Quizzes'],
 		),
 		'quizleagues' => array(
 			'function' => 'GetQuizLeagueData',
@@ -102,7 +102,7 @@ function GetMaintenanceData()
 	$context['html_headers'] .= '<script type="text/javascript"><!-- // --><![CDATA[
 			function clearResults(thisform)
 			{
-				thisform.formaction.value = "resetQuizes";
+				thisform.formaction.value = "resetQuizzes";
 				if(confirm(\'' . $txt['SMFQuizAdmin_Maintenance_Page']['ResetAllQuizData'] . '\'))
 					thisform.submit();
 				else
@@ -111,7 +111,7 @@ function GetMaintenanceData()
 	// ]]></script>';
 
 	// User has selected to reset the quiz scores
-	if (isset($_POST['formaction']) && $_POST['formaction'] == 'resetQuizes')
+	if (isset($_POST['formaction']) && $_POST['formaction'] == 'resetQuizzes')
 	{
 		ResetQuizResults();
 		ResetQuizTopScores();
@@ -219,10 +219,10 @@ function GetSettingsData($return_config = false)
 		array('check', 'SMFQuiz_enabled', 'text_label' => $txt['SMFQuiz_Common']['QuizEnabled']),
 		array('large_text', 'SMFQuiz_Welcome', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['WelcomeMessage']),
 		array('check', 'SMFQuiz_showUserRating', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ShowUserRating']),
-		array('text', 'SMFQuiz_InfoBoardItemsToDisplay', 6, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['InfoBoardItemsToDisplay']),
-		array('text', 'SMFQuiz_ListPageSizes', 6, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ListPageSizes']),
-		array('text', 'SMFQuiz_ImportQuizesAsUserId', 6, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ImportQuizesAsUser']),
-		array('text', 'SMFQuiz_SessionTimeLimit', 6, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['SessionTimeLimit']),
+		array('float', 'SMFQuiz_InfoBoardItemsToDisplay', 6, 'min' => 1, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['InfoBoardItemsToDisplay']),
+		array('float', 'SMFQuiz_ListPageSizes', 6, 'min' => 1, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ListPageSizes']),
+		array('float', 'SMFQuiz_ImportQuizzesAsUserId', 6, 'min' => 0, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ImportQuizzesAsUser']),
+		array('float', 'SMFQuiz_SessionTimeLimit', 6, 'min' => 0, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['SessionTimeLimit']),
 		array('check', 'SMFQuiz_AutoClean', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['QuizAutoClean']),
 		array('title', 'QuizCompletionSettings', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['QuizCompletionSettings']),
 		array('text', 'SMFQuiz_0to19', 50, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['Score0to19']),
@@ -234,11 +234,14 @@ function GetSettingsData($return_config = false)
 		array('title', 'QuizMessagingSettings', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['QuizMessagingSettings']),
 		array('check', 'SMFQuiz_SendPMOnBrokenTopScore', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['SendPMOnBrokenTopScore']),
 		array('text', 'SMFQuiz_PMBrokenTopScoreSubject', 50, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMBrokenTopScoreMsg'] . ' - ' . $txt['SMFQuiz_Common']['Subject']),
-		array('large_text', 'SMFQuiz_PMBrokenTopScoreMsg', 10, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMBrokenTopScoreMsg'] . ' - ' . $txt['SMFQuiz_Common']['MessageBody'], 'postinput' => '<br/><img style="cursor:pointer" class="preview_loading" onclick="submitPreview(1);" src="' .$settings['default_images_url'] . '/quiz_images/preview.png" title="' . $txt['SMFQuiz_Common']['Preview'] . '" alt="' . $txt['SMFQuiz_Common']['Preview'] . '" />'),
-
+		array('large_text', 'SMFQuiz_PMBrokenTopScoreMsg', 10, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMBrokenTopScoreMsg'] . ' - ' . $txt['SMFQuiz_Common']['MessageBody'],
+			'postinput' => '<br/><img style="cursor:pointer" class="preview_loading" onclick="submitPreview(1);" src="' .$settings['default_images_url'] . '/quiz_images/preview.png" title="' . $txt['SMFQuiz_Common']['Preview'] . '" alt="' . $txt['SMFQuiz_Common']['Preview'] . '" />',
+			'help' => 'quiz_mod_pm_placeolders'),
 		array('check', 'SMFQuiz_SendPMOnLeagueRoundUpdate', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['SendPMOnLeagueRoundUpdate']),
 		array('text', 'SMFQuiz_PMLeagueRoundUpdateSubject', 50, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMLeagueRoundUpdateMsg'] . ' - ' . $txt['SMFQuiz_Common']['Subject']),
-		array('large_text', 'SMFQuiz_PMLeagueRoundUpdateMsg', 10, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMLeagueRoundUpdateMsg'] . ' - ' . $txt['SMFQuiz_Common']['MessageBody'], 'postinput' => '<br/><img style="cursor:pointer" class="preview_loading" onclick="submitPreview(2);" src="' .$settings['default_images_url'] . '/quiz_images/preview.png" title="' . $txt['SMFQuiz_Common']['Preview'] . '" alt="' . $txt['SMFQuiz_Common']['Preview'] . '" />'),
+		array('large_text', 'SMFQuiz_PMLeagueRoundUpdateMsg', 10, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['PMLeagueRoundUpdateMsg'] . ' - ' . $txt['SMFQuiz_Common']['MessageBody'],
+			'postinput' => '<br/><img style="cursor:pointer" class="preview_loading" onclick="submitPreview(2);" src="' .$settings['default_images_url'] . '/quiz_images/preview.png" title="' . $txt['SMFQuiz_Common']['Preview'] . '" alt="' . $txt['SMFQuiz_Common']['Preview'] . '" />',
+			'help' => 'quiz_mod_pm_placeolders'),
 	);
 
 	if ($return_config)
@@ -343,7 +346,7 @@ function GetQuizData()
 		GetEditQuizData();
 	// Otherwise just get the default Quiz League data
 	elseif (!isset($_POST["QuizAction"]))
-		GetQuizesData();
+		GetQuizzesData();
 }
 
 
@@ -442,7 +445,7 @@ function GetNewQuestionData()
 	if (isset($_POST['id_quiz']))
 		$context['SMFQuiz']['id_quiz'] = $_POST['id_quiz'];
 
-	// The new question page provides a list of quizes to select. Therefore we need to obtain a list of category data
+	// The new question page provides a list of quizzes to select. Therefore we need to obtain a list of category data
 	GetAllQuizDetails();
 
 	// The new question page provides a list of question types to select. Therefore we need to obtain a list of question type data
@@ -695,10 +698,10 @@ function GetDeleteQuizData()
 	$deleteKeys = GetKeysFromPost('quiz');
 
 	if (!empty($deleteKeys))
-		DeleteQuizes($deleteKeys);
+		DeleteQuizzes($deleteKeys);
 
 	// As we are going to return to the quiz detail list page after the delete, we need to load this data
-	GetQuizesData();
+	GetQuizzesData();
 
 	// We need to set the SMFQuiz specific action here so the template knows what to do. This could be achieved through the FORM
 	// variable, but tidier this way
@@ -801,8 +804,8 @@ function GetUpdateQuizData()
 	else
 	{
 		// We need to get new quiz data, as that will be the next page shown
-		GetQuizesData();
-		$context['SMFQuiz']['Action'] = 'Quizes';
+		GetQuizzesData();
+		$context['SMFQuiz']['Action'] = 'Quizzes';
 	}
 }
 
@@ -1308,7 +1311,7 @@ function UpdateQuizLeagueStatus($id_quiz_league, $enabled)
 	));
 }
 
-function GetQuizesData()
+function GetQuizzesData()
 {
 	global $context, $scripturl, $smcFunc, $txt, $modSettings, $settings;
 
@@ -1389,12 +1392,12 @@ function GetQuizesData()
 	// Set the filter links
 	$context['letter_links'] = '';
 	for ($i = 97; $i < 123; $i++)
-		$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
+		$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
 
 	// Sort out the column information.
 	foreach ($context['columns'] as $col => $column_details)
 	{
-		$context['columns'][$col]['href'] = $scripturl . '?action=admin;area=quiz;sa=quizes;starts_with=' . $starts_with . ';sort=' . $col . ';start=0';
+		$context['columns'][$col]['href'] = $scripturl . '?action=admin;area=quiz;sa=quizzes;starts_with=' . $starts_with . ';sort=' . $col . ';start=0';
 
 		if ((!isset($_REQUEST['desc']) && $col == $sort) || ($col != $sort && !empty($column_details['default_sort_rev'])))
 			$context['columns'][$col]['href'] .= ';desc';
@@ -1406,10 +1409,10 @@ function GetQuizesData()
 	$context['sort_by'] = $sort;
 	$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
 
-	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;">*</a> ';
-	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;enabled"><img src="' . $settings['default_images_url'] . '/quiz_images/unlock.png" alt="enabled" title="enabled" align="top" /></a> ';
-	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;disabled"><img src="' . $settings['default_images_url'] . '/quiz_images/lock.png" alt="disabled" title="disabled" align="top" /></a> ';
-	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizes;review"><img src="' . $settings['default_images_url'] . '/quiz_images/review.png" alt="for review" title="for review" align="top" /></a> ';
+	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;">*</a> ';
+	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;enabled"><img src="' . $settings['default_images_url'] . '/quiz_images/unlock.png" alt="enabled" title="enabled" align="top" /></a> ';
+	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;disabled"><img src="' . $settings['default_images_url'] . '/quiz_images/lock.png" alt="disabled" title="disabled" align="top" /></a> ';
+	$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;review"><img src="' . $settings['default_images_url'] . '/quiz_images/review.png" alt="for review" title="for review" align="top" /></a> ';
 
 	// List out the different sorting methods...
 	$sort_methods = array(
@@ -1473,15 +1476,15 @@ function GetQuizesData()
 		WHERE title LIKE {string:starts_with} {raw:queryExtra}' ,
 		$query_parameters
 	);
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=quiz;sa=quizes;starts_with=' . $starts_with . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : '') . (isset($_REQUEST['disabled']) ? ';disabled' : '') . (isset($_REQUEST['enabled']) ? ';enabled' : '') . (isset($_REQUEST['review']) ? ';review' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=quiz;sa=quizzes;starts_with=' . $starts_with . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : '') . (isset($_REQUEST['disabled']) ? ';disabled' : '') . (isset($_REQUEST['enabled']) ? ';enabled' : '') . (isset($_REQUEST['review']) ? ';review' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	// @TODO query
 	$result = $smcFunc['db_query']('', '
@@ -1529,13 +1532,13 @@ function GetQuizesData()
 		$query_parameters
 	);
 
-	$context['SMFQuiz']['quizes'] = Array();
+	$context['SMFQuiz']['quizzes'] = Array();
 	while ($row = $smcFunc['db_fetch_assoc']($result))
-		$context['SMFQuiz']['quizes'][] = $row;
+		$context['SMFQuiz']['quizzes'][] = $row;
 
 	$smcFunc['db_free_result']($result);
 
-	$context['SMFQuiz']['Action'] = 'quizes';
+	$context['SMFQuiz']['Action'] = 'quizzes';
 }
 
 function GetShowDisputesData()
@@ -1645,16 +1648,16 @@ function GetShowDisputesData()
 		ON			QD.id_quiz_question = QQ.id_question',
 		$query_parameters
 	);
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=quiz;sa=disputes;sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=quiz;sa=disputes;sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	// @TODO check input?
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	// @TODO query
 	$result = $smcFunc['db_query']('', '
@@ -1799,15 +1802,15 @@ function GetShowResultsData()
 		FROM 	{db_prefix}quiz_result',
 		$query_parameters
 	);
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=quiz;sa=results;sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=quiz;sa=results;sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	// @TODO query
 	$result = $smcFunc['db_query']('', '
@@ -1877,14 +1880,14 @@ function UploadQuiz($id_quiz)
 	$post_results = httpFunc('POST',$server,$port,$uri,$content);
 
 	if (!is_string($post_results))
-		$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizUploadError'];
+		$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizzes_Page']['QuizUploadError'];
 	else
 	{
 		if (strpos($post_results,'exists'))
-			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizUploadExists'];
+			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizzes_Page']['QuizUploadExists'];
 		else
 		{
-			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizUploadedSuccessfully'];
+			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizzes_Page']['QuizUploadedSuccessfully'];
 			upload_images($id_quiz);
 		}
 	}
@@ -1956,30 +1959,38 @@ function escape($url)
 
 function ImportQuizFile($urlPath, $categoryId, $isEnabled, $image, $fileCount)
 {
-	global $context, $modSettings;
+	global $context, $modSettings, $sourcedir;
 
 	$isEnabled = $isEnabled == 'on' ? 1 : 0;
 	$image = !empty($image) && $image != '-' ? $image : null;
 	$newUrlPath = escape($urlPath);
 
-	$quizString = load($newUrlPath);
+	$quizString = quizLoad($newUrlPath);
 
-	$creator_id = isset($modSettings['SMFQuiz_ImportQuizesAsUserId']) ? $modSettings['SMFQuiz_ImportQuizesAsUserId'] : 1;
+	$creator_id = isset($modSettings['SMFQuiz_ImportQuizzesAsUserId']) ? $modSettings['SMFQuiz_ImportQuizzesAsUserId'] : 1;
 
-	if (!$myxml=simplexml_load_string($quizString))
+	libxml_use_internal_errors(true);
+	$tempFile = $sourcedir . '/Quiz/Temp/temp_' . substr(md5(rand(1000, 9999999)), 0, 5) . '.xml';
+	file_put_contents($quizString, $tempFile);
+	@chmod($tempFile, 0644);
+	if (!$myxml = simplexml_load_file($tempFile)) {
+		@unlink($tempFile);
 		fatal_lang_error('quiz_mod_quiz_already_exists', false);
+	}
 	else
 	{
 		// TODO: Should really check XML is valid here
+		@unlink($tempFile);
+		$myxml = format_string2($myxml);
 		foreach($myxml->quiz as $quiz)
 		{
-			$newQuizId = ImportQuiz($quiz->title, $quiz->description, $quiz->playLimit, $quiz->secondsPerQuestion, $quiz->showAnswers, $categoryId, $isEnabled, $image, $creator_id);
+			$newQuizId = ImportQuiz(format_string2($quiz->title), format_string2($quiz->description), $quiz->playLimit, $quiz->secondsPerQuestion, $quiz->showAnswers, $categoryId, $isEnabled, $image, $creator_id);
 
 			foreach($quiz->questions->children() as $questions)
 			{
-				$newQuestionId = ImportQuizQuestion($newQuizId, $questions->questionText, $questions->questionTypeId, $questions->answerText);
+				$newQuestionId = ImportQuizQuestion($newQuizId, format_string2($questions->questionText), $questions->questionTypeId, format_string2($questions->answerText));
 				foreach ($questions->children()->answers->children() as $answers)
-					ImportQuizAnswer($newQuestionId, $answers->answerText, $answers->isCorrect);
+					ImportQuizAnswer($newQuestionId, format_string2($answers->answerText), $answers->isCorrect);
 			}
 		}
 		$context['SMFQuiz']['SMFQuizImported'] = $fileCount+1;
@@ -1987,7 +1998,7 @@ function ImportQuizFile($urlPath, $categoryId, $isEnabled, $image, $fileCount)
 }
 
 	// @TODO to replace
-function ImportQuizes($quizDetails)
+function ImportQuizzes($quizDetails)
 {
 	global $boarddir, $context, $boardurl;
 
@@ -2026,7 +2037,7 @@ function ImportQuizes($quizDetails)
 		}
 	}
 
-	$path = 'http://www.smfmodding.com/quizes/';
+	$path = 'http://www.smfmodding.com/quizzes/';
 
 	// Loop through quiz detail array
 	for ($count = 0; $count < sizeof($quizDetails); $count++)
@@ -2047,7 +2058,7 @@ function DeleteQuizImport()
 {
 	global $boarddir;
 
-	$path = $boarddir . '/tempQuizes/';
+	$path = $boarddir . '/tempQuizzes/';
 	$count = 1;
 	if ($handle = opendir($path))
 	{
@@ -2080,13 +2091,13 @@ function GetAdminCenterData()
 	$context['SMFQuiz_latestNews'] = $adminCenterXml->smfQuiz->newsEntries->newsEntry;*/
 
 	// Get some of the data to show
-	$context['SMFQuiz_totalQuizes'] = 0;
+	$context['SMFQuiz_totalQuizzes'] = 0;
 	GetTotalQuizStats();
 	if (isset($context['SMFQuiz']['totalQuizStats']))
 	{
 		foreach($context['SMFQuiz']['totalQuizStats'] as $row)
 		{
-			$context['SMFQuiz_totalQuizes'] = $row['total_quiz_count'];
+			$context['SMFQuiz_totalQuizzes'] = $row['total_quiz_count'];
 			$context['SMFQuiz_totalResults'] = $row['total_quiz_plays'];
 		}
 	}
@@ -2122,20 +2133,23 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 
 	// Only continue if XML is valid
 	require_once($sourcedir . '/Class-Package.php');
+	$quizXmlString = format_string2(($quizXmlString));
+	//$quizXmlString = str_replace(array("'", '"'), array("&apos;", "&quot;"), $quizXmlString);
 	$quizzes = New xmlArray($quizXmlString);
+	//$quizzes = simplexml_load_string($quizzes);
 
-	if (!$quizzes->exists('quizes'))
+	if (!$quizzes->exists('quizzes'))
 		$unsuccessful[] = array($txt['quiz_mod_unknown_quiz'], 'quiz_mod_error_reading_file');
 	else
 	{
-		foreach ($quizzes->set('quizes/quiz') as $quiz)
+		foreach ($quizzes->set('quizzes/quiz') as $quiz)
 		{
 			$title = $quiz->fetch('title');
 			if (empty($title))
 				continue;
 
 			$id_category = 0;
-			$creator_id = isset($modSettings['SMFQuiz_ImportQuizesAsUserId']) ? $modSettings['SMFQuiz_ImportQuizesAsUserId'] : 1;
+			$creator_id = isset($modSettings['SMFQuiz_ImportQuizzesAsUserId']) ? $modSettings['SMFQuiz_ImportQuizzesAsUserId'] : 1;
 			$categoryLocator = !empty($installedCategories['name']) && $quiz->exists('categoryName') ? array_search($quiz->fetch('categoryName'), $installedCategories['name']) : '';
 
 			// We have found a matching category, so use this
@@ -2152,8 +2166,8 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 
 			if ($quiz->exists('image') && $quiz->exists('imageData'))
 			{
-				$dest = $settings['default_theme_dir'] . '/images/quiz_images/Quizes/' . $image;
-				if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Quizes/'))
+				$dest = $settings['default_theme_dir'] . '/images/quiz_images/Quizzes/' . $image;
+				if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Quizzes/'))
 				{
 					$imageData = base64_decode($quiz->fetch('imageData'));
 					file_put_contents($dest, $imageData);
@@ -2180,7 +2194,7 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 				foreach ($questions->set('answers/answer') as $answers)
 					ImportQuizAnswer($newQuestionId, $answers->fetch('answerText'), $answers->fetch('isCorrect'));
 			}
-			$context['SMFQuiz']['importResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizes_Page']['QuizImportedSuccessfully'];
+			$context['SMFQuiz']['importResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizzes_Page']['QuizImportedSuccessfully'];
 // 			if (!empty($newQuizId))
 // 				import_quiz_images($newQuizId);
 			if (!isset($unsuccessful[md5($title)]))
@@ -2189,6 +2203,12 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 	}
 
 	return array('successful' => $successful, 'unsuccessful' => $unsuccessful);
+}
+
+function filter_quiz_data_string($dataString)
+{
+	$dataString = str_replace(array('quizes', 'Quizes'), array('quizzes', 'Quizzes'), $dataString);
+	return preg_replace('/\\\{2,}/', '', $dataString);
 }
 
 function import_quiz_images($id_quiz)
@@ -2273,11 +2293,11 @@ function save_image($image)
 	global $boarddir;
 
 	// Where to save the file
-	$outFilePath = $boarddir . '/Themes/default/images/quiz_images/Quizes/' . $image;
+	$outFilePath = $boarddir . '/Themes/default/images/quiz_images/Quizzes/' . $image;
 
 	$server  = 'www.smfmodding.com';
 	$port    = '80';
-	$uri     = '/Themes/default/images/quiz_images/Quizes/' . urlencode($image);
+	$uri     = '/Themes/default/images/quiz_images/Quizzes/' . urlencode($image);
 	$content = 'test';
 
 	$post_results = httpFunc('GET',$server,$port,$uri,$content);
@@ -2355,7 +2375,7 @@ function parseHttpResponse($content=null,$doHack=false)
 	if (empty($content))
 		return false;
 
-	// Nasty hack for when we are retrieving Quizes to import. For some reason we
+	// Nasty hack for when we are retrieving Quizzes to import. For some reason we
 	// get some garbage at the end of the XML
 	if ($doHack==true)
 	{
@@ -2439,11 +2459,137 @@ function unchunkHttpResponse($str=null)
 	return $str;
 }
 
+function quizCreateDirs($path)
+{
+	global $boarddir;
+	if (!is_dir($path))
+	{
+		$directory_path = $boarddir . '/';
+		$directories = explode("/", $path);
+		array_pop($directories);
+
+		foreach($directories as $directory)
+		{
+			$directory_path .= $directory . '/';
+			if (!is_dir($directory_path)) {
+				@mkdir($directory_path, 0755);
+			}
+		}
+	}
+}
+
+function unzipQuizArchive($src_file, $dest_dir)
+{
+	global $sourcedir;
+	require_once($sourcedir . '/Subs-Package.php');
+
+	$dest_dir = !empty($dest_dir) ? rtrim(str_replace('\\', '/', $dest_dir), '/') : false;
+	if (class_exists('ZipArchive')) {
+		$splitter = '/';
+		if ($dest_dir === false)
+		{
+			$dest_dir = mb_substr($src_file, 0, strrpos($src_file, $splitter)) . '/';
+			$dest_dir = preg_replace( "/^(game)_(.+?)\.(\S+)$/", "\\2",  $dest_dir);
+		}
+
+		$dest_dir = rtrim(str_replace('\\', '/', $dest_dir), '/');
+		quizCreateDirs($dest_dir);
+		$zip = new ZipArchive;
+		$res = $zip->open($src_file);
+		if ($res === TRUE) {
+			for($i = 0; $i < $zip->numFiles; $i++) {
+				@$zip->extractTo($dest_dir, array($zip->getNameIndex($i)));
+			}
+			$zip->close();
+		}
+		else
+			$zip = false;
+	}
+	elseif (function_exists('zip_open'))
+	{
+		if ($zip = zip_open($src_file))
+		{
+			if ($zip)
+			{
+				$splitter = ($create_zip_name_dir === true) ? '.' : '/';
+				if ($dest_dir === false) {
+					$dest_dir = mb_substr($src_file, 0, strrpos($src_file, $splitter)) . '/';
+				}
+				$dest_dir = rtrim(str_replace('\\', '/', $dest_dir), '/');
+				quizCreateDirs($dest_dir);
+
+				while ($zip_entry = zip_read($zip))
+				{
+					$pos_last_slash = strrpos(zip_entry_name($zip_entry), '/');
+					if ($pos_last_slash !== false)
+						quizCreateDirs($dest_dir . '/' . mb_substr(zip_entry_name($zip_entry), 0, $pos_last_slash+1));
+
+					if (zip_entry_open($zip,$zip_entry, 'rb'))
+					{
+						$file_name = $dest_dir . '/' . zip_entry_name($zip_entry);
+						$dir_name = dirname($file_name);
+
+							if ($overwrite === true || ($overwrite === false && !is_file($file_name)))
+							{
+								$fstream = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
+								@file_put_contents($file_name, $fstream);
+								@chmod($file_name, 0755);
+								if (substr($file_name, -4) == '.htm')
+									@rename($file_name, $file_name. 'l');
+							}
+
+						zip_entry_close($zip_entry);
+					}
+				}
+
+				zip_close($zip);
+			}
+		}
+		else
+			return false;
+	}
+	else
+	{
+		$splitter = ($create_zip_name_dir === true) ? '.' : '/';
+		if ($dest_dir === false)
+		{
+			$dest_dir = mb_substr($src_file, 0, strrpos($src_file, $splitter)) . '/';
+			$dest_dir = preg_replace( "/^(game)_(.+?)\.(\S+)$/", "\\2",  $dest_dir);
+		}
+		$dest_dir = rtrim(str_replace('\\', '/', $dest_dir), '/');
+		quizCreateDirs($dest_dir);
+		if (function_exists('read_zip_file'))
+			$zip = read_zip_file($src_file, $dest_dir, false, false, null);
+		elseif (function_exists('read_tgz_file'))
+			$zip = read_tgz_file($src_file, $dest_dir, false, $overwrite, null);
+		elseif (class_exists('ZipArchive')) {
+			// PHP 8 fallback only if pecl-zip package is installed
+			$zip = new ZipArchive;
+			$res = $zip->open($src_file);
+			if ($res === TRUE) {
+				for($i = 0; $i < $zip->numFiles; $i++) {
+					$zip->extractTo($dest_dir, array($zip->getNameIndex($i)));
+				}
+				$zip->close();
+			}
+			else
+				$zip = false;
+		}
+		else
+			$zip = false;
+
+		if (empty($zip))
+			return false;
+	}
+
+	return true;
+}
+
 function GetQuizImportData()
 {
-	global $context, $scripturl, $modSettings, $smcFunc, $txt, $settings;
+	global $context, $scripturl, $modSettings, $smcFunc, $txt, $settings, $sourcedir;
 
-	$importResults = array();
+	list($importResults) = [[]];
 	// Borrowed from Subs-Post.php
 	// These are the only valid image types for SMF.
 	$validImageTypes = array(
@@ -2463,22 +2609,52 @@ function GetQuizImportData()
 		$numFiles = count($_FILES['imported_quiz']['tmp_name']);
 		for ($i = 0; $i < $numFiles; $i++)
 		{
-			$file = $_FILES['imported_quiz']['tmp_name'][$i];
+			$fileData = pathinfo(basename($_FILES['imported_quiz']['name'][$i]));
+			move_uploaded_file($_FILES['imported_quiz']['tmp_name'][$i], $sourcedir . '/Quiz/Temp/' . $fileData['basename']);
+			$tempPath = 'temp_' . substr(md5(rand(1000, 9999999)), 0, 6);
+			$file = $sourcedir . '/Quiz/Temp/' . $fileData['basename'];
+			mkdir($sourcedir . '/Quiz/Temp/' . $tempPath, 0755);
+			if (!empty($fileData['extension']) && $fileData['extension'] == 'zip' && unzipQuizArchive($sourcedir . '/Quiz/Temp/' . $fileData['basename'], $sourcedir . '/Quiz/Temp/' . $tempPath)) {
+				clearstatcache();
+				if (file_exists($sourcedir . '/Quiz/Temp/' . $tempPath . '/' . $fileData['filename'] . '.xml')) {
+					$file = $sourcedir . '/Quiz/Temp/' . $tempPath . '/' . $fileData['filename'] . '.xml';
+					@chmod($file, 0644);
+				}
+				elseif (file_exists($sourcedir . '/Quiz/Temp/' . $tempPath . '/' . $fileData['filename'] . '.php')) {
+					$tempFiles = glob($sourcedir . '/Quiz/Temp/' . $tempPath . '/*');
+					foreach ($tempFiles as $tempFile) {
+						if (is_file($tempFile)) {
+							$ext = pathinfo($tempFile, PATHINFO_EXTENSION);
+							@chmod($tempFile, 0644);
+							if (in_array($ext, array('gif', 'jpeg', 'png', 'jpg', 'bmp'))) {
+								$newFilename = $ext == 'jpeg' ? pathinfo($tempFile, PATHINFO_FILENAME) . 'jpg' : pathinfo($tempFile, PATHINFO_BASENAME);
+								@rename($tempFile, $settings['default_theme_dir'] . '/images/quiz_images/Quizzes/' . $newFileName);
+								continue;
+							}
+							elseif ($ext == 'php') {
+								quizGetPhpData($tempFile);
+							}
+						}
+					}
+					quizRmdir($sourcedir . '/Quiz/Temp/' . $tempPath);
+					continue;
+				}
+			}
+
 			$imgFile = '';
 			if (!empty($_FILES['imported_quiz_img']['tmp_name'][$i]))
 			{
 				// Borrowed from Subs-Post.php {
-				$size = @getimagesize($_FILES['imported_quiz_img']['tmp_name'][$i]);
+				$size = @getimagesize($file);
 				// Sometime in the future we my want to check that the size is not higher than...something
 				list ($width, $height) = $size;
 
 				// Is a valid image: green light for upload
 				if (isset($validImageTypes[$size[2]]))
 				{
-				//}
-					$imgFile = un_htmlspecialchars($_FILES['imported_quiz_img']['name'][$i]);
-					$img_destination = $settings['default_theme_dir'] . '/images/quiz_images/Quizes/' . $imgFile;
-					if (!file_exists($img_destination) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Quizes'))
+					$imgFile = un_htmlspecialchars($file);
+					$img_destination = $settings['default_theme_dir'] . '/images/quiz_images/Quizzes/' . $imgFile;
+					if (!file_exists($img_destination) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Quizzes'))
 						move_uploaded_file($_FILES['imported_quiz_img']['tmp_name'][$i], $img_destination);
 				}
 			}
@@ -2487,11 +2663,14 @@ function GetQuizImportData()
 				if (isset($_GET['image']))
 					save_image($_GET['image']);
 
-				$fileContent = file_get_contents($file);
-				$importResults[$i] = array(
-					'name' => $_FILES['imported_quiz']['name'][$i],
-					'returns' => import_quiz($fileContent, $imgFile),
-				);
+				clearstatcache();
+				if (file_exists($file) && substr($file, -4) == '.xml') {
+					$fileContent = file_get_contents($file);
+					$importResults[$i] = array(
+						'name' => $file,
+						'returns' => import_quiz($fileContent, $imgFile),
+					);
+				}
 			}
 		}
 
@@ -2504,7 +2683,27 @@ function GetQuizImportData()
 						$context[$key . '_import'][] = str_replace('{FILENAME}', $return['name'], $quiz[0]) . ($key == 'successful' ? '' : ' (' . $txt['quiz_mod_failure_reason'] . ': ' . $txt[$quiz[1]] . ')');
 			}
 		}
+
+		/*
+		$files = glob($sourcedir . '/Quiz/Temp/*');
+		foreach ($files as $file) {
+			if (file_exists($file) && !in_array(basename($file), array('index.php', '.htaccess'))) {
+				@unlink($file);
+			}
+		}
+		*/
+		$tempPaths = glob($sourcedir . '/Quiz/Temp/*');
+		foreach ($tempPaths as $tempPath) {
+			if (is_dir($tempPath)) {
+				quizRmdir($tempPath);
+			}
+			elseif (!in_array(basename($tempPath), array('index.php', '.htaccess'))) {
+				@unlink($tempPath);
+			}
+		}
 	}
+
+	clearstatcache();
 /*
 	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
 	$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'updated';
@@ -2556,24 +2755,24 @@ function GetQuizImportData()
 	// Load quiz importer stats XML
 	$getQuizImporterStatsUrl = "http://www.smfmodding.com/Sources/SMFQuizImporter.php?action=getImporterStats";
 	$getQuizImporterStatsXml = simplexml_load_string(load($getQuizImporterStatsUrl));
-	$context['SMFQuiz_top10QuizImports'] = $getQuizImporterStatsXml->top10Quizes->top10Quiz;
+	$context['SMFQuiz_top10QuizImports'] = $getQuizImporterStatsXml->top10Quizzes->top10Quiz;
 	$context['SMFQuiz_latestQuizImports'] = $getQuizImporterStatsXml->latestImports->latestImport;
 
 	// Load quiz XML
-	$getQuizesUrl = "http://www.smfmodding.com/Sources/SMFQuizImporter.php?action=getQuizes;sort=" . $sort . ";limit=" . $limit . ";start=" . $start . ";hide_imported=" . $hide_imported . ";starts_with=" . $starts_with;
+	$getQuizzesUrl = "http://www.smfmodding.com/Sources/SMFQuizImporter.php?action=getQuizzes;sort=" . $sort . ";limit=" . $limit . ";start=" . $start . ";hide_imported=" . $hide_imported . ";starts_with=" . $starts_with;
 	if (isset($_REQUEST['desc']))
-		$getQuizesUrl .= ";desc";
+		$getQuizzesUrl .= ";desc";
 
-	$quizesXmlString = load($getQuizesUrl);
-	$getQuizesXml = simplexml_load_string($quizesXmlString);
+	$quizzesXmlString = quizLoad($getQuizzesUrl);
+	$getQuizzesXml = simplexml_load_string($quizzesXmlString);
 
 	// Get quiz data and store in context
-	$context['SMFQuiz_quizesToImport'] = $getQuizesXml->quiz;
+	$context['SMFQuiz_quizzesToImport'] = $getQuizzesXml->quiz;
 
-	$context['num_quizes'] =  $getQuizesXml->count;
+	$context['num_quizzes'] =  $getQuizzesXml->count;
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=quiz;sa=quizimporter;starts_with=' . $starts_with . ';hide_imported=' . $hide_imported . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $start, $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=quiz;sa=quizimporter;starts_with=' . $starts_with . ';hide_imported=' . $hide_imported . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $start, $context['num_quizzes'], $limit);
 	$hide_imported == 0 ? $hideText = 'hide imported' :  $hideText = 'show imported';
 	$context['hide_imported'] = '[<b><a href="' . $scripturl . '?action=admin;area=quiz;sa=quizimporter;hide_imported=' . !$hide_imported . ';starts_with=' . $starts_with . ';sort=' . $sort . ';start=' . $start . '">' . $hideText . ' </a></b>]';
 
@@ -2582,7 +2781,7 @@ function GetQuizImportData()
 	for ($i = 97; $i < 123; $i++)
 		$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizimporter;hide_imported=' . $hide_imported . ';starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
 
-	// Get all quizes for compare
+	// Get all quizzes for compare
 	// @TODO query
 	$result = $smcFunc['db_query']('', '
 		SELECT 		Q.title
@@ -2596,15 +2795,21 @@ function GetQuizImportData()
 	$smcFunc['db_free_result']($result);*/
 }
 
+function quizGetPhpData($tempFile)
+{
+
+}
+
 // TODO
 function format_string2($stringToFormat)
 {
 	global $smcFunc;
 
 	// Remove any slashes. These should not be here, but it has been known to happen
-	$returnString = str_replace("\\", "", $smcFunc['db_unescape_string']($stringToFormat));
+	$returnString = str_replace(array("\\", "quizes", "Quizes"), array("", "quizzes", "Quizzes"), $smcFunc['db_unescape_string']($stringToFormat));
+	$returnString = str_replace(array("'", '"'), array('&apos;', '&quot;'), html_entity_decode($returnString, ENT_QUOTES, 'UTF-8'));
 
-	return html_entity_decode($returnString, ENT_QUOTES, 'UTF-8');
+	return $returnString;
 }
 
 function BuildQuizXml($id_quiz)
@@ -2612,9 +2817,9 @@ function BuildQuizXml($id_quiz)
 	global $context, $modSettings, $user_settings, $settings;
 
 	$quizXml = '<?xml version="1.0" encoding="ISO-8859-1"?>
-			<quizes>
+			<quizzes>
 	';
-	$quizRows = ExportQuizes($id_quiz);
+	$quizRows = ExportQuizzes($id_quiz);
 	foreach ($quizRows as $row)
 	{
 	// @TODO double quotes
@@ -2671,9 +2876,68 @@ function BuildQuizXml($id_quiz)
 	}
 
 	$quizXml .= "
-			</quizes>
+			</quizzes>
 	";
 	return ($quizXml);
+}
+
+function quizRmdir($dir, $ignore = '')
+{
+	global $modSettings, $boarddir;
+
+	// linux/windows compatibility
+	$ignore = empty($ignore) ? '/' . uniqid('ignore_', true) . '/' : $ignore;
+	$boarddirx = str_replace('\\', '/', $boarddir);
+	$thisPath = str_replace('\\', '/', $dir);
+	$ignore = str_replace('\\', '/', $ignore);
+
+	$boarddirx = trim($boarddirx, '/');
+	$mainPathArray = array('Sources', 'Themes', 'Packages', 'Smileys', 'cache', 'avatars', 'attachments');
+	$thisPath = trim($thisPath, '/');
+
+	// make absolutely sure the deleted path is not an essential parent path
+	if ($thisPath == '.' || $thisPath == '..' || $thisPath == $boarddirx || !is_dir($dir))
+		return false;
+
+	foreach ($mainPathArray as $path)
+	{
+		if ($thisPath == $boarddirx . '/' . $path)
+			return false;
+	}
+
+	clearstatcache(false, $dir);
+	if (is_dir($dir) && stripos(str_replace('\\', '/', $dir), $ignore) === FALSE && stripos(str_replace('\\', '/', $dir), rtrim($ignore, '/')) === FALSE)
+	{
+		$objects = scandir($dir);
+		foreach ($objects as $object)
+		{
+			if ($object != '.' && $object != '..')
+			{
+				clearstatcache(false, $dir . '/' . $object);
+				if (is_dir($dir . '/' . $object)) {
+					quizRmdir($dir . '/' . $object, $ignore);
+				}
+				else {
+					@chmod($dir . '/' . $object, 0777);
+					@unlink($dir . '/' . $object);
+				}
+			}
+		}
+
+		reset($objects);
+		clearstatcache(false, $dir);
+		if (is_readable($dir) && is_dir($dir)) {
+			if (count(scandir($dir)) == 2) {
+				@chmod($dir, 0777);
+				if (@rmdir($dir)) {
+					clearstatcache(false, $dir);
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 ?>

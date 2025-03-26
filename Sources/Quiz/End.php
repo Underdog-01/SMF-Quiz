@@ -218,7 +218,7 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 
 	// Set defaults
 	$quizTitle = '';
-	$quizImage = $settings['default_images_url'] . '/quiz_images/Quizes/Default-64.png';
+	$quizImage = $settings['default_images_url'] . '/quiz_images/Quizzes/Default-64.png';
 	$topScore = false;
 
 	// Retrieve quiz info and top score
@@ -232,7 +232,7 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 			$top_user_name = $quiztitleRow['real_name'];
 			$top_time = $quiztitleRow['top_time'];
 			$quizTitle = $quiztitleRow['title'];
-			$quizImage = !empty($quiztitleRow['image']) ? $settings["default_images_url"] . '/quiz_images/Quizes/' . $quiztitleRow['image'] : $quizImage ;
+			$quizImage = !empty($quiztitleRow['image']) ? $settings["default_images_url"] . '/quiz_images/Quizzes/' . $quiztitleRow['image'] : $quizImage ;
 		}
 		if (($correct > $top_correct) || ($correct == $top_correct && $total_seconds < $top_time))
 			$topScore = true;
@@ -262,9 +262,8 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 
 		// Add entry for infoboard
 		AddInfoBoardentry($id_user, $name, $id_quiz, $correct, $total_seconds, false, $quizTitle, $quizImage);
-
-	// Otherwise a top score
 	}
+	// Otherwise a top score
 	else
 	{
 		// Only send PM if set to do so
@@ -274,20 +273,41 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 			require_once($sourcedir . '/Subs-Post.php');
 			$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
 
-			if (in_array($top_id_user, $usersPrefs)) {
+			if (!empty($top_id_user) && !empty($usersPrefs) && in_array($top_id_user, $usersPrefs)) {
+				$pmfrom = array(
+					'id' => $user_settings['id_member'],
+					'name' => $user_settings['real_name'],
+					'username' => $user_settings['real_name']
+				);
+
+				if (!empty($modSettings['SMFQuiz_ImportQuizzesAsUserId'])) {
+					$quizResult = $smcFunc['db_query']('', '
+						SELECT real_name
+						FROM {db_prefix}members
+						WHERE id_member = {int:memid}',
+						array(
+							'memid' => (int)$modSettings['SMFQuiz_ImportQuizzesAsUserId'],
+						)
+					);
+
+					if ($smcFunc['db_num_rows']($quizResult) > 0) {
+						$name = !empty($quizResult['real_name']) ? $quizResult['real_name'] : $quizResult['member_name'];
+						$pmfrom = array(
+							'id' => (int)$modSettings['SMFQuiz_ImportQuizzesAsUserId'],
+							'name' => $name,
+							'username' => $name
+						);
+					}
+
+					$smcFunc['db_free_result']($quizResult);
+				}
 				$pmto = array(
 					'to' => array(),
 					'bcc' => array($top_id_user)
 				);
 
-				$subject = ParseMessage($modSettings['SMFQuiz_PMBrokenTopScoreSubject'], $quizTitle, $total_seconds, $correct, $top_time, $top_correct, $quizImage, $scripturl, $id_quiz, $top_user_name);
-				$message = ParseMessage($modSettings['SMFQuiz_PMBrokenTopScoreMsg'], $quizTitle, $total_seconds, $correct, $top_time, $top_correct, $quizImage, $scripturl, $id_quiz, $top_user_name);
-
-				$pmfrom = array(
-					'id' => $user_settings['id_member'],
-					'name' => $user_settings['real_name'],
-					'username' => $user_settings['member_name']
-				);
+				$subject = ParseMessage($modSettings['SMFQuiz_PMBrokenTopScoreSubject'], $quizTitle, $total_seconds, $correct, $top_time, $top_correct, $quizImage, $id_quiz, $top_user_name);
+				$message = ParseMessage($modSettings['SMFQuiz_PMBrokenTopScoreMsg'], $quizTitle, $total_seconds, $correct, $top_time, $top_correct, $quizImage, $id_quiz, $top_user_name);
 
 				// Send message
 				sendpm($pmto, $subject, Quiz\Helper::quiz_pmFilter($message), 0, $pmfrom);
@@ -453,20 +473,29 @@ function InsertQuizLeagueEnd($id_quiz_league, $id_user, $questions, $correct, $i
 	AddQuizLeagueInfoBoardentry($id_user, $name, $id_quiz_league, $correct, $total_seconds);
 }
 
-function ParseMessage($message, $quiztitle, $total_seconds, $total_points, $top_time, $top_points, $quizImage, $scripturl, $id_quiz, $old_member_name)
+function ParseMessage($message, $quiztitle, $total_seconds, $total_points, $top_time, $top_points, $quizImage, $id_quiz, $old_member_name)
 {
-	global $user_settings;
+	global $user_settings, $boardurl, $scripturl;
 
-// @TODO single replace
-	$message = str_replace("{quiz_name}", $quiztitle, $message);
-	$message = str_replace("{new_score_seconds}", $total_seconds, $message);
-	$message = str_replace("{new_score}", $total_points, $message);
-	$message = str_replace("{old_score_seconds}", $top_time, $message);
-	$message = str_replace("{old_score}", $top_points, $message);
-	$message = str_replace("{member_name}", $user_settings['real_name'], $message);
-	$message = str_replace("{old_member_name}", $old_member_name, $message);
-	$message = str_replace("{quiz_image}", "[img]" . $quizImage . "[/img]", $message);
-	$message = str_replace("{quiz_link}", $scripturl . '?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz, $message);
+	$placeHolders = [
+		"{quiz_name}" => $quiztitle,
+		"{new_score_seconds}" => $total_seconds,
+		"{new_score}" => $total_points,
+		"{old_score_seconds}" => $top_time,
+		"{old_score}" => $top_points,
+		"{member_name}" => $user_settings['real_name'],
+		"{old_member_name}" => $old_member_name,
+		"{quiz_image}" => "[img]" . $quizImage . "[/img]",
+		"{quiz_link}" => $scripturl . '?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz,
+		"{quiz_iurl}" => "[iurl=" . $scripturl . '?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz . "]" . $quiztitle . "[/iurl]",
+		"{scripturl}" => $scripturl,
+		"{boardurl}" => $boardurl,
+	];
+
+	foreach ($placeHolders as $find => $replacement) {
+		$message = str_replace($find, $replacement, $message);
+	}
+
 	return $message;
 }
 

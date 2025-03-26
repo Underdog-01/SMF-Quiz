@@ -9,11 +9,15 @@ require_once($sourcedir . '/Quiz/Db.php');
 
 function SMFQuiz()
 {
-	global $context, $txt, $sourcedir;
+	global $context, $txt, $sourcedir, $settings, $modSettings;
 
 	isAllowedTo('quiz_view');
 	$context['page_title'] = $txt['SMFQuiz'];
 	addJavaScriptVar('id_user', $context['user']['id'], false);
+	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
+	$context['html_headers'] .= '
+		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/QuizMain.css?v=' . $qv . '"/>
+		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizMain.js?v=' . $qv . '"></script>';
 
 	if ($context['current_subaction'] == 'play')
 	{
@@ -35,7 +39,7 @@ function SMFQuiz()
 		'quizleagues' => 'GetQuizLeaguesData',
 		'statistics' => 'GetStatisticsData',
 		'userdetails' => 'GetUserDetailsData',
-		'userquizes' => 'GetUserQuizesData',
+		'userquizzes' => 'GetUserQuizzesData',
 		'addquiz' => 'GetAddQuizData',
 		'saveQuizAndAddQuestions' => 'SaveQuizData',
 		'saveQuiz' => 'SaveQuizData',
@@ -52,12 +56,12 @@ function SMFQuiz()
 		'editQuiz' => 'GetEditQuizData',
 		'search' => 'QuizSearchXML',
 		'quizscores' => 'GetQuizScoresData',
-		'quizes' => 'GetQuizesData',
+		'quizzes' => 'GetQuizzesData',
 		'quizmasters' => 'GetQuizMastersData',
 		'quizleaguetable' => 'GetQuizLeagueData',
 		'quizleagueresults' => 'GetQuizLeagueResultsData',
-		'unplayedQuizes' => 'GetUnplayedQuizesData',
-		'playedQuizes' => 'GetPlayedQuizesData',
+		'unplayedQuizzes' => 'GetUnplayedQuizzesData',
+		'playedQuizzes' => 'GetPlayedQuizzesData',
 		'preview' => 'GetPreviewQuizData',
 		);
 
@@ -85,8 +89,8 @@ function SMFQuiz()
 		'show' => $context['user']['is_logged'],
 	);
 	$context['tab_links'][] = array(
-		'action' => 'userquizes',
-		'label' => isset($txt['SMFQuiz_tabs']['userQuizes']) ? $txt['SMFQuiz_tabs']['userQuizes'] : 'User Quizzes'
+		'action' => 'userquizzes',
+		'label' => isset($txt['SMFQuiz_tabs']['userQuizzes']) ? $txt['SMFQuiz_tabs']['userQuizzes'] : 'User Quizzes'
 	);
 
 	if (isset($_POST['formaction']))
@@ -114,8 +118,8 @@ function template_xml_list()
 
 	echo '<smf>';
 
-	if (isset($context['quiz']['search']['quizes']))
-		foreach ($context['quiz']['search']['quizes'] as $quiz)
+	if (isset($context['quiz']['search']['quizzes']))
+		foreach ($context['quiz']['search']['quizzes'] as $quiz)
 			echo '
 			<quiz>
 				<id>', $quiz['id'], '</id>
@@ -136,7 +140,7 @@ function QuizSearchXML()
 	// @TODO check input before queries
 	$search = '%'.addslashes($_REQUEST['name']).'%';
 	$result = $smcFunc['db_query']('', '
-		SELECT count(*) AS quizes
+		SELECT count(*) AS quizzes
 		FROM {db_prefix}quiz as Q
 		WHERE Q.Title LIKE {string:quiz}',
 		array(
@@ -145,11 +149,11 @@ function QuizSearchXML()
 	);
 	$row = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
-	// @TODO $row['quizes'] ?
+	// @TODO $row['quizzes'] ?
 	$how_many = $row[0];
 
 	$context['SMFQuiz']['search'] = array();
-	$context['SMFQuiz']['search']['quizes'] = array();
+	$context['SMFQuiz']['search']['quizzes'] = array();
 
 	$result = $smcFunc['db_query']('', '
 		SELECT Q.id_quiz, Q.title
@@ -164,7 +168,7 @@ function QuizSearchXML()
 
 	while ($quiz = $smcFunc['db_fetch_assoc']($result))
 	{
-		$context['quiz']['search']['quizes'][] = array(
+		$context['quiz']['search']['quizzes'][] = array(
 		'title' => $quiz['title'],
 		'id' => $quiz['id_quiz'],
 		'url' => $scripturl . '?action=SMFQuiz;sa=categories;id_quiz=' . $quiz['id_quiz']
@@ -437,9 +441,9 @@ function SaveQuizData()
 	else
 	{
 		// We need to get new quiz data, as that will be the next page shown
-		GetUserQuizesData();
+		GetUserQuizzesData();
 
-		$context['current_subaction'] = 'userquizes';
+		$context['current_subaction'] = 'userquizzes';
 	}
 }
 
@@ -472,7 +476,7 @@ function AddShowImageScript()
 	// ]]></script>';
 }
 
-function GetUserQuizesData()
+function GetUserQuizzesData()
 {
 	global $context, $sourcedir, $txt;
 
@@ -500,8 +504,8 @@ function GetUserQuizesData()
 				'bcc' => array()
 			);
 
-			$subject = $txt['SMFQuiz_UserQuizes_Page']['UserQuizSubmittedForReview'];
-			$message = $txt['SMFQuiz_UserQuizes_Page']['QuizSubmittedForReview'];
+			$subject = $txt['SMFQuiz_UserQuizzes_Page']['UserQuizSubmittedForReview'];
+			$message = $txt['SMFQuiz_UserQuizzes_Page']['QuizSubmittedForReview'];
 
 			$pmfrom = array(
 				'id' => $userId,
@@ -514,8 +518,8 @@ function GetUserQuizesData()
 		}
 	}
 
-	GetUserQuizes($userId);
-	$context['current_subaction'] = 'userquizes';
+	GetUserQuizzes($userId);
+	$context['current_subaction'] = 'userquizzes';
 }
 
 function GetQuizLeaguesData()
@@ -677,16 +681,16 @@ function GetHomePageData()
 	// Get any outstanding sessions
 	GetQuizSessions($context['user']['id']);
 
-	// Need to get the latest quizes
-	GetLatestQuizes();
+	// Need to get the latest quizzes
+	GetLatestQuizzes();
 
-	// Need to get the most popular quizes
-	GetPopularQuizes(8);
+	// Need to get the most popular quizzes
+	GetPopularQuizzes(8);
 
 	// Need this for calculations
-	GetTotalQuizes();
+	GetTotalQuizzes();
 
-	// Need to get the most popular quizes
+	// Need to get the most popular quizzes
 	GetQuizMasters(8);
 
 	// Need to get the quiz league leaders
@@ -725,8 +729,8 @@ function GetCategoriesData()
 			$context['SMFQuiz']['category'][] = $row;
 		}
 
-		// Get any quizes that exist in this category
-		GetQuizesInCategoryData($categoryId, $context['user']['id']);
+		// Get any quizzes that exist in this category
+		GetQuizzesInCategoryData($categoryId, $context['user']['id']);
 	// Otherwise we are showing the quiz detail page
 	}
 	else
@@ -742,11 +746,11 @@ function GetStatisticsData()
 	// @TODO Performance?
 	// Could probably do this a little more efficiently, but for the meantime this will do
 
-	// Get total quizes
+	// Get total quizzes
 	GetTotalQuizStats();
 
 	// Need this for calculations
-	GetTotalQuizes();
+	GetTotalQuizzes();
 
 	// Get total questions
 	GetTotalQuestions();
@@ -760,8 +764,8 @@ function GetStatisticsData()
 	// Get quiz masters
 	GetQuizMasters(10);
 
-	// Need to get the most popular quizes
-	GetPopularQuizes(10);
+	// Need to get the most popular quizzes
+	GetPopularQuizzes(10);
 
 	// Get the best quiz result
 	GetBestQuizResult();
@@ -778,11 +782,11 @@ function GetStatisticsData()
 	// Get the most quiz wins
 	MostQuizWins();
 
-	// Get the hardest quizes
-	GetHardestQuizes();
+	// Get the hardest quizzes
+	GetHardestQuizzes();
 
-	// Get the easiest quizes
-	GetEasiestQuizes();
+	// Get the easiest quizzes
+	GetEasiestQuizzes();
 
 	// Get the most active players
 	GetMostActivePlayers();
@@ -797,8 +801,8 @@ function GetNewQuestionData()
 
 	QuestionScript();
 
-	// The new question page provides a list of quizes to select. Therefore we need to obtain a list of category data
-	GetUserQuizes($context['user']['id']);
+	// The new question page provides a list of quizzes to select. Therefore we need to obtain a list of category data
+	GetUserQuizzes($context['user']['id']);
 
 	// The new question page provides a list of question types to select. Therefore we need to obtain a list of question type data
 	GetAllQuestionTypes();
@@ -976,8 +980,8 @@ function GetUpdateQuizData()
 		GetNewQuestionData();
 	else
 	{
-		GetUserQuizesData();
-		$context['current_subaction'] = 'userquizes';
+		GetUserQuizzesData();
+		$context['current_subaction'] = 'userquizzes';
 	}
 }
 
@@ -1029,9 +1033,9 @@ function GetDeleteQuizData()
 		fatal_lang_error('no_access', false);
 
 	if (!empty($context['id_quiz']))
-		DeleteQuizes($context['id_quiz']);
+		DeleteQuizzes($context['id_quiz']);
 
-	GetUserQuizesData();
+	GetUserQuizzesData();
 }
 
 
@@ -1184,15 +1188,15 @@ function GetQuizScoresData()
 		WHERE id_quiz = {int:id_quiz}',
 		$query_parameters
 	);
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=quizscores;id_quiz=' . $id_quiz . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=quizscores;id_quiz=' . $id_quiz . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	$result = $smcFunc['db_query']('', '
 		SELECT
@@ -1231,7 +1235,7 @@ function GetQuizScoresData()
 }
 
 // @TODO createList?
-function GetUnplayedQuizesData()
+function GetUnplayedQuizzesData()
 {
 	global $context, $scripturl, $smcFunc, $txt, $modSettings;
 
@@ -1284,14 +1288,14 @@ function GetUnplayedQuizesData()
 	);
 
 	// Set the filter links
-	$context['letter_links'] = '<a href="' . $scripturl . '?action=SMFQuiz;sa=unplayedQuizes;id_user=' . $userId . '">*</a> ';
+	$context['letter_links'] = '<a href="' . $scripturl . '?action=SMFQuiz;sa=unplayedQuizzes;id_user=' . $userId . '">*</a> ';
 	for ($i = 97; $i < 123; $i++)
-		$context['letter_links'] .= '<a href="' . $scripturl . '?action=SMFQuiz;sa=unplayedQuizes;id_user=' . $userId . ';starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
+		$context['letter_links'] .= '<a href="' . $scripturl . '?action=SMFQuiz;sa=unplayedQuizzes;id_user=' . $userId . ';starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
 
 	// Sort out the column information.
 	foreach ($context['columns'] as $col => $column_details)
 	{
-		$context['columns'][$col]['href'] = $scripturl . '?action=SMFQuiz;sa=unplayedQuizes;id_user=' . $userId . ';starts_with=' . $starts_with . ';sort=' . $col . ';start=0';
+		$context['columns'][$col]['href'] = $scripturl . '?action=SMFQuiz;sa=unplayedQuizzes;id_user=' . $userId . ';starts_with=' . $starts_with . ';sort=' . $col . ';start=0';
 
 		if ((!isset($_REQUEST['desc']) && $col == $sort) || ($col != $sort && !empty($column_details['default_sort_rev'])))
 			$context['columns'][$col]['href'] .= ';desc';
@@ -1360,15 +1364,15 @@ function GetUnplayedQuizesData()
 		GROUP BY Q.id_quiz,QR.id_quiz_result',
 		$query_parameters
 	);
-	$context['num_quizes'] = $smcFunc['db_num_rows']($request);
+	$context['num_quizzes'] = $smcFunc['db_num_rows']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;id_user=' . $userId . ';sa=unplayedQuizes;starts_with=' . $starts_with . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;id_user=' . $userId . ';sa=unplayedQuizzes;starts_with=' . $starts_with . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	// Left join on category as may be top level
 	$result = $smcFunc['db_query']('', '
@@ -1418,17 +1422,17 @@ function GetUnplayedQuizesData()
 		$query_parameters
 	);
 
-	$context['SMFQuiz']['quizes'] = Array();
+	$context['SMFQuiz']['quizzes'] = Array();
 	while ($row = $smcFunc['db_fetch_assoc']($result))
-		$context['SMFQuiz']['quizes'][] = $row;
+		$context['SMFQuiz']['quizzes'][] = $row;
 
 	$smcFunc['db_free_result']($result);
 
-	$context['SMFQuiz']['Action'] = 'quizes';
+	$context['SMFQuiz']['Action'] = 'quizzes';
 }
 
 // @TODO createList?
-function GetPlayedQuizesData()
+function GetPlayedQuizzesData()
 {
 	global $context, $scripturl, $smcFunc, $txt, $modSettings;
 
@@ -1480,14 +1484,14 @@ function GetPlayedQuizesData()
 	);
 
 	// Set the filter links
-	$context['letter_links'] = '<a href="' . $scripturl . '?action=SMFQuiz;sa=playedQuizes;id_user=' . $userId . '">*</a> ';
+	$context['letter_links'] = '<a href="' . $scripturl . '?action=SMFQuiz;sa=playedQuizzes;id_user=' . $userId . '">*</a> ';
 	for ($i = 97; $i < 123; $i++)
-		$context['letter_links'] .= '<a href="' . $scripturl . '?action=SMFQuiz;sa=playedQuizes;id_user=' . $userId . ';starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
+		$context['letter_links'] .= '<a href="' . $scripturl . '?action=SMFQuiz;sa=playedQuizzes;id_user=' . $userId . ';starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
 
 	// Sort out the column information.
 	foreach ($context['columns'] as $col => $column_details)
 	{
-		$context['columns'][$col]['href'] = $scripturl . '?action=SMFQuiz;sa=playedQuizes;id_user=' . $userId . ';starts_with=' . $starts_with . ';sort=' . $col . ';start=0';
+		$context['columns'][$col]['href'] = $scripturl . '?action=SMFQuiz;sa=playedQuizzes;id_user=' . $userId . ';starts_with=' . $starts_with . ';sort=' . $col . ';start=0';
 
 		if ((!isset($_REQUEST['desc']) && $col == $sort) || ($col != $sort && !empty($column_details['default_sort_rev'])))
 			$context['columns'][$col]['href'] .= ';desc';
@@ -1553,15 +1557,15 @@ function GetPlayedQuizesData()
 			AND QR.id_user = {int:id_user}',
 		$query_parameters
 	);
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=playedQuizes;id_user=' . $userId . ';starts_with=' . $starts_with . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=playedQuizzes;id_user=' . $userId . ';starts_with=' . $starts_with . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	$result = $smcFunc['db_query']('', '
 		SELECT
@@ -1593,17 +1597,17 @@ function GetPlayedQuizesData()
 		$query_parameters
 	);
 
-	$context['SMFQuiz']['quizes'] = Array();
+	$context['SMFQuiz']['quizzes'] = Array();
 	while ($row = $smcFunc['db_fetch_assoc']($result))
-		$context['SMFQuiz']['quizes'][] = $row;
+		$context['SMFQuiz']['quizzes'][] = $row;
 
 	$smcFunc['db_free_result']($result);
 
-	$context['SMFQuiz']['Action'] = 'quizes';
+	$context['SMFQuiz']['Action'] = 'quizzes';
 }
 
 // @TODO createList?
-function GetQuizesInCategoryData($id_category, $id_user)
+function GetQuizzesInCategoryData($id_category, $id_user)
 {
 	global $context, $scripturl, $smcFunc, $txt, $modSettings;
 
@@ -1698,15 +1702,15 @@ function GetQuizesInCategoryData($id_category, $id_user)
 		$query_parameters
 	);
 
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=categories;categoryId=' . $id_category . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=categories;categoryId=' . $id_category . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	$result = $smcFunc['db_query']('', '
 		SELECT
@@ -1746,17 +1750,17 @@ function GetQuizesInCategoryData($id_category, $id_user)
 		$query_parameters
 	);
 
-	$context['SMFQuiz']['quizes'] = Array();
+	$context['SMFQuiz']['quizzes'] = Array();
 	while ($row = $smcFunc['db_fetch_assoc']($result))
-		$context['SMFQuiz']['quizes'][] = $row;
+		$context['SMFQuiz']['quizzes'][] = $row;
 
 	$smcFunc['db_free_result']($result);
 
-	$context['SMFQuiz']['Action'] = 'quizes';
+	$context['SMFQuiz']['Action'] = 'quizzes';
 }
 
 // @TODO createList
-function GetQuizesData()
+function GetQuizzesData()
 {
 	global $context, $scripturl, $smcFunc, $txt, $modSettings;
 
@@ -1845,14 +1849,14 @@ function GetQuizesData()
 	}
 
 	// Set the filter links
-	$context['letter_links'] = '<a href="' . $scripturl . '?action=SMFQuiz;sa=quizes;type=' . $type . '">*</a> ';
+	$context['letter_links'] = '<a href="' . $scripturl . '?action=SMFQuiz;sa=quizzes;type=' . $type . '">*</a> ';
 	for ($i = 97; $i < 123; $i++)
-		$context['letter_links'] .= '<a href="' . $scripturl . '?action=SMFQuiz;sa=quizes;type=' . $type . ';starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
+		$context['letter_links'] .= '<a href="' . $scripturl . '?action=SMFQuiz;sa=quizzes;type=' . $type . ';starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
 
 	// Sort out the column information.
 	foreach ($context['columns'] as $col => $column_details)
 	{
-		$context['columns'][$col]['href'] = $scripturl . '?action=SMFQuiz;sa=quizes;type=' . $type . ';starts_with=' . $starts_with . ';sort=' . $col . ';start=0';
+		$context['columns'][$col]['href'] = $scripturl . '?action=SMFQuiz;sa=quizzes;type=' . $type . ';starts_with=' . $starts_with . ';sort=' . $col . ';start=0';
 
 		if ((!isset($_REQUEST['desc']) && $col == $sort) || ($col != $sort && !empty($column_details['default_sort_rev'])))
 			$context['columns'][$col]['href'] .= ';desc';
@@ -1923,15 +1927,15 @@ function GetQuizesData()
 			AND Q.enabled = 1',
 		$query_parameters
 	);
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;type=' . $type . ';sa=quizes;starts_with=' . $starts_with . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;type=' . $type . ';sa=quizzes;starts_with=' . $starts_with . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	$result = $smcFunc['db_query']('', '
 		SELECT
@@ -1983,13 +1987,13 @@ function GetQuizesData()
 		$query_parameters
 	);
 
-	$context['SMFQuiz']['quizes'] = Array();
+	$context['SMFQuiz']['quizzes'] = Array();
 	while ($row = $smcFunc['db_fetch_assoc']($result))
-		$context['SMFQuiz']['quizes'][] = $row;
+		$context['SMFQuiz']['quizzes'][] = $row;
 
 	$smcFunc['db_free_result']($result);
 
-	$context['SMFQuiz']['Action'] = 'quizes';
+	$context['SMFQuiz']['Action'] = 'quizzes';
 }
 
 // @TODO createList
@@ -2057,15 +2061,15 @@ function GetQuizMastersData()
 		GROUP BY Q.top_user_id',
 		$query_parameters
 	);
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=quizmasters;sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=quizmasters;sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	$result = $smcFunc['db_query']('', '
 		SELECT
@@ -2212,16 +2216,16 @@ function GetQuizLeagueData()
 			AND QLT.id_quiz_league = {int:id_quiz_league}',
 		$query_parameters
 	);
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=quizleaguetable;current_round=' . $current_round . ';id_quiz_league=' . $id_quiz_league . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=quizleaguetable;current_round=' . $current_round . ';id_quiz_league=' . $id_quiz_league . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	// @TODO check input
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	$result = $smcFunc['db_query']('', '
 		SELECT
@@ -2416,15 +2420,15 @@ function GetQuizLeagueResultsData()
 		WHERE QLR.id_quiz_league = {int:id_quiz_league}',
 		$query_parameters
 	);
-	list ($context['num_quizes']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_quizzes']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=quizleagueresults;id_quiz_league=' . $id_quiz_league . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizes'], $limit);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=quizleagueresults;id_quiz_league=' . $id_quiz_league . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_quizzes'], $limit);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizes']);
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_quizzes']);
 
 	$result = $smcFunc['db_query']('', '
 		SELECT

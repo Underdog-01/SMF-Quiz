@@ -1,0 +1,119 @@
+/* Quiz details page */
+.quiz_details_flex {
+	margin: 4px 0px;
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+.quiz_details_flex_cell {
+	flex: 1 0 47%;
+	padding: 0.5rem;
+	align-self: start;
+}
+.quiz_details_flex_play {
+	border: 0px;
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+}
+.quiz_details_flex_row {
+	flex: 1 0 97%;
+	width: 100%;
+	text-overflow: ellipsis;
+}
+.quiz_details_flex_play_title {
+	flex: 1 0 30%;
+	padding: 0.25rem 0.5rem;
+}
+.quiz_details_flex_play_descript {
+	flex: 1 0 60%;
+	padding: 0.25rem 0.5rem;
+}
+.quiz_details_flex_play_img {
+	width: 64px;
+	height: 64px;
+}
+.quiz_details_flex_scores {
+	border: 0px;
+	width: 100%;
+	height: 100%;
+	font-size: xx-small;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+}
+.quiz_details_flex_scores_title {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+	justify-content: space-between;
+}
+.quiz_details_flex_scores_small {
+	padding: 0.15rem 0rem;
+	flex: 1 0 6%;
+	text-align: center;
+}
+.quiz_details_flex_scores_med {
+	padding: 0.15rem 0rem;
+	flex: 1 0 23%;
+	text-align: center;
+	cursor: pointer;
+}
+.quiz_details_flex_scores_lge {
+	padding: 0.15rem 0rem;
+	flex: 1 0 34%;
+	text-align: center;
+}
+.quiz_details_flex_scores_bar {
+	padding: 0.15rem 0rem;
+	flex: 1 0 44%;
+	text-align: left;
+}
+.quiz_details_flex_scores_bar_title {
+	padding: 0.15rem 0rem;
+	flex: 1 0 44%;
+	text-align: center;
+}
+.quiz_details_viewall {
+	padding-top: 0.5rem;
+	font-size: small;
+}
+.quiz_details_flex_stat {
+	border: 0px;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+}
+.quiz_details_flex_stat_title {
+	flex: 1 0 40%;
+	padding: 0.25rem 0.5rem;
+}
+.quiz_details_flex_stat_descript {
+	flex: 1 0 50%;
+	padding: 0.25rem 0.5rem;
+}
+.quizLevelVeryEasy {
+	color: green;
+}
+.quizLevelEasy {
+	color: green;
+}
+.quizLevelAverage {
+	color: orange;
+}
+.quizLevelDifficult {
+	color: red;
+}
+.quizLevelNA {
+	color: red;
+}
+.quizLevelTough {
+	color: red;
+}
+

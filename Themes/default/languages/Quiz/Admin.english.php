@@ -13,11 +13,12 @@ $txt['SMFQuiz'] = 'Quiz';
 $txt['SMFQuizMod'] = 'The SMF Quiz Mod';
 $txt['SMFQuizModDescription'] = 'This page allows you to configure the SMF Quiz modification';
 $txt['AlertOnePackage'] = 'You must select at least one Quiz to package';
+$txt['SMFQuizAdmin_QuizCheckAll'] = 'Select All';
 
 // Text for any titles that appear in the admin section
 $txt['SMFQuizAdmin_Titles'] = array(
 	'Settings' => 'Settings',
-	'Quizes' => 'Quizzes',
+	'Quizzes' => 'Quizzes',
 	'QuizLeagues' => 'Quiz Leagues',
 	'Categories' => 'Categories',
 	'Questions' => 'Questions',
@@ -32,11 +33,12 @@ $txt['SMFQuizAdmin_Titles'] = array(
 // Blurb text for titles
 $txt['SMFQuizAdmin_Title_Blurbs'] = array(
 	'Settings' => 'Here you will find the general settings for the quiz that allow you to customise it how you like',
-	'Quizes' => 'Create, modify and delete quizzes. This is where you manage all of the quizzes installed',
+	'Quizzes' => 'Create, modify and delete quizzes. This is where you manage all of the quizzes installed',
 	'QuizLeagues' => 'You may create a number of quiz leagues on your site. This is where you manage your created quiz leagues',
 	'Categories' => 'Each quiz can be placed in categories, this is where you manage those categories',
 	'Questions' => 'These are the quiz questions, all of them. If you want to manage the questions for a specific quiz you might be better off viewing them from the Quiz section',
-	'QuizImporter' => 'There are hundreds of pre-made quizzes available for you to import from the SMF Modding site, you may import these directly into your site here. <b>Please be part of the community and share any quizzes you have made</b>',
+	'QuizImporter' => 'There are hundreds of pre-made quizzes available for you to import from the SMF Modding site, you may import these directly into your site here.',
+	'QuizImporterExtra' => '<b>Please be part of the community and share any quizzes you have made</b>',
 	'Maintenance' => 'The quiz mod may need a little tender loving care every now and again. You can perform some of the maintenance functions to give love to your mod here',
 	'Results' => 'You can view every quiz result ever submitted from here',
 	'Disputes' => 'Some of your members may dispute answers to questions. You can view these from here',
@@ -54,9 +56,9 @@ $txt['SMFQuizAdmin_AdminCenter_Page'] = array(
 	'VersionInformation' => 'Version Information',
 	'ModVersion' => 'Mod Version',
 	'CurrentSMFQuizVersion' => 'Current SMF Quiz Version',
-	'TotalQuizes' => 'Total Quizzes',
-	'QuizesNotEnabled' => 'Quizzes not Enabled',
-	'QuizesWaitingReview' => 'Quizzes waiting Review',
+	'TotalQuizzes' => 'Total Quizzes',
+	'QuizzesNotEnabled' => 'Quizzes not Enabled',
+	'QuizzesWaitingReview' => 'Quizzes waiting Review',
 	'TotalResults' => 'Total Results',
 	'OutstandingDisputes' => 'Outstanding Disputes',
 	'Statistics' => 'Statistics',
@@ -72,12 +74,12 @@ $txt['SMFQuizAdmin_QuizDisputes_Page'] = array(
 );
 
 // Language text located in the quizzes page
-$txt['SMFQuizAdmin_Quizes_Page'] = array(
+$txt['SMFQuizAdmin_Quizzes_Page'] = array(
 	'PackageName' => 'Package Name',
 	'PackageDescription' => 'Package Description',
 	'PackageAuthor' => 'Package Author',
 	'PackageSiteAddress' => 'Package Site Address',
-	'PackageQuiz' => 'Package Quiz',
+	'PackageQuiz' => 'Export',
 	'NewQuiz' => 'New Quiz',
 	'DeleteQuiz' => 'Delete Quiz',
 	'QuizUploadedSuccessfully' => 'Quiz uploaded successfully',
@@ -89,6 +91,7 @@ $txt['SMFQuizAdmin_Quizes_Page'] = array(
 	'UploadDisabled' => 'Disabled (click to enable)',
 	'WaitingReview' => 'Waiting review',
 	'PreviewQuiz' => 'Preview this Quiz',
+	'ExportQuiz' => 'Quiz Package Exporter',
 );
 
 // Language text located in the new quiz page
@@ -180,7 +183,7 @@ $txt['SMFQuizAdmin_NewQuestion_Page'] = array(
 
 // Language text located in the quiz importer page
 $txt['SMFQuizAdmin_QuizImporter_Page'] = array(
-	'AvailableQuizesToImport' => 'Available Quizzes to Import',
+	'AvailableQuizzesToImport' => 'Available Quizzes to Import',
 	'available' => 'available from filtered results',
 	'Legend' => 'Legend',
 	'Unavailable' => 'Unavailable',
@@ -226,7 +229,7 @@ $txt['SMFQuizAdmin_QuizExport_Page'] = array(
 );
 
 // Language text located in the settings page
-$txt['SMFQuizAdmim_Settings_Page'] = array(
+$txt['SMFQuizAdmim_Settings_Page'] = [
 	'GeneralSettings' => 'General Settings',
 	'QuizAutoClean' => 'Auto Clean',
 	'WelcomeMessage' => 'Welcome Message',
@@ -239,7 +242,7 @@ $txt['SMFQuizAdmim_Settings_Page'] = array(
 	'Score60to79' => 'Score 60-79%',
 	'Score80to99' => 'Score 80-99%',
 	'Score100' => 'Score 100%',
-	'ImportQuizesAsUser' => 'Import Quizzes as User ID',
+	'ImportQuizzesAsUser' => 'Import Quizzes as User ID',
 	'QuizMessagingSettings' => 'Quiz Messaging Settings',
 	'SendPMOnBrokenTopScore' => 'Send PM on Broken Top Score',
 	'SendPMOnLeagueRoundUpdate' => 'Send PM on Quiz League Round Update',
@@ -248,7 +251,10 @@ $txt['SMFQuizAdmim_Settings_Page'] = array(
 	'SessionTimeLimit' => 'Session Replay Time (minutes)',
 	'ShowUserRating' => 'Show User Ratings',
 	'PreviewPMSent' => 'The Preview PM has been sent to your message box, please go there to review it',
-);
+];
+
+$txt['quiz_mod_pm_placeolders'] = '<div>These {placeholders} can be used in Quiz PMs:</div>
+<div style="padding-top: 1rem;overflow-wrap: break-word;word-wrap: break-word;hyphens: auto;">{quiz_name}, {new_score_seconds}, {new_score}, {old_score_seconds}, {old_score}, {member_name}, {old_member_name}, {quiz_image}, {quiz_link}, {quiz_iurl}, {boardurl}, {scripturl}</div>';
 
 $txt['quiz_mod_summary'] = 'Quiz Mod Summary';
 $txt['quiz_mod_statistics'] = 'Quiz Mod Statistics';
@@ -303,7 +309,7 @@ $txt['SMFQuiz_ListPageSizes'] = 'This is the size of the pages when browsing mos
 $txt['SMFQuiz_InfoBoardItemsToDisplay'] = 'The number of InfoBoard items to display on the main page';
 $txt['SMFQuiz_showUserRating'] = 'This setting determines whether the user rating should be displayed or not';
 $txt['SMFQuiz_SessionTimeLimit'] = 'This is the value in minutes before a user can resume playing a quiz. This is to discourage cheating, so the user does not keep closing the quiz window to obtain the answer each time.';
-$txt['SMFQuiz_ImportQuizesAsUserId'] = 'When importing quizzes the mod needs to set the owner of the quiz. The ID you specify here is the ID for the user you wish to make the owner of the imported quizzes. You may wish to create a special user for quiz importing so that you can play the imported quizzes as well.';
+$txt['SMFQuiz_ImportQuizzesAsUserId'] = 'When importing quizzes the mod needs to set the owner of the quiz. The ID you specify here is the ID for the user you wish to make the owner of the imported quizzes. You may wish to create a special user for quiz importing so that you can play the imported quizzes as well.';
 $txt['SMFQuiz_SendPMOnBrokenTopScore'] = 'When checked a PM will be sent to the person who had the top score when their top score is broken and if Quiz PMs are enabled in their profile. You can control the message sent to them in the next setting.';
 $txt['SMFQuiz_AutoClean'] = 'When this option is selected the quiz scheduled task that updates the league will also automatically clean up the data in the database';
 $txt['SMFQuiz_PMBrokenTopScoreMsg'] =
@@ -371,3 +377,8 @@ $txt['SMFQuiz_PMLeagueRoundUpdateMsg'] = 'Use the following placeholders in your
 		<td>Link to the Quiz League</td>
 	</tr>
 </table>';
+
+// Uninstall all data warning
+$txt['quiz_uninstall_db'] = 'Removes all database entries made by SMF-Quiz';
+$txt['quiz_uninstall_files'] = 'Removes all files and folders including custom images for SMF-Quiz';
+$txt['quiz_uninstall_warning'] = 'Activating the above checkbox will perform these actions and is not reversable!';

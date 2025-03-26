@@ -9,11 +9,11 @@ $txt['SMFQuiz'] = 'Quiz';
 // Language text located in the home page
 $txt['SMFQuiz_Home_Page'] = array(
 	'Welcome' => 'Welcome to the SMF Quiz',
-	'OutstandingQuizes' => 'You have the following outstanding Quiz Sessions to be completed',
+	'OutstandingQuizzes' => 'You have the following outstanding Quiz Sessions to be completed',
 	'QuizSearch' => 'Quiz Search',
-	'NewQuizes' => 'New Quizzes',
+	'NewQuizzes' => 'New Quizzes',
 	'QuizLeagueLeaders' => 'Quiz League Leaders',
-	'PopularQuizes' => 'Popular Quizzes',
+	'PopularQuizzes' => 'Popular Quizzes',
 	'QuizMasters' => 'Quiz Masters (most wins)',
 	'InfoBoard' => 'Information Board',
 	'QuizDisabled' => 'The Administrator of the board has disabled the Quiz',
@@ -23,7 +23,7 @@ $txt['SMFQuiz_Home_Page'] = array(
 
 // Language text located in the categories page
 $txt['SMFQuiz_Categories_Page'] = array(
-	'NoQuizesInCategory' => 'No quizzes have been created in this category',
+	'NoQuizzesInCategory' => 'No quizzes have been created in this category',
 	'TopLevel' => 'Top Level',
 	'ThisIsTheTopLevelCategory' => 'This is the Top Level Category',
 );
@@ -46,11 +46,11 @@ $txt['SMFQuiz_QuizLeague_Page'] = array(
 );
 
 // Language text located in the user quizzes page
-$txt['SMFQuiz_UserQuizes_Page'] = array(
+$txt['SMFQuiz_UserQuizzes_Page'] = array(
 	'Title' => 'SMFQuiz - User Quizzes',
 	'Description' => 'This section allows you to create your own quizzes! Once you have created a quiz you need to submit it for review. Once the administrator has reviewed the quiz it will be approved and then everyone else can play your quiz! There are no restrictions on the amount of quizzes you can create, so go ahead.',
-	'YourQuizes' => 'Your Quizzes',
-	'NotCreatedQuizes' => 'You have not created any quizzes',
+	'YourQuizzes' => 'Your Quizzes',
+	'NotCreatedQuizzes' => 'You have not created any quizzes',
 	'UserQuizSubmittedForReview' => 'User Quiz Submitted for Review',
 	'QuizSubmittedForReview' => 'A quiz has been submitted for review',
 );
@@ -90,11 +90,11 @@ $txt['SMFQuiz_QuizDetails_Page'] = array(
 $txt['SMFQuiz_Statistics_Page'] = array(
 	'Title' => 'SMFQuiz - Statistics Center',
 	'GeneralStatistics' => 'General Statistics',
-	'TotalQuizes' => 'Total Quizzes',
+	'TotalQuizzes' => 'Total Quizzes',
 	'TotalQuestions' => 'Total Questions',
 	'TotalAnswers' => 'Total Answers',
 	'TotalCategories' => 'Total Categories',
-	'TotalQuizesPlayed' => 'Total Quizzes Played',
+	'TotalQuizzesPlayed' => 'Total Quizzes Played',
 	'TotalQuestionsPlayed' => 'Total Questions Played',
 	'TotalCorrectQuestions' => 'Total Correct Questions',
 	'TotalPercentageCorrect' => 'Total Percentage Correct',
@@ -104,9 +104,9 @@ $txt['SMFQuiz_Statistics_Page'] = array(
 	'NewestQuiz' => 'Newest Quiz',
 	'OldestQuiz' => 'Oldest Quiz',
 	'Top10QuizWinners' => 'Top 10 Quiz Winners',
-	'Top10Quizes' => 'Top 10 Quizzes',
-	'10HardestQuizes' => '10 Hardest Quizzes',
-	'10EasiestQuizes' => '10 Easiest Quizzes',
+	'Top10Quizzes' => 'Top 10 Quizzes',
+	'10HardestQuizzes' => '10 Hardest Quizzes',
+	'10EasiestQuizzes' => '10 Easiest Quizzes',
 	'10MostActivePlayers' => '10 Most Active Players',
 	'10MostQuizCreators' => '10 Most Quiz Creators',
 );
@@ -118,7 +118,7 @@ $txt['SMFQuiz_tabs'] = array(
 	'quizleagues' => 'Quiz Leagues',
 	'statistics' => 'Statistics',
 	'userDetails' => 'User Details',
-	'userQuizes' => 'User Quizzes',
+	'userQuizzes' => 'User Quizzes',
 );
 
 // Language text for user ratings
@@ -144,7 +144,7 @@ $txt['SMFQuiz_UserDetails_Page'] = array(
 	'LastSeen' => 'Last Seen',
 	'Location' => 'Location',
 	'Website' => 'Website',
-	'TotalQuizesPlayed' => 'Total Quizzes Played',
+	'TotalQuizzesPlayed' => 'Total Quizzes Played',
 	'TotalQuestionsPlayed' => 'Total Questions Played',
 	'TotalWins' => 'Total Wins',
 	'TotalCorrect' => 'Total Correct',
@@ -152,7 +152,7 @@ $txt['SMFQuiz_UserDetails_Page'] = array(
 	'TotalTimeouts' => 'Total Timeouts',
 	'PercentageCorrect' => 'Percentage Correct',
 	'UserRating' => 'UserRating',
-	'ViewUnplayedQuizes' => 'View unplayed quizzes',
+	'ViewUnplayedQuizzes' => 'View unplayed quizzes',
 );
 
 // Language text located in javascript

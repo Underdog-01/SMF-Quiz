@@ -76,7 +76,7 @@ function deleteRow()
 		document.getElementById("answerTable").deleteRow(rowCount);
 }
 
-function verifyQuizesChecked(selectedForm)
+function verifyQuizzesChecked(selectedForm)
 {
 	var foundChecked = false;
 	var quizIds = "";
@@ -233,4 +233,16 @@ $(document).ready(function(){
 			console.log( "finished" );
 		});
 	}
+	if ($("input#quizCheckboxes") && !$(".quizCheckbox").length) {
+		$("input#quizCheckboxes").prop("type", "hidden");
+		$('label[for="quizCheckboxes"]').hide();
+	}
+	$("#quizCheckboxes").on("click", function(){
+		if ($("#quizCheckboxes").is(':checked')) {
+			$(".quizCheckbox").prop("checked", true);
+		}
+		else {
+			$(".quizCheckbox").prop("checked", false);
+		}
+	});
 });

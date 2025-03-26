@@ -1,0 +1,22 @@
+<?php
+/**
+ * Zhen Mailer
+ *
+ * @package SMF Zhen Mailer
+ * @PHP Mailer version 6.03
+ * @license https://www.gnu.org/licenses/lgpl.html
+ */
+// This file is here solely to protect your Sources directory.
+
+// Look for Settings.php....
+if (file_exists(dirname(dirname(__FILE__)) . '/Settings.php'))
+{
+	// Found it!
+	require(dirname(dirname(__FILE__)) . '/Settings.php');
+	header('Location: ' . $boardurl);
+}
+// Can't find it... just forget it.
+else
+	exit;
+
+?>

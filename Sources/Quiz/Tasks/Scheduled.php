@@ -261,7 +261,7 @@ class Scheduled
 							$message = ParseLeagueMessage($modSettings['SMFQuiz_PMLeagueRoundUpdateMsg'], $row['title'], $quizLeaguePosRow['last_position'], $position, ($position-$quizLeaguePosRow['last_position']), $row['id_quiz_league']);
 
 							$pmfrom = array(
-								'id' => $modSettings['SMFQuiz_ImportQuizesAsUserId'],
+								'id' => $modSettings['SMFQuiz_ImportQuizzesAsUserId'],
 								'name' => 'Quiz Notifier',
 								'username' => 'Quiz Notifier'
 							);
@@ -359,30 +359,15 @@ class Scheduled
 		// Free the database
 		$smcFunc['db_free_result']($getLeagueDatesResult);
 
-		// remove rogue member ids from quiz_members
-		$nonMembers = [];
-		$request = $smcFunc['db_query']('', '
-			SELECT qm.id_member
-			FROM {db_prefix}quiz_members qm
-			LEFT JOIN {db_prefix}members m ON m.id_member = qm.id_member
-			WHERE m.id_member IS NULL',
-			[]
-		);
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-		{
-			$nonMembers[] = $row['id_member'];
-		}
-		$smcFunc['db_free_result']($request);
-
-		if (!empty($nonMembers)) {
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}quiz_members
-				WHERE id_member IN({array_int:memIDs})',
-				array(
-					'memIDs' => $nonMembers,
-				)
-			);
+		// Remove any rogue temp Quiz files
+		$tempPaths = glob($sourcedir . '/Quiz/Temp/*');
+		foreach ($tempPaths as $tempPath) {
+			if (is_dir($tempPath)) {
+				quizRmdir($tempPath);
+			}
+			elseif (!in_array(basename($tempPath), array('index.php', '.htaccess'))) {
+				@unlink($tempPath);
+			}
 		}
 
 		$this->quiz_clean();
@@ -417,6 +402,9 @@ class Scheduled
 
 			// Auto complete quiz sessions
 			CompleteQuizSessions($date);
+
+			// Clean up rogue Quiz user IDs
+			CleanQuizMembers();
 		}
 	}
 }

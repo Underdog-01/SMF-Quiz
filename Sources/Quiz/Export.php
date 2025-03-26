@@ -16,7 +16,7 @@ function quizExport()
 function PackageQuiz()
 {
 	global $context, $modSettings;
-	// Get the key ids for the quizes to package. This function returns a string containing a comma separated list of id's
+	// Get the key ids for the quizzes to package. This function returns a string containing a comma separated list of id's
 	// @TODO check and validate inputs
 	if (empty($_GET['quizIds']))
 		return;
@@ -47,13 +47,13 @@ function PackageQuiz()
 
 	if (sizeof($quizKeys) > 0)
 	{
-		$quizRows = ExportQuizes($quizKeys);
+		$quizRows = ExportQuizzes($quizKeys);
 		header('Content-Disposition: attachment; filename="' . $packageName . '"');
 		header("Pragma: public");
 		header("Expires: 0");
 		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 		echo '<?xml version="1.0" encoding="ISO-8859-1"?>';
-		echo '<quizes>
+		echo '<quizzes>
 				<description>' , $packageDescription , '</description>
 				<author>' , $packageAuthor , '</author>
 				<siteAddress>' , $packageSiteAddress , '</siteAddress>
@@ -118,7 +118,7 @@ function PackageQuiz()
 			";
 		}
 
-		echo '</quizes>';
+		echo '</quizzes>';
 	}
 }
 ?>

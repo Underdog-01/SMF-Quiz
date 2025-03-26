@@ -3,7 +3,7 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>SMF_Modding:SMFQuiz</id>
 	<name>SMF Quiz</name>
-	<version>2.0.3-BETA4</version>
+	<version>2.0.3-BETA7</version>
 	<type>modification</type>
 
 	<!-- Install -->
@@ -23,7 +23,7 @@
 		<!-- Source Files -->
 		<require-dir name="Sources" destination="$boarddir">Source files</require-dir>
 		<!-- Database -->
-		<database>database.php</database>
+		<code>database.php</code>
 		<code>install.php</code>
 		<!-- Hooks -->
 		<hook hook="integrate_pre_load" function="Quiz\Integration::init" file="$sourcedir/Quiz/Integration.php" />
@@ -51,9 +51,8 @@
 		<remove-dir name="$themedir/css/quiz" />
 		<!-- Languages -->
 		<remove-dir name="$languagedir/Quiz" />
-		<!-- Database -->
-		<database>database.php</database>
 		<!-- Tasks -->
 		<code>uninstall.php</code>
+		<database>uninstall_quiz_all.php</database>
 	</uninstall>
 </package-info>

@@ -9,7 +9,7 @@ if (!defined('SMF'))
  * Version : 2.00.A
  */
 // @TODO replace with fetch_web_data?
-function load($url, $options=array())
+function quizLoad($url, $options=array())
 {
 	$default_options = array(
 		'method' => 'get',

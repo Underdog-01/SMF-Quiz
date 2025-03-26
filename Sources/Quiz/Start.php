@@ -171,8 +171,8 @@ function QuizLeagueSessionExists($id_user, $id_quiz_league)
 		WHERE id_user = {int:id_user}
 			AND id_quiz_league = {int:id_quiz_league}',
 		array(
-			'id_user' => $id_user,
-			'id_quiz_league' => $id_quiz_league,
+			'id_user' => (int)$id_user,
+			'id_quiz_league' => (int)$id_quiz_league,
 		)
 	);
 
@@ -208,6 +208,10 @@ function GetQuizLeagueDetails($id_quiz_league, $id_user, $id_session, $debugOn)
 {
 	global $smcFunc;
 
+	if (!isset($id_quiz_league)) {
+		return '';
+	}
+
 	// Get the quiz league details, but only if the user has played less than once for this round
 	$leagueResult = $smcFunc['db_query']('', '
 		SELECT title, description, day_interval, question_plays, questions_per_session,
@@ -217,11 +221,15 @@ function GetQuizLeagueDetails($id_quiz_league, $id_user, $id_session, $debugOn)
 		WHERE id_quiz_league = {int:id_quiz_league}
 			AND state = 1',
 		array(
-			'id_user' => $id_user,
-			'id_quiz_league' => $id_quiz_league,
+			'id_user' => (int)$id_user,
+			'id_quiz_league' => (int)$id_quiz_league,
 		)
 	);
 	$leagueRow = $smcFunc['db_fetch_assoc']($leagueResult);
+
+	if (empty($leagueRow)) {
+		return '';
+	}
 
 	$leaguePlays = $smcFunc['db_query']('', '
 		SELECT COUNT(*) AS user_plays
@@ -230,9 +238,9 @@ function GetQuizLeagueDetails($id_quiz_league, $id_user, $id_session, $debugOn)
 			AND id_user = {int:id_user}
 			AND round = {int:current_round}',
 		array(
-			'id_user' => $id_user,
-			'id_quiz_league' => $id_quiz_league,
-			'current_round' => $leagueRow['current_round'],
+			'id_user' => (int)$id_user,
+			'id_quiz_league' => (int)$id_quiz_league,
+			'current_round' => (int)$leagueRow['current_round'],
 		)
 	);
 	list($timesPlayed) = $smcFunc['db_fetch_row']($leaguePlays);
@@ -279,8 +287,8 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 		FROM {db_prefix}quiz Q
 		WHERE Q.id_quiz = {int:id_quiz}',
 		array(
-			'id_user' => $id_user,
-			'id_quiz' => $id_quiz,
+			'id_user' => (int)$id_user,
+			'id_quiz' => (int)$id_quiz,
 		)
 	);
 	$rows = $smcFunc['db_num_rows']($leagueResult);
@@ -292,7 +300,7 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 			FROM {db_prefix}quiz_question
 			WHERE id_quiz = {int:id_quiz}',
 			array(
-				'id_quiz' => $id_quiz,
+				'id_quiz' => (int)$id_quiz,
 			)
 		);
 		list($questions_per_session) = $smcFunc['db_fetch_row']($questionsData);
@@ -305,8 +313,8 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 				AND id_user = {int:id_user}
 			LIMIT 1',
 			array(
-				'id_user' => $id_user,
-				'id_quiz' => $id_quiz,
+				'id_user' => (int)$id_user,
+				'id_quiz' => (int)$id_quiz,
 			)
 		);
 		$timesPlayed = $smcFunc['db_fetch_row']($quizPlays);
@@ -352,8 +360,8 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 			WHERE QR.id_user = {int:id_user}
 				AND QR.id_quiz = {int:id_quiz}',
 			array(
-				'id_user' => $id_user,
-				'id_quiz' => $id_quiz,
+				'id_user' => (int)$id_user,
+				'id_quiz' => (int)$id_quiz,
 			)
 		);
 
