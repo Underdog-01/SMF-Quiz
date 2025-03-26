@@ -1,12 +1,5 @@
 <?php
-/**
- * Zhen Mailer
- *
- * @package SMF Zhen Mailer
- * @PHP Mailer version 6.03
- * @license https://www.gnu.org/licenses/lgpl.html
- */
-// This file is here solely to protect your Sources directory.
+// This file is here solely to protect this directory.
 
 // Look for Settings.php....
 if (file_exists(dirname(dirname(__FILE__)) . '/Settings.php'))
