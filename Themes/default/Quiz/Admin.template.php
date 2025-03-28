@@ -281,9 +281,9 @@ function template_maintenance()
 					<span class="topslice"><span></span></span>
 					<div class="content">
 						<div class="quiz_task_box" style="padding-bottom: 1.25em;">
-							<button onclick="return clearResults(this.form)" class="quiz_task_button quiz_task_button-bright quiz_task_button-animate" name="btnClearResults" id="btnClearResults" value="' . $buttonID . '">
-								<span id="span_' . $buttonID . '" class="quiz_task_span">' . $txt['SMFQuizAdmin_Maintenance_Page']['ResetQuizResults'] . '</span>
-								<span id="' . $buttonID . '_percent"></span>
+							<button onclick="return clearResults(this.form)" class="quiz_task_button quiz_task_button-bright quiz_task_button-animate" name="btnClearResults" id="btnClearResults" value="btnClearResults">
+								<span id="span_btnClearResults" class="quiz_task_span">' . $txt['SMFQuizAdmin_Maintenance_Page']['ResetQuizResults'] . '</span>
+								<span id="btnClearResults_percent"></span>
 							</button>
 						</div>
 					</div>
