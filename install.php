@@ -13,7 +13,7 @@ if (file_exists(dirname(__FILE__) . '/SSI.php') && !defined('SMF'))
 elseif (!defined('SMF'))
 	die('<b>Error:</b> Cannot install - please verify you put this in the same place as SMF\'s index.php.');
 
-global $smcFunc;
+global $smcFunc, $db_name;
 
 if (!isset($smcFunc['db_list_columns']) || !isset($smcFunc['db_add_column'])) {
 	db_extend('packages');
@@ -108,12 +108,14 @@ if (!empty($nonMembers)) {
 // adjust table columns if necessary ~ default is text
 $tables = [
 	'quiz' => ['title', 'description', 'image'],
-	'quiz_category' => ['name'],
-	'quiz_league' => ['title'],
+	'quiz_category' => ['name', 'description', 'image'],
+	'quiz_league' => ['title', 'description', 'categories'],
 	'quiz_question_type' => ['description'],
 	'quiz_session' => ['id_quiz_session'],
-	'quiz_question' => ['question_text'],
-	'quiz_answer' => ['answer_text']
+	'quiz_question' => ['question_text', 'answer_text', 'image'],
+	'quiz_answer' => ['answer_text'],
+	'quiz_infoboard' => ['entry'],
+	'quiz_dispute' => ['reason'],
 
 ];
 
@@ -122,27 +124,42 @@ foreach ($tables as $table => $columns)
 	if (check_table_existsQuizInstall($table)) {
 		$query = $smcFunc['db_list_columns'] ('{db_prefix}' . $table, 'detail');
 
-		switch($table) {
-			case 'title':
-			case 'image':
-			case 'quiz_session':
-			case 'quiz_question_type':
-				foreach ($columns as $column) {
-					if (!empty($query[$column]) && !empty($query[$column]['size']) && (int)$query[$column]['size'] != 191) {
-						$smcFunc['db_change_column']('{db_prefix}' . $table, $column, array('size' => 191, 'default' => ''));
+		foreach ($columns as $column) {
+			switch($column) {
+				case in_array($column, ['title', 'image', 'name', 'id_quiz_session']):
+					if (!empty($query[$column]) && !empty($query[$column]['type']) && $query[$column]['type'] != 'varchar') {
+						$smcFunc['db_change_column']('{db_prefix}' . $table, $column, array('type' => 'varchar', 'size' => 191, 'not_null' => true, 'default' => ''));
 					}
-				}
-				break;
-			default:
-				foreach ($columns as $column) {
-					if (!empty($query[$column]) && !empty($query[$column]['type']) && (int)$query[$column]['type'] != 'text') {
-						$smcFunc['db_change_column']('{db_prefix}' . $table, $column, array('type' => 'text', 'not_null' => false));
+					elseif (!empty($query[$column]) && !empty($query[$column]['size']) && (int)$query[$column]['size'] != 191) {
+						$smcFunc['db_change_column']('{db_prefix}' . $table, $column, array('size' => 191, 'not_null' => true, 'default' => ''));
 					}
-				}
+					/*
+					$smcFunc['db_query']('', '
+						ALTER TABLE {db_prefix}' . $table . '
+						CHANGE `' . $column . '` `' . $column . '` VARCHAR(191)
+						NOT NULL DEFAULT ""',
+						[]
+					);
+					*/
+					break;
+				default:
+					if (!empty($query[$column]) && !empty($query[$column]['type']) && $query[$column]['type'] != 'text') {
+						$smcFunc['db_change_column']('{db_prefix}' . $table, $column, array('type' => 'text', 'null' => true, 'default' => null));
+					}
+					elseif (!empty($query[$column]) && (!empty($query[$column]['default']) || !is_null($query[$column]['default']))) {
+						$smcFunc['db_change_column']('{db_prefix}' . $table, $column, array('type' => 'text', 'null' => true, 'default' => null));
+					}
 
+			}
 		}
-
-
+		$smcFunc['db_query']('', "
+			REPAIR TABLE {raw:db_name}.{raw:table}",
+			['db_name' => $db_name, 'table' => $table]
+		);
+		$smcFunc['db_query']('', "
+			OPTIMIZE TABLE {raw:db_name}.{raw:table}",
+			['db_name' => $db_name, 'table' => $table]
+		);
 	}
 }
 

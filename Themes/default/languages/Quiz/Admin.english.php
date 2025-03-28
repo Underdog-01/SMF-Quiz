@@ -263,9 +263,9 @@ $txt['quiz_mod_summary'] = 'Quiz Mod Summary';
 $txt['quiz_mod_statistics'] = 'Quiz Mod Statistics';
 $txt['quiz_mod_successful_import'] = 'Congratulations! You have successfully imported the following quizzes:';
 $txt['quiz_mod_unsuccessful_import'] = 'Attention! The following quizzes have not been imported:';
-$txt['quiz_mod_clean_quiz'] = 'Remove quiz';
-$txt['quiz_mod_more_quizzes'] = 'Add quiz';
-$txt['quiz_mod_import_quizzes'] = 'Add quiz';
+$txt['quiz_mod_clean_quiz'] = 'Remove Quiz';
+$txt['quiz_mod_more_quizzes'] = 'Add Quiz';
+$txt['quiz_mod_import_quizzes'] = 'Import Package';
 $txt['quiz_mod_nocat_quiz'] = 'No Category';
 $txt['quiz_mod_cat_override'] = 'Category Override';
 

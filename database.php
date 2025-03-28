@@ -61,9 +61,9 @@ $tables = [
 			[
 				'name' => 'title',
 				'type' => 'varchar',
-				'size' => 255,
+				'size' => 191,
 				'not_null' => true,
-				'default' => 'Quiz Title'
+				'default' => '',
 			],
 			[
 				'name' => 'description',
@@ -101,8 +101,9 @@ $tables = [
 			[
 				'name' => 'image',
 				'type' => 'varchar',
-				'size' => 255,
-				'not_null' => true
+				'size' => 191,
+				'not_null' => true,
+				'default' => '',
 			],
 			[
 				'name' => 'id_category',
@@ -233,9 +234,9 @@ $tables = [
 			[
 				'name' => 'name',
 				'type' => 'varchar',
-				'size' => 255,
+				'size' => 191,
 				'not_null' => true,
-				'default' => 'Quiz Category'
+				'default' => '',
 			],
 			[
 				'name' => 'description',
@@ -252,8 +253,9 @@ $tables = [
 			[
 				'name' => 'image',
 				'type' => 'varchar',
-				'size' => 255,
+				'size' => 191,
 				'not_null' => true,
+				'default' => '',
 			],
 			[
 				'name' => 'quiz_count',
@@ -313,8 +315,9 @@ $tables = [
 			[
 				'name' => 'image',
 				'type' => 'varchar',
-				'size' => 255,
-				'not_null' => true
+				'size' => 191,
+				'not_null' => true,
+				'default' => '',
 			],
 			[
 				'name' => 'updated',
@@ -396,9 +399,9 @@ $tables = [
 			[
 				'name' => 'title',
 				'type' => 'varchar',
-				'size' => 255,
+				'size' => 191,
 				'not_null' => true,
-				'default' => 'Quiz League Title'
+				'default' => '',
 			],
 			[
 				'name' => 'description',
@@ -705,10 +708,8 @@ $tables = [
 			],
 			[
 				'name' => 'description',
-				'type' => 'varchar',
-				'size' => 191,
-				'not_null' => true,
-				'default' => 'Description'
+				'type' => 'text',
+				'not_null' => false,
 			],
 		],
 		'indexes' => [
@@ -928,7 +929,8 @@ $tables = [
 				'name' => 'id_quiz_session',
 				'type' => 'varchar',
 				'size' => 191,
-				'not_null' => true
+				'not_null' => true,
+				'default' => '',
 			],
 			[
 				'name' => 'question_count',
