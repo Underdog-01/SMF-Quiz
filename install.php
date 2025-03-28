@@ -133,14 +133,6 @@ foreach ($tables as $table => $columns)
 					elseif (!empty($query[$column]) && !empty($query[$column]['size']) && (int)$query[$column]['size'] != 191) {
 						$smcFunc['db_change_column']('{db_prefix}' . $table, $column, array('size' => 191, 'not_null' => true, 'default' => ''));
 					}
-					/*
-					$smcFunc['db_query']('', '
-						ALTER TABLE {db_prefix}' . $table . '
-						CHANGE `' . $column . '` `' . $column . '` VARCHAR(191)
-						NOT NULL DEFAULT ""',
-						[]
-					);
-					*/
 					break;
 				default:
 					if (!empty($query[$column]) && !empty($query[$column]['type']) && $query[$column]['type'] != 'text') {

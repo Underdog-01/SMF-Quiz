@@ -1339,9 +1339,8 @@ function DeleteQuizzes($quizInIds)
 	global $smcFunc, $db_prefix;
 
 	// What we need to do now is loop through each quiz that has been deleted and decrement the quiz count for that quizzes category
-	list($quizIds, $answerData) = [explode(",", $quizInIds), []];
-	for ($i = 0; $i < sizeof($quizIds); $i++)
-	{
+	$quizIds = explode(",", $quizInIds);
+	for ($i = 0; $i < sizeof($quizIds); $i++) {
 		// We need to return the cateogry associated to the quiz first - could have done this all using subqueries, but this seems
 		// to be frowned upon in SMF
 // @TODO query
@@ -1361,23 +1360,6 @@ function DeleteQuizzes($quizInIds)
 		}
 		$smcFunc['db_free_result']($result);
 
-		// Query answer IDs
-		$result = $smcFunc['db_query']('', '
-			SELECT 		qa.id_answer
-			FROM 		{db_prefix}quiz_answers qa
-			INNER JOIN {db_prefix}quiz_questions ON qa.id_question = q.id_question
-			WHERE		q.id_quiz = {int:id_quiz}',
-			[
-				'id_quiz' => $quizIds[$i]
-			]
-		);
-
-		while ($row = $smcFunc['db_fetch_assoc']($result)) {
-			$answerData[] = $row['id_answer'];
-		}
-		$smcFunc['db_free_result']($result);
-		
-
 		// Delete questions related to this quiz
 // @TODO query
 		$smcFunc['db_query']('', '
@@ -1396,6 +1378,8 @@ function DeleteQuizzes($quizInIds)
 		DELETE FROM {$db_prefix}quiz
 		WHERE		id_quiz IN ({$quizInIds})"
 	);
+
+	DeleteOrphanedAnswersData();
 }
 
 // Data class for deleting quiz disputes
