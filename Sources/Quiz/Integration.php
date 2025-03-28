@@ -116,7 +116,7 @@ class Integration
 					'label' => $txt['SMFQuiz'],
 					'file' => 'Quiz/Admin.php',
 					'function' => 'SMFQuizAdmin',
-					'icon' => 'icons/quiz.png',
+					'icon' => '../../quiz_images/quiz.png',
 					'permission' => array('quiz_admin'),
 					'subsections' => array(
 						'adminCenter' => array($txt['SMFQuizAdmin_Titles']['AdminCenter']),
@@ -185,6 +185,7 @@ class Integration
 			$context['html_headers'] .= '
 			<script>
 				$(document).ready(function(){
+					$("input[name=\'do_db_changes\']").css({"display":"inline-flex","flex-direction":"column","align-self":"center","margin":"0.5rem"});
 					$("#db_changes_div > ul.normallist li").remove();
 					$("#db_changes_div > ul.normallist").append("<li>' . $txt['quiz_uninstall_db'] . '</li>");
 					$("#db_changes_div > ul.normallist").append("<li>' . $txt['quiz_uninstall_files'] . '</li>");
