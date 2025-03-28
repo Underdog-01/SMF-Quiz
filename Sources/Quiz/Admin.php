@@ -99,6 +99,7 @@ function GetMaintenanceData()
 
 	loadLanguage('ManageMaintenance');
 
+	$context['quiz_mtasks'] = ['FindOrphanQuestions', 'FindOrphanAnswers', 'FindOrphanQuizResults', 'FindOrphanCategories'];
 	$context['html_headers'] .= '<script type="text/javascript"><!-- // --><![CDATA[
 			function clearResults(thisform)
 			{
@@ -221,8 +222,9 @@ function GetSettingsData($return_config = false)
 		array('check', 'SMFQuiz_showUserRating', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ShowUserRating']),
 		array('float', 'SMFQuiz_InfoBoardItemsToDisplay', 6, 'min' => 1, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['InfoBoardItemsToDisplay']),
 		array('float', 'SMFQuiz_ListPageSizes', 6, 'min' => 1, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ListPageSizes']),
-		array('float', 'SMFQuiz_ImportQuizzesAsUserId', 6, 'min' => 0, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ImportQuizzesAsUser']),
 		array('float', 'SMFQuiz_SessionTimeLimit', 6, 'min' => 0, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['SessionTimeLimit']),
+		array('float', 'SMFQuiz_ImportQuizzesAsUserId', 6, 'min' => 0, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ImportQuizzesAsUser']),
+		array('select', 'SMFQuiz_ZipExport', explode('|', $txt['SMFQuiz_ExportType']), 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['QuizZipExport']),
 		array('check', 'SMFQuiz_AutoClean', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['QuizAutoClean']),
 		array('title', 'QuizCompletionSettings', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['QuizCompletionSettings']),
 		array('text', 'SMFQuiz_0to19', 50, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['Score0to19']),
@@ -506,19 +508,14 @@ function SetImageUploadJavascript()
 		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.selectboxes.js?v=' . $qv . '"></script>
 		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/ajaxfileupload.js?v=' . $qv . '"></script>
 		<script>
-		$(document).ready(function() {
-		});
-
-		function ajaxFileUpload(subFolder)
-		{
+		function ajaxFileUpload(subFolder) {
 			/* start setting some animation when the ajax starts and completes */
 			$(".preview_loading").each().on( "ajaxStart", function() {
 				$(this).show();
 			}).on( "ajaxComplete", function() {
-				$(this).hide();			
+				$(this).hide();
 			});
-			$.ajaxFileUpload
-			(
+			$.ajaxFileUpload (
 				{
 					url:"' . $boardurl . '/index.php?action=SMFQuizAjax;sa=imageUpload;xml;imageFolder="+subFolder,
 					secureuri:false,
@@ -549,8 +546,7 @@ function SetImageUploadJavascript()
 		}
 
 		/* Refreshes all images in the image dropdown box */
-		function refreshImageList(subFolder, sel_file)
-		{
+		function refreshImageList(subFolder, sel_file) {
 			$("#imageList").removeOption(/./);
 			$("#imageList").addOption("-", "-", sel_file == undefined);
 			$.ajax({
@@ -1870,9 +1866,10 @@ function UploadQuiz($id_quiz)
 	global $context, $settings, $txt;
 
 	$content = BuildQuizXml($id_quiz);
+
 	$server  = 'www.smfmodding.com';
 	//$server  = 'localhost';
-	$port    = '80';
+	$port    = '443';
 	$uri     = '/Sources/SMFQuizUpload.php';
 	//$uri     = '/smf2/Sources/SMFQuizUpload.php';
 
@@ -1964,9 +1961,10 @@ function ImportQuizFile($urlPath, $categoryId, $isEnabled, $image, $fileCount)
 	$image = !empty($image) && $image != '-' ? $image : null;
 	$newUrlPath = escape($urlPath);
 
+	$catData = quizGetCategoryInfo();
 	$quizString = quizLoad($newUrlPath);
 
-	$creator_id = isset($modSettings['SMFQuiz_ImportQuizzesAsUserId']) ? $modSettings['SMFQuiz_ImportQuizzesAsUserId'] : 1;
+	$creator_id = isset($modSettings['SMFQuiz_ImportQuizzesAsUserId']) ? (int)$modSettings['SMFQuiz_ImportQuizzesAsUserId'] : 1;
 
 	libxml_use_internal_errors(true);
 	$tempFile = $sourcedir . '/Quiz/Temp/temp_' . substr(md5(rand(1000, 9999999)), 0, 5) . '.xml';
@@ -1980,14 +1978,18 @@ function ImportQuizFile($urlPath, $categoryId, $isEnabled, $image, $fileCount)
 	{
 		// TODO: Should really check XML is valid here
 		@unlink($tempFile);
-		$myxml = format_string2($myxml);
 		foreach($myxml->quiz as $quiz)
 		{
-			$newQuizId = ImportQuiz(format_string2($quiz->title), format_string2($quiz->description), $quiz->playLimit, $quiz->secondsPerQuestion, $quiz->showAnswers, $categoryId, $isEnabled, $image, $creator_id);
+			$currentCat = $quiz->exists('categoryName') ? strtolower(trim(format_string2((string)$quiz->fetch('categoryName')))) : '';
+			$findCat = !empty($currentCat) ? array_search($currentCat, array_column($catData, 'cat_name')) : 0;
+			$id_category = !empty($findCat) ? $catData[$findCat]['id_cat'] : 0;
+			$newQuizId = ImportQuiz(format_string2($quiz->title), format_string2($quiz->description), $quiz->playLimit, $quiz->secondsPerQuestion, $quiz->showAnswers, $id_category, $isEnabled, $image, $creator_id);
 
 			foreach($quiz->questions->children() as $questions)
 			{
-				$newQuestionId = ImportQuizQuestion($newQuizId, format_string2($questions->questionText), $questions->questionTypeId, format_string2($questions->answerText));
+				$qImage = $questions->exists('image') ? format_string2($questions->image) : '';
+				$qImageData = $questions->exists('imageData') ? $questions->imageData : '';
+				$newQuestionId = ImportQuizQuestion($newQuizId, format_string2($questions->questionText), $questions->questionTypeId, format_string2($questions->answerText), $qImage, $qImageData);
 				foreach ($questions->children()->answers->children() as $answers)
 					ImportQuizAnswer($newQuestionId, format_string2($answers->answerText), $answers->isCorrect);
 			}
@@ -2007,7 +2009,7 @@ function ImportQuizzes($quizDetails)
 	$fileEnabledToImport = Array();
 	$fileImagesToImport = Array();
 
-	// Loop through posted values and assing to arrays appropriately
+	// Loop through posted values and assign to the appropriate array
 	foreach($_POST as $key => $value)
 	{
 		if (substr($key, 0, 4) == 'quiz')
@@ -2106,7 +2108,7 @@ function GetAdminCenterData()
 }
 
 	// @TODO to recode with an access to multiple remote servers
-function import_quiz($quizXmlString, $image = 'Default-64.png')
+function import_quiz($quizXmlString, $image = 'Default-64.png', $catOverride = 0)
 {
 	global $modSettings, $user_settings, $settings, $context, $txt, $sourcedir;
 
@@ -2114,7 +2116,6 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 		return;
 	// @TODO this function still needs a bit of work
 
-	$installedCategories = get_category_names();
 	$unsuccessful = array();
 	$successful = array();
 	// These are the only valid image types for SMF.
@@ -2130,13 +2131,12 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 		14 => 'iff'
 	);
 
-	// Only continue if XML is valid
 	require_once($sourcedir . '/Class-Package.php');
 	$quizXmlString = format_string2(($quizXmlString));
-	//$quizXmlString = str_replace(array("'", '"'), array("&apos;", "&quot;"), $quizXmlString);
 	$quizzes = New xmlArray($quizXmlString);
-	//$quizzes = simplexml_load_string($quizzes);
+	$catData = quizGetCategoryInfo();
 
+	// Only continue if XML is valid
 	if (!$quizzes->exists('quizzes'))
 		$unsuccessful[] = array($txt['quiz_mod_unknown_quiz'], 'quiz_mod_error_reading_file');
 	else
@@ -2147,13 +2147,12 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 			if (empty($title))
 				continue;
 
-			$id_category = 0;
 			$creator_id = isset($modSettings['SMFQuiz_ImportQuizzesAsUserId']) ? $modSettings['SMFQuiz_ImportQuizzesAsUserId'] : 1;
-			$categoryLocator = !empty($installedCategories['name']) && $quiz->exists('categoryName') ? array_search($quiz->fetch('categoryName'), $installedCategories['name']) : '';
 
-			// We have found a matching category, so use this
-			if (!empty($categoryLocator))
-				$id_category = $installedCategories['id_category'][$categoryLocator];
+			// Check for a matching category
+			$currentCat = $quiz->exists('categoryName') ? strtolower(trim(format_string2((string)$quiz->fetch('categoryName')))) : '';
+			$findCat = !empty($currentCat) ? array_search($currentCat, array_column($catData, 'cat_name')) : 0;
+			$id_category = !empty($catOverride) ? $catOverride : (!empty($findCat) ? $catData[$findCat]['id_cat'] : 0);
 
 			if ($quiz->exists('image'))
 			{
@@ -2166,7 +2165,7 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 			if ($quiz->exists('image') && $quiz->exists('imageData'))
 			{
 				$dest = $settings['default_theme_dir'] . '/images/quiz_images/Quizzes/' . $image;
-				if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Quizzes/'))
+				if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Quizzes/') && $quiz->exists('imageData'))
 				{
 					$imageData = base64_decode($quiz->fetch('imageData'));
 					file_put_contents($dest, $imageData);
@@ -2182,7 +2181,7 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 				}
 			}
 
-			$newQuizId = ImportQuiz($title, $quiz->fetch('description'), $quiz->fetch('playLimit'), $quiz->fetch('secondsPerQuestion'), $quiz->fetch('showAnswers'), $id_category, 1, $image, $creator_id);
+			$newQuizId = ImportQuiz($title, $quiz->fetch('description'), $quiz->fetch('playLimit'), $quiz->fetch('secondsPerQuestion'), $quiz->fetch('showAnswers'), (int)$id_category, 1, $image, $creator_id);
 
 			if (!is_numeric($newQuizId))
 				$unsuccessful[md5($title)] = array($title, 'quiz_mod_quiz_already_exists');
@@ -2194,20 +2193,13 @@ function import_quiz($quizXmlString, $image = 'Default-64.png')
 					ImportQuizAnswer($newQuestionId, $answers->fetch('answerText'), $answers->fetch('isCorrect'));
 			}
 			$context['SMFQuiz']['importResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizzes_Page']['QuizImportedSuccessfully'];
-// 			if (!empty($newQuizId))
-// 				import_quiz_images($newQuizId);
+
 			if (!isset($unsuccessful[md5($title)]))
 				$successful[] = array($title, null);
 		}
 	}
 
 	return array('successful' => $successful, 'unsuccessful' => $unsuccessful);
-}
-
-function filter_quiz_data_string($dataString)
-{
-	$dataString = str_replace(array('quizes', 'Quizes'), array('quizzes', 'Quizzes'), $dataString);
-	return preg_replace('/\\\{2,}/', '', $dataString);
 }
 
 function import_quiz_images($id_quiz)
@@ -2263,29 +2255,6 @@ function import_image($imageFileName)
 	return '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" /> ' . $imageFileName . ' imported successfully';
 }
 
-function get_category_names()
-{
-	global $smcFunc;
-
-	// @TODO query
-	$result = $smcFunc['db_query']('', '
-		SELECT 		QC.id_category,
-					QC.name
-		FROM 		{db_prefix}quiz_category QC'
-	);
-
-	$categoryNames = Array();
-	while ($row = $smcFunc['db_fetch_assoc']($result))
-	{
-		$categoryNames['id_category'][] = $row['id_category'];
-		$categoryNames['name'][] = $row['name'];
-	}
-
-	$smcFunc['db_free_result']($result);
-
-	return $categoryNames;
-}
-
 	// @TODO to replace
 function save_image($image)
 {
@@ -2295,7 +2264,7 @@ function save_image($image)
 	$outFilePath = $boarddir . '/Themes/default/images/quiz_images/Quizzes/' . $image;
 
 	$server  = 'www.smfmodding.com';
-	$port    = '80';
+	$port    = '443';
 	$uri     = '/Themes/default/images/quiz_images/Quizzes/' . urlencode($image);
 	$content = 'test';
 
@@ -2588,7 +2557,7 @@ function GetQuizImportData()
 {
 	global $context, $scripturl, $modSettings, $smcFunc, $txt, $settings, $sourcedir;
 
-	list($importResults) = [[]];
+	list($importResults, $context['quiz_category_data']) = [[], quizGetCategoryInfo()];
 	// Borrowed from Subs-Post.php
 	// These are the only valid image types for SMF.
 	$validImageTypes = array(
@@ -2605,6 +2574,7 @@ function GetQuizImportData()
 
 	if (!empty($_FILES))
 	{
+		$catOverride = isset($_POST['quizCategoryOverride']) ? (int)$_POST['quizCategoryOverride'] : 0;
 		$numFiles = count($_FILES['imported_quiz']['tmp_name']);
 		for ($i = 0; $i < $numFiles; $i++)
 		{
@@ -2626,12 +2596,28 @@ function GetQuizImportData()
 							$ext = pathinfo($tempFile, PATHINFO_EXTENSION);
 							@chmod($tempFile, 0644);
 							if (in_array($ext, array('gif', 'jpeg', 'png', 'jpg', 'bmp'))) {
-								$newFilename = $ext == 'jpeg' ? pathinfo($tempFile, PATHINFO_FILENAME) . 'jpg' : pathinfo($tempFile, PATHINFO_BASENAME);
-								@rename($tempFile, $settings['default_theme_dir'] . '/images/quiz_images/Quizzes/' . $newFileName);
+								$newFileName = $ext == 'jpeg' ? pathinfo($tempFile, PATHINFO_FILENAME) . 'jpg' : pathinfo($tempFile, PATHINFO_BASENAME);
+								@rename($tempFile, $settings['default_theme_dir'] . '/images/quiz_images/' . $newFileName);
 								continue;
 							}
 							elseif ($ext == 'php') {
-								quizGetPhpData($tempFile);
+								$processPhpFile = quizGetPhpData($tempFile, $catOverride);
+								$importResults[$i] = array(
+									'name' => pathinfo($tempFile, PATHINFO_FILENAME),
+									'returns' => $processPhpFile,
+								);
+							}
+						}
+						elseif (is_dir($tempFile) && in_array(basename($tempFile), array('Quizzes', 'Questions'))) {
+							$tempFilez = glob($tempFile . '/*');
+							foreach ($tempFilez as $tempImg) {
+								$imgExt = pathinfo($tempImg, PATHINFO_EXTENSION);
+								@chmod($tempImg, 0644);
+								if (in_array($imgExt, array('gif', 'jpeg', 'png', 'jpg', 'bmp'))) {
+									$neweImgName = $imgExt == 'jpeg' ? pathinfo($tempImg, PATHINFO_FILENAME) . 'jpg' : pathinfo($tempImg, PATHINFO_BASENAME);
+									@rename($tempImg, $settings['default_theme_dir'] . '/images/quiz_images/' . basename($tempFile) . '/' . $newImgName);
+									continue;
+								}
 							}
 						}
 					}
@@ -2667,7 +2653,7 @@ function GetQuizImportData()
 					$fileContent = file_get_contents($file);
 					$importResults[$i] = array(
 						'name' => $file,
-						'returns' => import_quiz($fileContent, $imgFile),
+						'returns' => import_quiz($fileContent, $imgFile, $catOverride),
 					);
 				}
 			}
@@ -2695,100 +2681,110 @@ function GetQuizImportData()
 	}
 
 	clearstatcache();
-/*
-	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
-	$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'updated';
-	$limit = $modSettings['SMFQuiz_ListPageSizes'];
-	$start = isset($_REQUEST['start']) ? $_REQUEST['start'] : 1;
-	$hide_imported = isset($_REQUEST['hide_imported']) ? $_REQUEST['hide_imported'] : false;
-
-	// Set up the columns...
-	$context['columns'] = array(
-		'updated' => array(
-			'label' => $txt['SMFQuiz_Common']['Date']
-		),
-	// @TODO '' => ???
-		'' => array(
-			'label' => '',
-			'width' => '2'
-		),
-		'title' => array(
-			'label' => $txt['SMFQuiz_Common']['Title']
-		),
-		'description' => array(
-			'label' => $txt['SMFQuiz_Common']['Description']
-		),
-		'category' => array(
-			'label' => $txt['SMFQuiz_Common']['Category']
-		),
-	// @TODO '' => ???
-		'' => array(
-			'label' => '',
-			'width' => '2'
-		)
-	);
-
-	// Sort out the column information.
-	foreach ($context['columns'] as $col => $column_details)
-	{
-		$context['columns'][$col]['href'] = $scripturl . '?action=admin;area=quiz;sa=quizimporter;hide_imported=' . $hide_imported . ';starts_with=' . $starts_with . ';sort=' . $col . ';start=0';
-
-		if ((!isset($_REQUEST['desc']) && $col == $sort) || ($col != $sort && !empty($column_details['default_sort_rev'])))
-			$context['columns'][$col]['href'] .= ';desc';
-
-		$context['columns'][$col]['link'] = '<a href="' . $context['columns'][$col]['href'] . '" rel="nofollow">' . $context['columns'][$col]['label'] . '</a>';
-		$context['columns'][$col]['selected'] = $sort == $col;
-	}
-
-	$context['sort_by'] = $sort;
-	$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'down' : 'up';
-
-	// Load quiz importer stats XML
-	$getQuizImporterStatsUrl = "http://www.smfmodding.com/Sources/SMFQuizImporter.php?action=getImporterStats";
-	$getQuizImporterStatsXml = simplexml_load_string(load($getQuizImporterStatsUrl));
-	$context['SMFQuiz_top10QuizImports'] = $getQuizImporterStatsXml->top10Quizzes->top10Quiz;
-	$context['SMFQuiz_latestQuizImports'] = $getQuizImporterStatsXml->latestImports->latestImport;
-
-	// Load quiz XML
-	$getQuizzesUrl = "http://www.smfmodding.com/Sources/SMFQuizImporter.php?action=getQuizzes;sort=" . $sort . ";limit=" . $limit . ";start=" . $start . ";hide_imported=" . $hide_imported . ";starts_with=" . $starts_with;
-	if (isset($_REQUEST['desc']))
-		$getQuizzesUrl .= ";desc";
-
-	$quizzesXmlString = quizLoad($getQuizzesUrl);
-	$getQuizzesXml = simplexml_load_string($quizzesXmlString);
-
-	// Get quiz data and store in context
-	$context['SMFQuiz_quizzesToImport'] = $getQuizzesXml->quiz;
-
-	$context['num_quizzes'] =  $getQuizzesXml->count;
-
-	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=quiz;sa=quizimporter;starts_with=' . $starts_with . ';hide_imported=' . $hide_imported . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $start, $context['num_quizzes'], $limit);
-	$hide_imported == 0 ? $hideText = 'hide imported' :  $hideText = 'show imported';
-	$context['hide_imported'] = '[<b><a href="' . $scripturl . '?action=admin;area=quiz;sa=quizimporter;hide_imported=' . !$hide_imported . ';starts_with=' . $starts_with . ';sort=' . $sort . ';start=' . $start . '">' . $hideText . ' </a></b>]';
-
-	// Set the filter links
-	$context['letter_links'] = '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizimporter;hide_imported=' . $hide_imported . ';">*</a> ';
-	for ($i = 97; $i < 123; $i++)
-		$context['letter_links'] .= '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizimporter;hide_imported=' . $hide_imported . ';starts_with=' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
-
-	// Get all quizzes for compare
-	// @TODO query
-	$result = $smcFunc['db_query']('', '
-		SELECT 		Q.title
-		FROM 		{db_prefix}quiz Q'
-	);
-
-	$context['SMFQuiz']['quizTitles'] = Array();
-	while ($row = $smcFunc['db_fetch_assoc']($result))
-		$context['SMFQuiz']['quizTitles'][] = format_string2($row['title']);
-
-	$smcFunc['db_free_result']($result);*/
 }
 
-function quizGetPhpData($tempFile)
+function quizGetPhpData($tempFile, $catOverride = 0)
 {
+	global $modSettings, $user_info, $context;
 
+	list(
+		$newQuizLoadData,
+		$successful,
+		$unsuccessful,
+		$x,
+		$y,
+		$z,
+		$isEnabled,
+		$creator_id,
+		$catData
+	) = [
+		[],
+		[],
+		[],
+		0,
+		0,
+		0,
+		1,
+		!empty($modSettings['SMFQuiz_ImportQuizzesAsUserId']) ? (int)$modSettings['SMFQuiz_ImportQuizzesAsUserId'] : $user_info['id'],
+		quizGetCategoryInfo(),
+	];
+
+	if (file_exists($tempFile) && is_file($tempFile)) {
+		require_once($tempFile);
+
+		if (!class_exists('Quiz\QuizImport')) {
+			$unsuccessful[] = array($txt['quiz_mod_unknown_quiz'], 'quiz_mod_error_reading_file');
+		}
+		else {
+			$newQuizLoadData = Quiz\QuizImport::quizImportData();
+			// Quiz objects
+			while (array_key_exists('quiz' . $x, $newQuizLoadData['quizzes'])) {
+				$quiz = $newQuizLoadData['quizzes']['quiz' . $x];
+				// Check for a matching category
+				$currentCat = !empty($quiz['categoryName']) ? strtolower(trim(format_string2(strval($quiz['categoryName'])))) : '';
+				$findCat = !empty($currentCat) ? array_search($currentCat, array_column($catData, 'cat_name')) : 0;
+				$id_category = !empty($catOverride) ? $catOverride : (!empty($findCat) ? $catData[$findCat]['id_cat'] : 0);
+
+				$image = !empty($quiz['image']) && $quiz['image'] != '-' ? format_string2($quiz['image']) : 'Default-64.png';
+				$newQuizId = ImportQuiz(format_string2($quiz['title']), format_string2($quiz['description']), (int)$quiz['playLimit'], (int)$quiz['secondsPerQuestion'], (int)$quiz['showAnswers'], (int)$id_category, $isEnabled, $image, $creator_id);
+				if (!is_numeric($newQuizId)) {
+					$unsuccessful[md5(format_string2($quiz['title']))] = array(format_string2($quiz['title']), 'quiz_mod_quiz_already_exists');
+				}
+				else {
+					$successful[] = array(format_string2($quiz['title']), null);
+					// Question objects
+					while (array_key_exists('question' . $y, $quiz['questions'])) {
+						$questions = $quiz['questions']['question' . $y];
+						$qImage = !empty($questions['image']) ? format_string2($questions['image']) : '';
+						$newQuestionId = ImportQuizQuestion($newQuizId, format_string2($questions['questionText']), (int)$questions['questionTypeId'], format_string2($questions['answerText']), $qImage, '');
+						// Answer objects
+						while (array_key_exists('answer' . $z, $questions['answers'])) {
+							$answers = $questions['answers']['answer' . $z];
+							ImportQuizAnswer($newQuestionId, format_string2($answers['answerText']), (int)$answers['isCorrect']);
+							$z++;
+						}
+						$z = 0;
+						$y++;
+					}
+					$y = 0;
+				}
+				$x++;
+			}
+
+		}
+	}
+	else {
+		$unsuccessful[] = array($txt['quiz_mod_unknown_quiz'], 'quiz_mod_error_reading_file');
+	}
+
+	//$context['SMFQuiz']['SMFQuizImported'] = $fileCount+1;
+	return array('successful' => $successful, 'unsuccessful' => $unsuccessful);
+}
+
+function quizGetCategoryInfo()
+{
+	global $smcFunc;
+
+	$catData = [];
+	$catData[] = ['id_cat' => 0, 'cat_name' => ''];
+	$result = $smcFunc['db_query']('', '
+		SELECT 		id_category, name
+		FROM 		{db_prefix}quiz_category
+		WHERE		id_category > 0',
+		[]
+	);
+
+	while ($row = $smcFunc['db_fetch_assoc']($result)) {
+		$catData[] = [
+			'id_cat' => (int)$row['id_category'],
+			'cat_name' => strtolower(trim(format_string2($row['name']))),
+		];
+	}
+
+	// Free the database
+	$smcFunc['db_free_result']($result);
+
+	return !empty($catData) ? array_filter($catData) : ['id_cat' => 0, 'cat_name' => ''];
 }
 
 // TODO
@@ -2796,9 +2792,11 @@ function format_string2($stringToFormat)
 {
 	global $smcFunc;
 
-	// Remove any slashes. These should not be here, but it has been known to happen
+	// Remove any backslashes
 	$returnString = str_replace(array("\\", "quizes", "Quizes"), array("", "quizzes", "Quizzes"), $smcFunc['db_unescape_string']($stringToFormat));
-	$returnString = str_replace(array("'", '"'), array('&apos;', '&quot;'), html_entity_decode($returnString, ENT_QUOTES, 'UTF-8'));
+
+	// Ensure double|single quotes are explicitly HTML5 entities
+	$returnString = str_replace(array("'", '"'), array('&apos;', '&quot;'), html_entity_decode($returnString, ENT_QUOTES|ENT_HTML5, 'UTF-8'));
 
 	return $returnString;
 }
@@ -2807,7 +2805,7 @@ function BuildQuizXml($id_quiz)
 {
 	global $context, $modSettings, $user_settings, $settings;
 
-	$quizXml = '<?xml version="1.0" encoding="ISO-8859-1"?>
+	$quizXml = '<?xml version="1.0" encoding="utf-8"?>
 			<quizzes>
 	';
 	$quizRows = ExportQuizzes($id_quiz);
@@ -2821,7 +2819,7 @@ function BuildQuizXml($id_quiz)
 					<playLimit>{$row['play_limit']}</playLimit>
 					<secondsPerQuestion>{$row['seconds_per_question']}</secondsPerQuestion>
 					<showAnswers>{$row['show_answers']}</showAnswers>
-					<category_name><![CDATA[{$row['category_name']}]]></category_name>
+					<categoryName><![CDATA[{$row['category_name']}]]></categoryName>
 					<image><![CDATA[{$row['image']}]]></image>
 					<image_data><![CDATA[{$row['image_data']}]]></image_data>
 					<user_name><![CDATA[{$user_settings['member_name']}]]></user_name>
@@ -2834,6 +2832,7 @@ function BuildQuizXml($id_quiz)
 
 		foreach ($quizQuestionRows as $questionRow)
 		{
+			$questionRow['image_data'] = !empty($questionRow['image_data']) ? $questionRow['image_data'] : '';
 	// @TODO double quotes
 			$quizXml .= "
 						<question>
@@ -2841,6 +2840,7 @@ function BuildQuizXml($id_quiz)
 							<questionTypeId>{$questionRow['id_question_type']}</questionTypeId>
 							<answerText><![CDATA[{$questionRow['answer_text']}]]></answerText>
 							<image><![CDATA[{$questionRow['image']}]]></image>
+							<image_data><![CDATA[{$questionRow['image_data']}]]></image_data>
 							<answers>
 			";
 
@@ -2869,7 +2869,7 @@ function BuildQuizXml($id_quiz)
 	$quizXml .= "
 			</quizzes>
 	";
-	return ($quizXml);
+	return $quizXml;
 }
 
 function quizRmdir($dir, $ignore = '')

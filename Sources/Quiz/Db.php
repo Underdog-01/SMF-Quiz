@@ -2345,7 +2345,7 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 			intval($seconds_per_question),
 			intval($show_answers),
 			$smcFunc['db_escape_string'] ($image),
-			intval($id_category),
+			(int)$id_category,
 			intval($enabled),
 			time(),
 			intval($creator_id),
@@ -2362,7 +2362,7 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 	return $import_quiz['id_quiz'];
 }
 
-function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer_text, $image, $imageData)
+function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer_text, $image, $imageData = '')
 {
 	global $smcFunc, $settings, $sourcedir;
 
@@ -2383,7 +2383,7 @@ function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer
 	if (!empty($image))
 	{
 		$dest = $settings['default_theme_dir'] . '/images/quiz_images/Questions/' . $image;
-		if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Questions/'))
+		if (!file_exists($dest) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Questions/') && !empty($imageData))
 		{
 			$imageData = base64_decode($imageData);
 			file_put_contents($dest, $imageData);

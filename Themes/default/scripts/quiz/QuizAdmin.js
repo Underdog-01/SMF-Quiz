@@ -1,5 +1,5 @@
 /* SMFQuiz */
-var id_dispute = 0;
+let id_dispute = 0;
 if(typeof jQuery == "undefined") {
 	var headTag = document.getElementsByTagName("head")[0];
 	var jqTag = document.createElement("script");
@@ -98,12 +98,41 @@ function verifyQuizzesChecked(selectedForm)
 		var packageDescription = document.getElementById("packageDescription").value;
 		var packageAuthor = document.getElementById("packageAuthor").value;
 		var packageSiteAddress = document.getElementById("packageSiteAddress").value;
-// @TODO replace with POSTed data
-		location.href = smf_scripturl + "?action=SMFQuizExport;quizIds=" + escape(quizIds) + ";packageName=" + escape(packageName) + ";packageDescription=" + escape(packageDescription) + ";packageAuthor=" + escape(packageAuthor) + ";packageSiteAddress=" + escape(packageSiteAddress);
+		$(".quizCheckbox").prop("checked", false);
+		$("#quizCheckboxes").prop("checked", false);
+		let exportData = {
+			quizIds: encodeURIComponent(quizIds),
+			packageName: encodeURIComponent(packageName),
+			packageDescription: encodeURIComponent(packageDescription),
+			packageAuthor: encodeURIComponent(packageAuthor),
+			packageSiteAddress: encodeURIComponent(packageAuthor),
+			packageSiteAddress: encodeURIComponent(packageSiteAddress)
+		};
+
+		$.post(smf_scripturl + "?action=SMFQuizExport", exportData)
+		.done(function( resultData ) {
+			if (resultData) {
+				location.href = smf_scripturl.slice(0, -9) + 'Sources/Quiz/Temp/' + resultData;
+				console.log("Quizzes were exported ~ " + resultData);
+				$(".quizCheckbox").prop("checked", false);
+				$("#quizCheckboxes").prop("checked", false);
+			}
+			else {
+				alert("Error ~ Quizzes not exported ~ Missing package name ~ " + errorThrown);
+			}
+
+		}).fail(function() {
+			alert("Error ~ Quizzes not exported ~ " + errorThrown);
+		})
+		.always(function() {
+			console.log( "finished" );
+		});
+		//location.href = smf_scripturl + "?action=SMFQuizExport;quizIds=" + escape(quizIds) + ";packageName=" + escape(packageName) + ";packageDescription=" + escape(packageDescription) + ";packageAuthor=" + escape(packageAuthor) + ";packageSiteAddress=" + escape(packageSiteAddress);
 	}
 	else
 	{
 		alert(quizAlertOnePackage);
+		$(".quizCheckbox").prop("checked", false);
 		return false;
 	}
 }
@@ -244,5 +273,14 @@ $(document).ready(function(){
 		else {
 			$(".quizCheckbox").prop("checked", false);
 		}
+	});
+	$("#addQuizButton").on("click", function(){
+		let $tr = $("#moreQuizzes > tbody > tr:last");
+		let addQuizButton = "imported_quiz" + (parseInt($tr.find("input").attr("id").match(/\d+/))+1);
+		let $clone = $tr.clone();
+		$clone.find("input").attr("id", addQuizButton);
+		$clone.find("a").attr("onclick", "cleanFileInput('" + addQuizButton + "')");
+		$("#moreQuizzes > tbody").append($clone);
+		return true;
 	});
 });

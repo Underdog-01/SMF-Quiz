@@ -1,14 +1,19 @@
 # Changelog
 
-#### 2.0.3 - 21 March 2025
+#### 2.0.3 - 27 March 2025
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Custom hooks for use by other modifications.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Updated JQuery and its plug-ins.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added PHP import/export support.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added Quiz DB members table for member settings.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added Quiz member profile settings for PM alerts.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Aesthetic changes to maintenance template.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added category override for Quiz imports.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed player quiz limit adheres to quiz setting.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed scheduled task include class file.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed report question UI widget.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed admin reported question delete.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed backslash issue for import/export.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed auto category setting from Quiz package imports.
 
 #### 2.0.2 - 10 November 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Prevent non creators from managing other user quizzes.
@@ -80,7 +85,7 @@
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Added permissions and additional settings.
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Added Quiz League section.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Improved database functions and performance.
-- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Database changes. 
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Database changes.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Code improvements and several modifications.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Modified the installation file and operations.
 ---

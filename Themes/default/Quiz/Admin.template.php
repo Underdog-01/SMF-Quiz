@@ -280,9 +280,12 @@ function template_maintenance()
 				<div class="windowbg">
 					<span class="topslice"><span></span></span>
 					<div class="content">
-							', $txt['SMFQuizAdmin_Maintenance_Page']['ResetQuizResults'], '<br>
-							<span><input type="submit" name="btnClearResults" id="btnClearResult" value="', $txt['maintain_run_now'], '" onclick="return clearResults(this.form);" class="button floatnone" /></span>
-							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+						<div class="quiz_task_box" style="padding-bottom: 1.25em;">
+							<button onclick="return clearResults(this.form)" class="quiz_task_button quiz_task_button-bright quiz_task_button-animate" name="btnClearResults" id="btnClearResults" value="' . $buttonID . '">
+								<span id="span_' . $buttonID . '" class="quiz_task_span">' . $txt['SMFQuizAdmin_Maintenance_Page']['ResetQuizResults'] . '</span>
+								<span id="' . $buttonID . '_percent"></span>
+							</button>
+						</div>
 					</div>
 					<span class="botslice"><span></span></span>
 				</div>
@@ -291,26 +294,22 @@ function template_maintenance()
 				</div>
 				<div class="windowbg">
 					<span class="topslice"><span></span></span>
-					<div class="content">
-							', $txt['SMFQuizAdmin_Maintenance_Page']['FindOrphanedQuestions'], '<br>
-							<span><input type="submit" name="btnFindOrphanQuestions" id="btnFindOrphanQuestions" value="', $txt['maintain_run_now'], '" class="button floatnone" /></span>
-							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					</div>
-					<div class="content">
-							', $txt['SMFQuizAdmin_Maintenance_Page']['FindOrphanedAnswers'], '<br>
-							<span><input type="submit" name="btnFindOrphanAnswers" id="btnFindOrphanAnswers" value="', $txt['maintain_run_now'], '" class="button floatnone" /></span>
-							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					</div>
-					<div class="content">
-							', $txt['SMFQuizAdmin_Maintenance_Page']['FindOrphanedQuizResults'], '<br>
-							<span><input type="submit" name="btnFindOrphanQuizResults" id="btnFindOrphanQuizResults" value="', $txt['maintain_run_now'], '" class="button floatnone" /></span>
-							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					</div>
-					<div class="content">
-							', $txt['SMFQuizAdmin_Maintenance_Page']['FindOrphanedCategories'], '<br>
-							<span><input type="submit" name="btnFindOrphanCategories" id="btnFindOrphanCategories" value="', $txt['maintain_run_now'], '" class="button floatnone" /></span>
-							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					</div>
+						<div style="padding: 0.5em;">
+							<div class="centertext titlebg" id="quiz_maintenance_tasks">';
+
+				foreach ($context['quiz_mtasks'] as $buttonID) {
+					echo '
+								<div class="quiz_task_box" style="padding-bottom: 1.25em;">
+									<button onclick="$(\'form#SMFQuizAdmin\').submit()" class="quiz_task_button quiz_task_button-bright quiz_task_button-animate" name="btn' . $buttonID . '" id="btn' . $buttonID . '" value="' . $buttonID . '">
+										<span id="span_' . $buttonID . '" class="quiz_task_span">' . $txt['SMFQuizAdmin_Maintenance_Page'][$buttonID] . '</span>
+										<span id="' . $buttonID . '_percent"></span>
+									</button>
+								</div>';
+				}
+
+				echo '
+							</div>
+						</div>
 					<span class="botslice"><span></span></span>
 				</div>
 				<div class="cat_bar">
@@ -459,7 +458,7 @@ function template_new_question()
 													</tr>
 												</tbody>
 											</table>
-											<input type="button" value="', $txt['SMFQuiz_Common']['AddRow'], '" onclick="addRow()"/>
+											<input class="quizAdminButtonGap" type="button" value="', $txt['SMFQuiz_Common']['AddRow'], '" onclick="addRow()"/>
 											<input type="button" value="', $txt['SMFQuiz_Common']['DeleteRow'], '" onclick="deleteRow()"/>
 										</div>
 
@@ -471,9 +470,9 @@ function template_new_question()
 								</tr>
 								<tr class="windowbg">
 									<td colspan="7">
-										<input type="submit" class="button" name="SaveQuestion" value="' , $txt['SMFQuizAdmin_NewQuestion_Page']['SaveQuestion'] , '"/>
-										<input type="submit" class="button" name="SaveAndAddMore" value="' , $txt['SMFQuizAdmin_NewQuestion_Page']['SaveAndAddMore'] , '"/>
-										<input type="submit" class="button" name="Done" value="' , $txt['SMFQuizAdmin_NewQuestion_Page']['Done'] , '"/>
+										<input type="submit" class="button quizAdminButtonGap" name="SaveQuestion" value="' , $txt['SMFQuizAdmin_NewQuestion_Page']['SaveQuestion'] , '"/>
+										<input type="submit" class="button quizAdminButtonGap" name="SaveAndAddMore" value="' , $txt['SMFQuizAdmin_NewQuestion_Page']['SaveAndAddMore'] , '"/>
+										<input type="submit" class="button quizAdminButtonGap" name="Done" value="' , $txt['SMFQuizAdmin_NewQuestion_Page']['Done'] , '"/>
 									</td>
 								</tr>
 							</tbody>
@@ -552,8 +551,8 @@ function template_edit_question()
 
 			echo '									</tbody>
 												</table>
-											<input type="button" value="Add Row" onclick="addRow()"/>
-											<input type="button" value="Delete Row" onclick="deleteRow()"/>
+											<input class="quizAdminButtonGap" type="button" value="Add Row" onclick="addRow()"/>
+											<input type="button quizAdminButtonGap" value="Delete Row" onclick="deleteRow()"/>
 											</div>
 			';
 		}
@@ -583,9 +582,9 @@ function template_edit_question()
 									</tr>
 									<tr class="windowbg">
 										<td colspan="7">
-											<input type="submit" class="button" name="UpdateQuestion" value="' , $txt['SMFQuizAdmin_EditQuestion_Page']['UpdateQuestion'] , '"/>
-											<input type="submit" class="button" name="UpdateQuestionAndAddMore" value="' , $txt['SMFQuizAdmin_EditQuestion_Page']['UpdateQuestionAndAddMore'] , '"/>
-											<input type="submit" class="button" name="Done" value="' , $txt['SMFQuizAdmin_EditQuestion_Page']['Done'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="UpdateQuestion" value="' , $txt['SMFQuizAdmin_EditQuestion_Page']['UpdateQuestion'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="UpdateQuestionAndAddMore" value="' , $txt['SMFQuizAdmin_EditQuestion_Page']['UpdateQuestionAndAddMore'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="Done" value="' , $txt['SMFQuizAdmin_EditQuestion_Page']['Done'] , '"/>
 										</td>
 									</tr>
 								</tbody>
@@ -641,8 +640,8 @@ function template_edit_category()
 									</tr>
 									<tr class="windowbg">
 										<td colspan="7">
-											<input type="submit" class="button" name="UpdateCategory" value="' , $txt['SMFQuizAdmin_EditCategory_Page']['UpdateCategory'] , '"/>
-											<input type="submit" class="button" name="Done" value="' , $txt['SMFQuizAdmin_EditCategory_Page']['Done'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="UpdateCategory" value="' , $txt['SMFQuizAdmin_EditCategory_Page']['UpdateCategory'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="Done" value="' , $txt['SMFQuizAdmin_EditCategory_Page']['Done'] , '"/>
 										</td>
 									</tr>
 								</tbody>
@@ -693,8 +692,8 @@ function template_new_category()
 								</tr>
 								<tr class="windowbg">
 									<td colspan="7">
-										<input type="submit" class="button" name="SaveCategory" value="' , $txt['SMFQuizAdmin_NewCategory_Page']['SaveCategory'] , '"/>
-										<input type="submit" class="button" name="Done" value="' , $txt['SMFQuizAdmin_NewCategory_Page']['Done'] , '"/>
+										<input type="submit" class="button quizAdminButtonGap" name="SaveCategory" value="' , $txt['SMFQuizAdmin_NewCategory_Page']['SaveCategory'] , '"/>
+										<input type="submit" class="button quizAdminButtonGap" name="Done" value="' , $txt['SMFQuizAdmin_NewCategory_Page']['Done'] , '"/>
 									</td>
 								</tr>
 							</tbody>
@@ -785,8 +784,8 @@ function template_show_questions()
 									</tr>
 									<tr class="windowbg">
 										<td colspan="8">
-											<input type="submit" class="button" name="NewQuestion" value="' , $txt['SMFQuizAdmin_Questions_Page']['NewQuestion'] , '"/>
-											<input type="submit" class="button" name="DeleteQuestion" value="' , $txt['SMFQuizAdmin_Questions_Page']['DeleteQuestion'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="NewQuestion" value="' , $txt['SMFQuizAdmin_Questions_Page']['NewQuestion'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="DeleteQuestion" value="' , $txt['SMFQuizAdmin_Questions_Page']['DeleteQuestion'] , '"/>
 										</td>
 									</tr>
 							</tbody>
@@ -878,9 +877,9 @@ function template_show_categories()
 	echo '
 									<tr class="windowbg">
 										<td colspan="8">
-											<input type="submit" class="button" name="NewCategory" value="' , $txt['SMFQuizAdmin_Categories_Page']['NewCategory'] , '"/>
-											<input type="submit" class="button" name="DeleteCategory" value="' , $txt['SMFQuizAdmin_Categories_Page']['DeleteCategory'] , '"/>
-											<input type="button" name="CategoryAction" value="' , $txt['SMFQuizAdmin_Categories_Page']['ParentCategory'] , '" onclick="window.location=\'', $scripturl, '?action=' . $context['current_action'] . ';area=' . $context['admin_area'] . ';sa=' . $context['current_subaction'] . ';parent=' , $parentLink , '\'"/>
+											<input type="submit" class="button quizAdminButtonGap" name="NewCategory" value="' , $txt['SMFQuizAdmin_Categories_Page']['NewCategory'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="DeleteCategory" value="' , $txt['SMFQuizAdmin_Categories_Page']['DeleteCategory'] , '"/>
+											<input type="button quizAdminButtonGap" name="CategoryAction" value="' , $txt['SMFQuizAdmin_Categories_Page']['ParentCategory'] , '" onclick="window.location=\'', $scripturl, '?action=' . $context['current_action'] . ';area=' . $context['admin_area'] . ';sa=' . $context['current_subaction'] . ';parent=' , $parentLink , '\'"/>
 										</td>
 									</tr>
 							</tbody>
@@ -989,9 +988,9 @@ function template_new_quiz()
 								</tr>
 								<tr class="windowbg">
 									<td colspan="7">
-										<input type="submit" class="button" name="SaveQuiz" value="' , $txt['SMFQuizAdmin_NewQuiz_Page']['SaveQuiz'] , '"/>
-										<input type="submit" class="button" name="SaveQuizAndAddQuestions" value="' , $txt['SMFQuizAdmin_NewQuiz_Page']['SaveQuizAndAddQuestions'] , '"/>
-										<input type="submit" class="button" name="' , $txt['SMFQuizAdmin_NewQuiz_Page']['Done'] , '" value="Done"/>
+										<input type="submit" class="button quizAdminButtonGap" name="SaveQuiz" value="' , $txt['SMFQuizAdmin_NewQuiz_Page']['SaveQuiz'] , '"/>
+										<input type="submit" class="button quizAdminButtonGap" name="SaveQuizAndAddQuestions" value="' , $txt['SMFQuizAdmin_NewQuiz_Page']['SaveQuizAndAddQuestions'] , '"/>
+										<input type="submit" class="button quizAdminButtonGap" name="' , $txt['SMFQuizAdmin_NewQuiz_Page']['Done'] , '" value="Done"/>
 									</td>
 								</tr>
 							</tbody>
@@ -1069,10 +1068,10 @@ function template_edit_quiz()
 								</tr>
 									<tr class="windowbg">
 										<td colspan="7">
-											<input type="submit" class="button" name="UpdateQuiz" value="' , $txt['SMFQuizAdmin_EditQuiz_Page']['UpdateQuiz'] , '"/>
-											<input type="submit" class="button" name="QuizQuestions" value="' , $txt['SMFQuizAdmin_EditQuiz_Page']['QuizQuestions'] , '"/>
-											<input type="submit" class="button" name="UpdateQuizAndAddQuestions" value="' , $txt['SMFQuizAdmin_EditQuiz_Page']['UpdateQuizAndAddQuestions'] , '"/>
-											<input type="submit" class="button" name="Done" value="' , $txt['SMFQuizAdmin_EditQuiz_Page']['Done'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="UpdateQuiz" value="' , $txt['SMFQuizAdmin_EditQuiz_Page']['UpdateQuiz'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="QuizQuestions" value="' , $txt['SMFQuizAdmin_EditQuiz_Page']['QuizQuestions'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="UpdateQuizAndAddQuestions" value="' , $txt['SMFQuizAdmin_EditQuiz_Page']['UpdateQuizAndAddQuestions'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="Done" value="' , $txt['SMFQuizAdmin_EditQuiz_Page']['Done'] , '"/>
 										</td>
 									</tr>
 								</tbody>
@@ -1153,8 +1152,8 @@ function template_new_quiz_league()
 								</tr>
 								<tr class="windowbg">
 									<td colspan="7">
-										<input type="submit" class="button" name="QuizLeagueAction" value="' , $txt['SMFQuizAdmin_NewQuizLeague_Page']['SaveQuizLeague'] , '"/>
-										<input type="submit" class="button" name="Done" value="' , $txt['SMFQuizAdmin_NewQuizLeague_Page']['Done'] , '"/>
+										<input type="submit" class="button quizAdminButtonGap" name="QuizLeagueAction" value="' , $txt['SMFQuizAdmin_NewQuizLeague_Page']['SaveQuizLeague'] , '"/>
+										<input type="submit" class="button quizAdminButtonGap" name="Done" value="' , $txt['SMFQuizAdmin_NewQuizLeague_Page']['Done'] , '"/>
 									</td>
 								</tr>
 							</tbody>
@@ -1238,8 +1237,8 @@ function template_edit_quiz_league()
 									</tr>
 									<tr class="windowbg">
 										<td colspan="7">
-											<input type="submit" class="button" name="QuizLeagueAction" value="' , $txt['SMFQuizAdmin_EditQuizLeague_Page']['UpdateQuizLeague'] , '"/>
-											<input type="submit" class="button" name="Done" value="' , $txt['SMFQuizAdmin_EditQuizLeague_Page']['Done'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="QuizLeagueAction" value="' , $txt['SMFQuizAdmin_EditQuizLeague_Page']['UpdateQuizLeague'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="Done" value="' , $txt['SMFQuizAdmin_EditQuizLeague_Page']['Done'] , '"/>
 										</td>
 									</tr>
 								</tbody>
@@ -1332,10 +1331,10 @@ function template_show_quizzes()
 										</td>
 										<td colspan="2">
 											<label for="quizCheckboxes">' , $txt['SMFQuizAdmin_QuizCheckAll'] , '</label>
-										</td>	
+										</td>
 										<td colspan="9">
-											<input type="submit" class="button" name="NewQuiz" value="' , $txt['SMFQuizAdmin_Quizzes_Page']['NewQuiz'] , '"/>
-											<input type="submit" class="button" name="DeleteQuiz" value="' , $txt['SMFQuizAdmin_Quizzes_Page']['DeleteQuiz'] , '"/>											
+											<input type="submit" class="button quizAdminButtonGap" name="NewQuiz" value="' , $txt['SMFQuizAdmin_Quizzes_Page']['NewQuiz'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="DeleteQuiz" value="' , $txt['SMFQuizAdmin_Quizzes_Page']['DeleteQuiz'] , '"/>
 										</td>
 									</tr>
 									<tr class="windowbg">
@@ -1363,7 +1362,7 @@ function template_show_quizzes()
 													<td><input type="text" name="packageSiteAddress" id="packageSiteAddress" size="60" maxlength="250"/></td>
 												</tr>
 												<tr>
-													<td colspan="2"><button type="button" class="button" name="QuizAction" onclick="return verifyQuizzesChecked(this.form);">' , $txt['SMFQuizAdmin_Quizzes_Page']['PackageQuiz'] , '</button></td>
+													<td colspan="2"><button id="exportQuizAction" type="button" class="button" name="QuizAction" onclick="return verifyQuizzesChecked(this.form);">' , $txt['SMFQuizAdmin_Quizzes_Page']['PackageQuiz'] , '</button></td>
 												</tr>
 											</table>
 										</td>
@@ -1590,8 +1589,8 @@ function template_show_quiz_leagues()
 	echo '
 									<tr class="windowbg">
 										<td colspan="11">
-											<input type="submit" class="button" name="QuizLeagueAction" value="' , $txt['SMFQuizAdmin_QuizLeagues_Page']['NewQuizLeague'] , '"/>
-											<input type="submit" class="button" name="QuizLeagueAction" value="' , $txt['SMFQuizAdmin_QuizLeagues_Page']['DeleteQuizLeague'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="QuizLeagueAction" value="' , $txt['SMFQuizAdmin_QuizLeagues_Page']['NewQuizLeague'] , '"/>
+											<input type="submit" class="button quizAdminButtonGap" name="QuizLeagueAction" value="' , $txt['SMFQuizAdmin_QuizLeagues_Page']['DeleteQuizLeague'] , '"/>
 										</td>
 									</tr>
 							</tbody>
@@ -1730,66 +1729,66 @@ function template_admin_center()
 		<div class="windowbg clear_right">
 			<span class="topslice"><span></span></span>
 			<div class="content">
-				<ul id="quick_tasks" class="flow_hidden" style="display: flex;justify-content: space-evenly;flex-wrap: wrap;box-sizing: border-box;">
-					<li style="flex: 1 0 47%;padding-top: 1rem;box-sizing: border-box;">
-						<div style="width: 80%;">
+				<ul id="quick_tasks" class="flow_hidden quizAdminMainContainer">
+					<li class="quizAdminMainButton">
+						<div class="quizAdminMainButtonContainer">
 							<a href="' . $scripturl . '?action=admin;area=quiz;sa=settings"><img src="' , $settings['default_images_url'] , '/quiz_images/Settings-48.png" alt="" class="home_image png_fix" /></a>
 							<h5><a href="' . $scripturl . '?action=admin;area=quiz;sa=settings">' , $txt['SMFQuizAdmin_Titles']['Settings'] , '</a></h5>
 							<span class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['Settings'] , '</span>
 						</div>
 					</li>
-					<li style="flex: 1 0 47%;padding-top: 1rem;box-sizing: border-box;">
-						<div style="width: 80%;">
+					<li class="quizAdminMainButton">
+						<div class="quizAdminMainButtonContainer">
 							<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes"><img src="' , $settings['default_images_url'] , '/quiz_images/Quizzes-48.png" alt="" class="home_image png_fix" /></a>
 							<h5><a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes">' , $txt['SMFQuizAdmin_Titles']['Quizzes'] , '</a></h5>
 							<span class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['Quizzes'] , '</span>
 						</div>
 					</li>
-					<li style="flex: 1 0 47%;padding-top: 1rem;box-sizing: border-box;">
-						<div style="width: 80%;">	
+					<li class="quizAdminMainButton">
+						<div class="quizAdminMainButtonContainer">
 							<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizleagues"><img src="' , $settings['default_images_url'] , '/quiz_images/Leagues-48.png" alt="" class="home_image png_fix" /></a>
 							<h5><a href="' . $scripturl . '?action=admin;area=quiz;sa=quizleagues">' , $txt['SMFQuizAdmin_Titles']['QuizLeagues'] , '</a></h5>
 							<span class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['QuizLeagues'] , '</span>
 						</div>
 					</li>
-					<li style="flex: 1 0 47%;padding-top: 1rem;box-sizing: border-box;">
-						<div style="width: 80%;">	
+					<li class="quizAdminMainButton">
+						<div class="quizAdminMainButtonContainer">
 							<a href="' . $scripturl . '?action=admin;area=quiz;sa=categories"><img src="' , $settings['default_images_url'] , '/quiz_images/Categories-48.png" alt="" class="home_image png_fix" /></a>
 							<h5><a href="' . $scripturl . '?action=admin;area=quiz;sa=categories">' , $txt['SMFQuizAdmin_Titles']['Categories'] , '</a></h5>
 							<span class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['Categories'] , '</span>
 						</div>
 					</li>
-					<li style="flex: 1 0 47%;padding-top: 1rem;box-sizing: border-box;">
-						<div style="width: 80%;">	
+					<li class="quizAdminMainButton">
+						<div class="quizAdminMainButtonContainer">
 							<a href="' . $scripturl . '?action=admin;area=quiz;sa=questions"><img src="' , $settings['default_images_url'] , '/quiz_images/Questions-48.png" alt="" class="home_image png_fix" /></a>
 							<h5><a href="' . $scripturl . '?action=admin;area=quiz;sa=questions">' , $txt['SMFQuizAdmin_Titles']['Questions'] , '</a></h5>
 							<span class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['Questions'] , '</span>
 						</div>
 					</li>
-					<li style="flex: 1 0 47%;padding-top: 1rem;box-sizing: border-box;">
-						<div style="width: 80%;">	
+					<li class="quizAdminMainButton">
+						<div class="quizAdminMainButtonContainer">
 							<a href="' . $scripturl . '?action=admin;area=quiz;sa=results"><img src="' , $settings['default_images_url'] , '/quiz_images/Results-48.png" alt="" class="home_image png_fix" /></a>
 							<h5><a href="' . $scripturl . '?action=admin;area=quiz;sa=results">' , $txt['SMFQuizAdmin_Titles']['Results'] , '</a></h5>
 							<span class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['Results'] , '</span>
 						</div>
 					</li>
-					<li style="flex: 1 0 47%;padding-top: 1rem;box-sizing: border-box;">
-						<div style="width: 80%;">	
+					<li class="quizAdminMainButton">
+						<div class="quizAdminMainButtonContainer">
 							<a href="' . $scripturl . '?action=admin;area=quiz;sa=disputes"><img src="' , $settings['default_images_url'] , '/quiz_images/Disputes-48.png" alt="" class="home_image png_fix" /></a>
 							<h5><a href="' . $scripturl . '?action=admin;area=quiz;sa=disputes">' , $txt['SMFQuizAdmin_Titles']['Disputes'] , '</a></h5>
 							<span class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['Disputes'] , '</span>
 						</div>
 					</li>
-					<li style="flex: 1 0 47%;padding-top: 1rem;box-sizing: border-box;">
-						<div style="width: 80%;">	
+					<li class="quizAdminMainButton">
+						<div class="quizAdminMainButtonContainer">
 							<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizimporter"><img src="' , $settings['default_images_url'] , '/quiz_images/Importer-48.png" alt="" class="home_image png_fix" /></a>
 							<h5><a href="' . $scripturl . '?action=admin;area=quiz;sa=quizimporter">' , $txt['SMFQuizAdmin_Titles']['QuizImporter'] , '</a></h5>
 							<div class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['QuizImporter'] , '</div>
 							<div class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['QuizImporterExtra'] , '</div>
 						</div>
 					</li>
-					<li style="flex: 1 0 47%;padding-top: 1rem;box-sizing: border-box;">
-						<div style="width: 80%;">
+					<li class="quizAdminMainButton">
+						<div class="quizAdminMainButtonContainer">
 							<a href="' . $scripturl . '?action=admin;area=quiz;sa=maintenance"><img src="' , $settings['default_images_url'] , '/quiz_images/Maintenance-48.png" alt="" class="home_image png_fix" /></a>
 							<h5><a href="' . $scripturl . '?action=admin;area=quiz;sa=maintenance">' , $txt['SMFQuizAdmin_Titles']['Maintenance'] , '</a></h5>
 							<span class="task">' , $txt['SMFQuizAdmin_Title_Blurbs']['Maintenance'] , '</span>
@@ -1840,7 +1839,7 @@ function template_quiz_importer()
 				<table id="moreQuizzes" class="table_grid" cellspacing="0" width="100%">
 					<thead>
 						<tr class="catbg">
-							<th class="first_th">', $txt['SMFQuizAdmin_Quizzes_Page']['PackageQuiz'], '</th>
+							<th class="first_th">', $txt['SMFQuizAdmin_Quizzes_Page']['PackageQuizImport'], '</th>
 							<th>', $txt['SMFQuiz_Common']['ImageUpload'], '</th>
 						</tr>
 					</thead>
@@ -1864,31 +1863,21 @@ function template_quiz_importer()
 				</table>
 			<div class="flow_auto">
 				<div class="floatright">
-					<div class="additional_row">
-						[<a href="#" onclick="addQuiz(); return false;">', $txt['quiz_mod_more_quizzes'], '</a>] <input type="submit" class="button" value="Import" style="float: right;" class="button" />
+					<div class="additional_row quizImportButtonsContainer">
+						<label for="quizCategoryOverride" class="quizImportSelectLabel">' . $txt['quiz_mod_cat_override'] . ':</label>
+						<select class="quizAdminButtonGap" name="quizCategoryOverride" id="quizCategoryOverride">';
+		foreach ($context['quiz_category_data'] as $key => $catData) {
+			echo '
+							<option value="' . $catData['id_cat'] . '">' . (empty($key) ? $txt['quiz_mod_nocat_quiz'] : $catData['cat_name']). '</option>';
+		}
+
+		echo '
+						</select>
+						<input class="button quizAdminButtonGap" id="addQuizButton" name="addQuiz" value="', $txt['quiz_mod_more_quizzes'], '" type="button">
+						<input type="submit" class="button quizAdminButtonGap" value="' . $txt['quiz_mod_import_quizzes'] . '">
 					</div>
 				</div>
-			</div>
-
-				<script type="text/javascript"><!-- // --><![CDATA[
-					current_quiz = 5
-					function addQuiz()
-					{
-						$("#moreQuizzes tr:last").after(', JavaScriptEscape('
-							<tr class="windowbg">
-								<td>
-									<input type="file" size="30" name="imported_quiz[]" id="imported_quiz'), ' + current_quiz + ', JavaScriptEscape('" class="input_file" />
-								</td>
-								<td>
-									(<a href="javascript:void(0);" onclick="cleanFileInput(\'imported_quiz\''), ' + current_quiz + ', JavaScriptEscape(');">' . $txt['quiz_mod_clean_quiz'] . '</a>)
-								</td>
-							</tr>'), ');
-						current_quiz++;
-
-						return true;
-					}
-				// ]]></script>
-		';
+			</div>';
 
 	echo '
 			</form>

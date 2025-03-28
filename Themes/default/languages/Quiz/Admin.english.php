@@ -14,6 +14,7 @@ $txt['SMFQuizMod'] = 'The SMF Quiz Mod';
 $txt['SMFQuizModDescription'] = 'This page allows you to configure the SMF Quiz modification';
 $txt['AlertOnePackage'] = 'You must select at least one Quiz to package';
 $txt['SMFQuizAdmin_QuizCheckAll'] = 'Select All';
+$txt['SMFQuiz_ExportType'] = 'XML|PHP';
 
 // Text for any titles that appear in the admin section
 $txt['SMFQuizAdmin_Titles'] = array(
@@ -80,6 +81,7 @@ $txt['SMFQuizAdmin_Quizzes_Page'] = array(
 	'PackageAuthor' => 'Package Author',
 	'PackageSiteAddress' => 'Package Site Address',
 	'PackageQuiz' => 'Export',
+	'PackageQuizImport' => 'Import',
 	'NewQuiz' => 'New Quiz',
 	'DeleteQuiz' => 'Delete Quiz',
 	'QuizUploadedSuccessfully' => 'Quiz uploaded successfully',
@@ -211,10 +213,10 @@ $txt['SMFQuizAdmin_Maintenance_Page'] = array(
 	'CategoryId' => 'Category Id',
 	'ResetQuizResults' => 'Reset Quiz Results',
 	'OrphanedData' => 'Orphaned Data',
-	'FindOrphanedQuestions' => 'Find Orphaned Questions',
-	'FindOrphanedAnswers' => 'Find Orphaned Answers',
-	'FindOrphanedQuizResults' => 'Find Orphaned Quiz Results',
-	'FindOrphanedCategories' => 'Find Orphaned Categories',
+	'FindOrphanQuestions' => 'Find Orphaned Questions',
+	'FindOrphanAnswers' => 'Find Orphaned Answers',
+	'FindOrphanQuizResults' => 'Find Orphaned Quiz Results',
+	'FindOrphanCategories' => 'Find Orphaned Categories',
 	'CompleteQuizSessions' => 'Complete Quiz Sessions',
 	'CleanInformationBoard' => 'Clean Information Board',
 );
@@ -251,6 +253,7 @@ $txt['SMFQuizAdmim_Settings_Page'] = [
 	'SessionTimeLimit' => 'Session Replay Time (minutes)',
 	'ShowUserRating' => 'Show User Ratings',
 	'PreviewPMSent' => 'The Preview PM has been sent to your message box, please go there to review it',
+	'QuizZipExport' => 'Select Export File Type',
 ];
 
 $txt['quiz_mod_pm_placeolders'] = '<div>These {placeholders} can be used in Quiz PMs:</div>
@@ -262,6 +265,9 @@ $txt['quiz_mod_successful_import'] = 'Congratulations! You have successfully imp
 $txt['quiz_mod_unsuccessful_import'] = 'Attention! The following quizzes have not been imported:';
 $txt['quiz_mod_clean_quiz'] = 'Remove quiz';
 $txt['quiz_mod_more_quizzes'] = 'Add quiz';
+$txt['quiz_mod_import_quizzes'] = 'Add quiz';
+$txt['quiz_mod_nocat_quiz'] = 'No Category';
+$txt['quiz_mod_cat_override'] = 'Category Override';
 
 $txt['quiz_mod_quiz_already_exists'] = 'a quiz with the same title already exists';
 $txt['quiz_mod_error_reading_file'] = 'error reading the quiz file. Please verify it is valid XML';

@@ -190,6 +190,7 @@ $txt['quizLocalizationTextJS'] = [
 	'quizSubmittedDisputeSuccess' => 'Dispute submitted successfully',
 	'quizSubmittedDisputeError' => 'Error ~ dispute was not submitted',
 	'quizSubmittedDisputeFinish' => 'Finished',
+	'quiz_mod_clean_quiz' => 'Remove quiz',
 ];
 
 $txt['quizLocalizationAdminAlertsJS'] = [
