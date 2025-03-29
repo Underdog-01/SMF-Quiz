@@ -1333,15 +1333,15 @@ function DeleteQuizLeagues($quizLeagueInIds)
 	);
 }
 
-// Data class for deleting quiz leagues
+// Data class for deleting quizzes
 function DeleteQuizzes($quizInIds)
 {
 	global $smcFunc, $db_prefix;
 
 	// What we need to do now is loop through each quiz that has been deleted and decrement the quiz count for that quizzes category
-	$quizIds = explode(",", $quizInIds);
-	for ($i = 0; $i < sizeof($quizIds); $i++) {
-		// We need to return the cateogry associated to the quiz first - could have done this all using subqueries, but this seems
+	$quizIds = array_filter(array_map('intval', explode(',', $quizInIds)));
+	foreach ($quizIds as $quizId) {
+		// We need to return the category associated to the quiz first - could have done this all using subqueries, but this seems
 		// to be frowned upon in SMF
 // @TODO query
 		$result = $smcFunc['db_query']('', '
@@ -1349,12 +1349,11 @@ function DeleteQuizzes($quizInIds)
 			FROM 		{db_prefix}quiz Q
 			WHERE		Q.id_quiz = {int:id_quiz}',
 			array(
-				'id_quiz' => $quizIds[$i]
+				'id_quiz' => (int)$quizId
 			)
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($result))
-		{
+		while ($row = $smcFunc['db_fetch_assoc']($result)) {
 			$categoryId = $row['id_category'];
 			DecrementCategoryTree($categoryId);
 		}
@@ -1366,42 +1365,42 @@ function DeleteQuizzes($quizInIds)
 			DELETE
 			FROM		{db_prefix}quiz_question
 			WHERE		id_quiz = {int:id_quiz}',
-			array(
-				'id_quiz' => $quizIds[$i],
-			)
+			[
+				'id_quiz' => $quizId,
+			]
 		);
 	}
 
 	// Delete all other data related to these quiz IDs
-	$smcFunc['db_query']('', "
-		DELETE FROM {$db_prefix}quiz
-		WHERE		id_quiz IN ({int_array:quizzes})",
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}quiz
+		WHERE id_quiz IN ({array_int:quizzes})',
 		[
-			'quizzes' => $quizInIds
+			'quizzes' => $quizIds
 		]
 	);
 
-	$smcFunc['db_query']('', "
-		DELETE FROM {$db_prefix}quiz_dispute
-		WHERE		id_quiz IN ({int_array:quizzes})",
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}quiz_dispute
+		WHERE		id_quiz IN ({array_int:quizzes})',
 		[
-			'quizzes' => $quizInIds
+			'quizzes' => $quizIds
 		]
 	);
 
-	$smcFunc['db_query']('', "
-		DELETE FROM {$db_prefix}quiz_result
-		WHERE		id_quiz IN ({int_array:quizzes})",
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}quiz_result
+		WHERE		id_quiz IN ({array_int:quizzes})',
 		[
-			'quizzes' => $quizInIds
+			'quizzes' => $quizIds
 		]
 	);
 
-	$smcFunc['db_query']('', "
-		DELETE FROM {$db_prefix}quiz_session
-		WHERE		id_quiz IN ({int_array:quizzes})",
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}quiz_session
+		WHERE		id_quiz IN ({array_int:quizzes})',
 		[
-			'quizzes' => $quizInIds
+			'quizzes' => $quizIds
 		]
 	);
 
