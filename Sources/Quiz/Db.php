@@ -1372,11 +1372,37 @@ function DeleteQuizzes($quizInIds)
 		);
 	}
 
-	// Execute the query
-// @TODO query
+	// Delete all other data related to these quiz IDs
 	$smcFunc['db_query']('', "
 		DELETE FROM {$db_prefix}quiz
-		WHERE		id_quiz IN ({$quizInIds})"
+		WHERE		id_quiz IN ({int_array:quizzes})",
+		[
+			'quizzes' => $quizInIds
+		]
+	);
+
+	$smcFunc['db_query']('', "
+		DELETE FROM {$db_prefix}quiz_dispute
+		WHERE		id_quiz IN ({int_array:quizzes})",
+		[
+			'quizzes' => $quizInIds
+		]
+	);
+
+	$smcFunc['db_query']('', "
+		DELETE FROM {$db_prefix}quiz_result
+		WHERE		id_quiz IN ({int_array:quizzes})",
+		[
+			'quizzes' => $quizInIds
+		]
+	);
+
+	$smcFunc['db_query']('', "
+		DELETE FROM {$db_prefix}quiz_session
+		WHERE		id_quiz IN ({int_array:quizzes})",
+		[
+			'quizzes' => $quizInIds
+		]
 	);
 
 	DeleteOrphanedAnswersData();
