@@ -79,9 +79,9 @@ function GetQuizQuestion($id_quiz, $questionNum, $debugOn)
 		$id_question = $questionRow["id_question"];
 
 		$xmlFragment .= '<id_question>' . $id_question . '</id_question>';
-		$xmlFragment .= '<question_text>' . xmlencode(format_string($questionRow["question_text"])) . '</question_text>';
+		$xmlFragment .= '<question_text>' . xmlencode(Quiz\Helper::format_infostring($questionRow["question_text"])) . '</question_text>';
 		$xmlFragment .= '<id_question_type>' . $questionRow["id_question_type"] . '</id_question_type>';
-		$xmlFragment .= '<questionanswer_text>' . xmlencode(format_string($questionRow["answer_text"])) . '</questionanswer_text>';
+		$xmlFragment .= '<questionanswer_text>' . xmlencode(Quiz\Helper::format_infostring($questionRow["answer_text"])) . '</questionanswer_text>';
 		$xmlFragment .= '<image>';
 		if (!empty($questionRow["image"]))
 			$xmlFragment .= $settings["default_images_url"] . '/quiz_images/Questions/' . $questionRow["image"];
@@ -110,7 +110,7 @@ function GetQuizQuestion($id_quiz, $questionNum, $debugOn)
 	{
 		$xmlFragment .= '<answer>';
 		$xmlFragment .= '<id_answer>' . $answerRow["id_answer"] . '</id_answer>';
-		$xmlFragment .= '<answer_text>' . xmlencode(format_string($answerRow["answer_text"])) . '</answer_text>';
+		$xmlFragment .= '<answer_text>' . xmlencode(Quiz\Helper::format_infostring($answerRow["answer_text"])) . '</answer_text>';
 		$xmlFragment .= '<is_correct>' . $answerRow["is_correct"] . '</is_correct>';
 		$xmlFragment .= '</answer>';
 	}
@@ -193,15 +193,15 @@ function GetQuizLeagueQuestion($id_quiz_league, $debugOn)
 		$id_question = $questionRow["id_question"];
 
 		$xmlFragment .= '<id_question>' . $id_question . '</id_question>';
-		$xmlFragment .= '<question_text>' . xmlencode(format_string($questionRow["question_text"])) . '</question_text>';
+		$xmlFragment .= '<question_text>' . xmlencode(Quiz\Helper::format_infostring($questionRow["question_text"])) . '</question_text>';
 		$xmlFragment .= '<id_question_type>' . $questionRow["id_question_type"] . '</id_question_type>';
-		$xmlFragment .= '<questionanswer_text>' . xmlencode(format_string($questionRow["answer_text"])) . '</questionanswer_text>';
+		$xmlFragment .= '<questionanswer_text>' . xmlencode(Quiz\Helper::format_infostring($questionRow["answer_text"])) . '</questionanswer_text>';
 		$xmlFragment .= '<image>';
 		if (!empty($questionRow["image"]))
 			$xmlFragment .= $settings["default_images_url"] . '/quiz_images/Questions/' . $questionRow["image"];
 
 		$xmlFragment .= '</image>';
-		$xmlFragment .= '<quizTitle>' . xmlencode(format_string($questionRow["Title"])) . '</quizTitle>';
+		$xmlFragment .= '<quizTitle>' . xmlencode(Quiz\Helper::format_infostring($questionRow["Title"])) . '</quizTitle>';
 	}
 	$smcFunc['db_free_result']($questionResult);
 	$xmlFragment .= '
@@ -223,7 +223,7 @@ function GetQuizLeagueQuestion($id_quiz_league, $debugOn)
 	{
 		$xmlFragment .= '<answer>';
 		$xmlFragment .= '<id_answer>' . $answerRow["id_answer"] . '</id_answer>';
-		$xmlFragment .= '<answer_text>' . xmlencode(format_string($answerRow["answer_text"])) . '</answer_text>';
+		$xmlFragment .= '<answer_text>' . xmlencode(Quiz\Helper::format_infostring($answerRow["answer_text"])) . '</answer_text>';
 		$xmlFragment .= '<is_correct>' . $answerRow["is_correct"] . '</is_correct>';
 		$xmlFragment .= '</answer>';
 	}
@@ -261,20 +261,6 @@ function GetQuizLeagueQuestion($id_quiz_league, $debugOn)
 		header("Content-Type: text/xml");
 		echo $xmlFragment;
 	}
-}
-
-function format_string($stringToFormat)
-{
-	global $smcFunc;
-
-	// Remove any slashes. These should not be here, but it has been known to happen
-	$returnString = str_replace("\\", "", $smcFunc['db_unescape_string']($stringToFormat));
-
-	// Add some breaks in for carriage returns
-	$returnString = str_replace(chr(10), "&lt;br/&gt;", $returnString);
-
-// @TODO utf8
-	return html_entity_decode($returnString, ENT_QUOTES, 'UTF-8');
 }
 
 /*

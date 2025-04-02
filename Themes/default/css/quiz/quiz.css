@@ -178,3 +178,7 @@ body
     height: 100%;
     box-sizing: border-box;
 }
+.quiz_centertext {
+	margin: 0 auto;
+	text-align: center;
+}

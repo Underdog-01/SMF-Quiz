@@ -53,6 +53,22 @@ $txt['SMFQuiz_UserQuizzes_Page'] = array(
 	'NotCreatedQuizzes' => 'You have not created any quizzes',
 	'UserQuizSubmittedForReview' => 'User Quiz Submitted for Review',
 	'QuizSubmittedForReview' => 'A quiz has been submitted for review',
+	'Player' => 'Player',
+	'QuizzesPlayed' => 'Played',
+	'Wins' => 'Wins',
+	'Questions' => 'Questions',
+	'Correct' => 'Correct',
+	'Incorrect' => 'Incorrect',
+	'Timeouts' => 'Timeouts',
+	'Percent' => 'Percent',
+);
+
+
+// Language text located in the users with most played quizzes page
+$txt['SMFQuiz_UsersMostPlayed_Page'] = array(
+	'Title' => 'SMFQuiz - Most Active Players',
+	'Description' => 'This section displays a list of the most active SMF-Quiz players including some of their statistics.',
+	'MostActivePlayers' => 'Active Players List',	
 );
 
 // Language text located in the add quiz page
@@ -119,6 +135,7 @@ $txt['SMFQuiz_tabs'] = array(
 	'statistics' => 'Statistics',
 	'userDetails' => 'User Details',
 	'userQuizzes' => 'User Quizzes',
+	'usersMostActive' => 'Active Players',
 );
 
 // Language text for user ratings
@@ -182,10 +199,15 @@ $txt['SMFQuiz_QuizEnd_Page'] = array(
 	'QuizInATimeOf' => 'quiz in a time of',
 	'QuizLeagueInATimeOf' => 'quiz league in a time of',
 	'SecondsThisIsANewTopScore' => 'seconds. This is a new top score!',
+	'Seconds' => 'seconds',
 );
 
 $txt['quiz_xml_error_no_id'] = 'No id_quiz_league or id_quiz specified';
 $txt['quiz_xml_error_no_quizzes'] = 'There are no Quizzes defined';
+$txt['quiz_league_end_infoboard'] = '<b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' <b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizLeagueInATimeOf'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['Seconds'] . '.';
+$txt['quiz_end_topscore'] = '<b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' %s<b> %s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizInATimeOf'] . ' <b>%d</b>  ' . $txt['SMFQuiz_QuizEnd_Page']['SecondsThisIsANewTopScore'] . '.';
+$txt['quiz_end_score'] = '<b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' %s<b> %s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizInATimeOf'] . ' <b>%d</b>';
+
 
 // Quiz profile
 $txt['quiz_profileSettings_title'] = 'SMF-Quiz Profile Settings';

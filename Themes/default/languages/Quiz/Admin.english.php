@@ -29,6 +29,7 @@ $txt['SMFQuizAdmin_Titles'] = array(
 	'UploadQuiz' => 'Upload Quiz',
 	'Results' => 'Results',
 	'Disputes' => 'Disputes',
+	'Main' => 'Main',
 );
 
 // Blurb text for titles
@@ -109,8 +110,8 @@ $txt['SMFQuizAdmin_NewQuiz_Page'] = array(
 $txt['SMFQuizAdmin_EditQuiz_Page'] = array(
 	'EditQuiz' => 'Edit Quiz',
 	'UpdateQuiz' => 'Update Quiz',
-	'QuizQuestions' => 'Quiz Questions',
-	'UpdateQuizAndAddQuestions' => 'Update Quiz and Add Questions',
+	'QuizQuestions' => 'View Questions',
+	'UpdateQuizAndAddQuestions' => 'Add Questions',
 	'Done' => 'Done',
 );
 
@@ -118,7 +119,7 @@ $txt['SMFQuizAdmin_EditQuiz_Page'] = array(
 $txt['SMFQuizAdmin_EditQuizLeague_Page'] = array(
 	'EditQuizLeague' => 'Edit Quiz League',
 	'UpdateQuizLeague' => 'Update Quiz League',
-	'Done' => 'Done',
+	'Done' => 'Save',
 );
 
 // Language text located in the quiz leagues page

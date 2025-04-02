@@ -93,6 +93,38 @@ function SMFQuizAdmin()
 	loadTemplate('Quiz/Admin');
 }
 
+function SMFQuiz_AdminPatch()
+{
+	global $scripturl, $context, $txt;
+
+	$areaArray = [
+		'quizSettings' => 'settings',
+		'quizResults' => 'results',
+		'quizDisputes' => 'disputes',
+		'quizQuizzes' => 'quizzes',
+		'quizQuizLeagues' => 'quizleagues',
+		'quizCategories' => 'categories',
+		'quizQuestions' => 'questions',
+		'quizMaintenance' => 'maintenance',
+		'quizQuizImporter' => 'quizimporter',
+	];
+	$area = isset($_REQUEST['area']) && is_string($_REQUEST['area']) ? $_REQUEST['area'] : '';
+	if (!empty($area) && array_key_exists($area, $areaArray)) {
+		$context['html_headers'] .= '
+		<script>
+			$(document).ready(function(){
+				setTimeout(function(){
+					window.location.href = "' . $scripturl . '?index.php;action=admin;area=quiz;sa=' . $areaArray[$area] . '";
+				}, 10);
+			});
+		</script>';
+		//redirectexit($scripturl . '?index.php;action=admin;area=quiz;sa=' . $areaArray[$area]);
+	}
+	$context['page_title'] = $txt['SMFQuiz'];
+	$context['current_subaction'] = 'patch';
+	loadTemplate('Quiz/Admin');
+}
+
 function GetMaintenanceData()
 {
 	global $context, $txt;
@@ -392,19 +424,19 @@ function GetQuizLeagueData()
 		// @TODO localization
 		switch ($_POST["QuizLeagueAction"])
 		{
-			case 'New Quiz League' : // User wants to create a new Quiz league
+			case 'newleague' : // User wants to create a new Quiz league
 				GetNewQuizLeagueData();
 				break;
 
-			case 'Delete Quiz League' : // User wants to delete the specified quiz league
+			case 'delete' : // User wants to delete the specified quiz league
 				GetDeleteQuizLeagueData();
 				break;
 
-			case 'Update Quiz League' : // User is updating a quiz league
+			case 'update' : // User is updating a quiz league
 				GetUpdateQuizLeagueData();
 				break;
 
-			case 'Save Quiz League' : // User has selected to save a new quiz league
+			case 'save' : // User has selected to save a new quiz league
 				GetSaveQuizLeagueData();
 				break;
 		}
@@ -760,23 +792,13 @@ function GetUpdateQuizData()
 	$description = isset($_POST['description']) ? $_POST['description'] : '';
 	$limit = isset($_POST['limit']) ? $_POST['limit'] : '';
 	$seconds = isset($_POST['seconds']) ? $_POST['seconds'] : '';
-	$showanswers = isset($_POST['show_answers']) ? $_POST['show_answers'] : '';
-	$enabled = isset($_POST['enabled']) ? $_POST['enabled'] : '';
+	$showanswers = isset($_POST['show_answers']) && strval($_POST['show_answers']) == 'on' ? 1 : 0;
+	$enabled = isset($_POST['enabled']) && strval($_POST['enabled']) == 'on' ? 1 : 0;
 	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
 	$categoryId = isset($_POST['id_category']) ? $_POST['id_category'] : '';
 	$quizId = isset($_POST['id_quiz']) ? $_POST['id_quiz'] : '';
 	$oldCategoryId = isset($_POST["oldCategoryId"]) ? $_POST["oldCategoryId"] : ''; // Need the old category, as if it is different we need to change quiz counts
 	$for_review = 1;
-
-	if ($showanswers == 'on')
-		$showanswers = 1;
-	else
-		$showanswers = 0;
-
-	if ($enabled == 'on')
-		$enabled = 1;
-	else
-		$enabled = 0;
 
 	// TODO: At a later date we probably want to make this a little more sophisticated by adding
 	// PMs back to the creator and some workflow
@@ -814,20 +836,10 @@ function GetSaveQuizData()
 	$description = isset($_POST['description']) ? $_POST['description'] : '';
 	$limit = isset($_POST['limit']) ? $_POST['limit'] : '';
 	$seconds = isset($_POST['seconds']) ? $_POST['seconds'] : '';
-	$showanswers = isset($_POST['showanswers']) ? $_POST['showanswers'] : '';
-	$enabled = isset($_POST['enabled']) ? $_POST['enabled'] : '';
+	$showanswers = isset($_POST['showanswers']) && strval($_POST['showanswers']) == 'on' ? 1 : 0;
+	$enabled = isset($_POST['enabled']) && strval($_POST['enabled']) == 'on' ? 1 : 0;
 	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
 	$categoryId = isset($_POST['id_category']) ? $_POST['id_category'] : '';
-
-	if ($showanswers == 'on')
-		$showanswers = 1;
-	else
-		$showanswers = 0;
-
-	if ($enabled == 'on')
-		$enabled = 1;
-	else
-		$enabled = 0;
 
 	// Save the data and return the identifier for this newly created quiz
 	$newQuizId = SaveQuiz($title, $description, $limit, $seconds, $showanswers, $image, $categoryId, $enabled, $context['user']['id'], 0);
@@ -1072,13 +1084,13 @@ function GetSaveQuizLeagueData()
 	// TODO - Need some validation on front end
 	$title = isset($_POST['title']) ? $_POST['title'] : '';
 	$description = isset($_POST['description']) ? $_POST['description'] : '';
-	$interval = isset($_POST["interval"]) ? $_POST["interval"] : '';
-	$questions = isset($_POST["questions"]) ? $_POST["questions"] : '';
-	$seconds = isset($_POST['seconds']) ? $_POST['seconds'] : '';
-	$points = isset($_POST["points"]) ? $_POST["points"] : '';
-	$showanswers = isset($_POST['showanswers']) ? $_POST['showanswers'] : '';
-	$totalRounds = isset($_POST["totalRounds"]) ? $_POST["totalRounds"] : '';
-	$state = isset($_POST["state"]) ? $_POST["state"] : '';
+	$interval = isset($_POST["interval"]) ? (int)$_POST["interval"] : '';
+	$questions = isset($_POST["questions"]) ? (int)$_POST["questions"] : '';
+	$seconds = isset($_POST['seconds']) ? (int)$_POST['seconds'] : '';
+	$points = isset($_POST["points"]) ? (int)$_POST["points"] : '';
+	$showanswers = isset($_POST['showanswers']) && strval($_POST['showanswers']) == 'on' ? 1 : 0;
+	$totalRounds = isset($_POST["totalRounds"]) ? (int)$_POST["totalRounds"] : '';
+	$state = isset($_POST["state"]) ? (int)$_POST["state"] : '';
 
 	// Build the category selection string
 	$categoryArray = $_POST["categories"];
@@ -1094,11 +1106,6 @@ function GetSaveQuizLeagueData()
 		}
 		$categories .= $category . ',';
 	}
-
-	if ($showanswers == 'on')
-		$showanswers = 1;
-	else
-		$showanswers = 0;
 
 	// Save the data
 	if (!empty($title))
@@ -1122,21 +1129,16 @@ function GetUpdateQuizLeagueData()
 	$questions = isset($_POST["questions"]) ? $_POST["questions"] : '';
 	$seconds = isset($_POST['seconds']) ? $_POST['seconds'] : '';
 	$points = isset($_POST["points"]) ? $_POST["points"] : '';
-	$showanswers = isset($_POST['showanswers']) ? $_POST['showanswers'] : '';
+	$showanswers = isset($_POST['showanswers']) && strval($_POST['showanswers']) == 'on' ? 1 : 0;
 	$totalRounds = isset($_POST["totalRounds"]) ? $_POST["totalRounds"] : '';
 	$state = isset($_POST["state"]) ? $_POST["state"] : '';
 	$id_quiz_league = isset($_POST["id_quiz_league"]) ? $_POST["id_quiz_league"] : 0;
 
 	// Build the category selection string
-	$categoryArray = $_POST["categories"];
+	$categoryArray = isset($_POST["categories"]) ? (array)$_POST["categories"] : [];
 	$categories = '';
 	foreach ($categoryArray as $category)
 		$categories .= $category . ',';
-
-	if ($showanswers == 'on')
-		$showanswers = 1;
-	else
-		$showanswers = 0;
 
 	// Save the data
 	if (!empty($title))

@@ -971,7 +971,7 @@ function UpdateAnswer($id_answer, $answer_text, $is_correct)
 		WHERE		id_answer = {int:id_answer}',
 		array(
 			'id_answer' => $id_answer,
-			'answer_text' => $smcFunc['db_escape_string'] (htmlspecialchars($answer_text, ENT_QUOTES, 'utf-8')),
+			'answer_text' => Quiz\Helper::quiz_commonStringFilter($answer_text),
 			'is_correct' => $is_correct,
 			'updated' => $updated
 	));
@@ -995,7 +995,7 @@ function SaveAnswer($id_question, $answer_text, $is_correct)
 		),
 		array(
 			$id_question,
-			$smcFunc['db_escape_string'] (htmlspecialchars($answer_text, ENT_QUOTES, 'utf-8')),
+			Quiz\Helper::quiz_commonStringFilter($answer_text),
 			$is_correct,
 			$updated
 		),
@@ -1026,16 +1026,16 @@ function UpdateQuiz($id_quiz, $title, $description, $play_limit, $seconds, $show
 					for_review = {int:for_review}
 		WHERE		id_quiz = {int:id_quiz}',
 		array(
-			'title' =>  $smcFunc['db_escape_string'] (htmlspecialchars($title, ENT_QUOTES, 'utf-8')),
-			'description' =>  $smcFunc['db_escape_string'] (htmlspecialchars($description, ENT_QUOTES, 'utf-8')),
-			'play_limit' => $play_limit,
-			'seconds' => $seconds,
-			'show_answers' => $show_answers,
-			'image' =>  $smcFunc['db_escape_string'] ($image),
-			'id_category' => $id_category,
-			'enabled' => $enabled,
-			'id_quiz' => $id_quiz,
-			'for_review' => $for_review
+			'title' =>  Quiz\Helper::quiz_commonStringFilter($title),
+			'description' =>  Quiz\Helper::quiz_commonStringFilter($description),
+			'play_limit' => (int)$play_limit,
+			'seconds' => (int)$seconds,
+			'show_answers' => (int)$show_answers,
+			'image' =>  Quiz\Helper::quiz_commonImageFileFilter($image),
+			'id_category' => (int)$id_category,
+			'enabled' => (int)$enabled,
+			'id_quiz' => (int)$id_quiz,
+			'for_review' => (int)$for_review
 		)
 	);
 
@@ -1077,12 +1077,12 @@ function SaveQuiz($title, $description, $play_limit, $seconds_per_question, $sho
 				'updated' => 'int'
 			),
 			array(
-				$smcFunc['db_escape_string'] (htmlspecialchars($title, ENT_QUOTES, 'utf-8')),
-				$smcFunc['db_escape_string'] (htmlspecialchars($description, ENT_QUOTES, 'utf-8')),
+				Quiz\Helper::quiz_commonStringFilter($title),
+				Quiz\Helper::quiz_commonStringFilter($description),
 				$play_limit,
 				$seconds_per_question,
 				$show_answers,
-				$smcFunc['db_escape_string'] ($image),
+				Quiz\Helper::quiz_commonImageFileFilter($image),
 				$id_category,
 				$enabled,
 				$creator_id,
@@ -1133,9 +1133,9 @@ function UpdateQuestion($id_question, $question_text, $image, $answer_text)
 					updated = {int:updated}
 		WHERE		id_question = {int:id_question}',
 		array(
-			'question_text' => $smcFunc['db_escape_string'] (htmlspecialchars($question_text, ENT_QUOTES, 'utf-8')),
-			'image' => $smcFunc['db_escape_string'] ($image),
-			'answer_text' => $smcFunc['db_escape_string'] (htmlspecialchars($answer_text, ENT_QUOTES, 'utf-8')),
+			'question_text' => Quiz\Helper::quiz_commonStringFilter($question_text),
+			'image' => Quiz\Helper::quiz_commonImageFileFilter($image),
+			'answer_text' => Quiz\Helper::quiz_commonStringFilter($answer_text),
 			'updated' => $updated,
 			'id_question' => $id_question
 	));
@@ -1161,11 +1161,11 @@ function SaveQuestion($question_text, $id_question_type, $id_quiz, $image, $answ
 		),
 		array(
 // @TODO utf8
-			$smcFunc['db_escape_string'] (htmlspecialchars($question_text, ENT_QUOTES, 'utf-8')),
+			Quiz\Helper::quiz_commonStringFilter($question_text),
 			$id_question_type,
 			$id_quiz,
-			$smcFunc['db_escape_string'] ($image),
-			$smcFunc['db_escape_string'] (htmlspecialchars($answer_text, ENT_QUOTES, 'utf-8')),
+			Quiz\Helper::quiz_commonImageFileFilter($image),
+			Quiz\Helper::quiz_commonStringFilter($answer_text),
 			$updated
 		),
 		array('id_question')
@@ -1197,17 +1197,17 @@ function UpdateQuizLeague($id_quiz_league, $title, $description, $day_interval, 
 					categories = {string:categories}
 		WHERE		id_quiz_league = {int:id_quiz_league}',
 		array(
-			'title' =>  $smcFunc['db_escape_string'] (htmlspecialchars($title, ENT_QUOTES, 'utf-8')),
-			'description' =>  $smcFunc['db_escape_string'] (htmlspecialchars($description, ENT_QUOTES, 'utf-8')),
-			'questions_per_session' => $questions_per_session,
-			'day_interval' => $day_interval,
-			'seconds_per_question' => $seconds_per_question,
-			'points_for_correct' => $points_for_correct,
-			'show_answers' => $show_answers,
-			'total_rounds' => $total_rounds,
-			'state' => $state,
+			'title' =>  Quiz\Helper::quiz_commonStringFilter($title),
+			'description' =>  Quiz\Helper::quiz_commonStringFilter($description),
+			'questions_per_session' => (int)$questions_per_session,
+			'day_interval' => (int)$day_interval,
+			'seconds_per_question' => (int)$seconds_per_question,
+			'points_for_correct' => (int)$points_for_correct,
+			'show_answers' => (int)$show_answers,
+			'total_rounds' => (int)$total_rounds,
+			'state' => (int)$state,
 			'categories' => $categories,
-			'id_quiz_league' => $id_quiz_league
+			'id_quiz_league' => (int)$id_quiz_league
 		)
 	);
 }
@@ -1217,6 +1217,14 @@ function SaveQuizLeague($title, $description, $day_interval, $questions_per_sess
 {
 	global $smcFunc;
 
+	/*
+	$smcFunc['db_query']('', "
+		DELETE FROM {$db_prefix}quiz_league
+		WHERE		id_question IN ({$questionInIds})",
+		[]
+	);
+	*/
+	
 	// Execute the query
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_league',
@@ -1234,19 +1242,19 @@ function SaveQuizLeague($title, $description, $day_interval, $questions_per_sess
 			'categories' => 'string'
 		),
 		array(
-			$title,
-			$description,
-			$day_interval,
-			$questions_per_session,
-			$seconds_per_question,
-			$points_for_correct,
-			$show_answers,
-			$total_rounds,
-			$state,
-			time(),
+			Quiz\Helper::quiz_commonStringFilter($title),
+			Quiz\Helper::quiz_commonStringFilter($description),
+			(int)$day_interval,
+			(int)$questions_per_session,
+			(int)$seconds_per_question,
+			(int)$points_for_correct,
+			(int)$show_answers,
+			(int)$total_rounds,
+			(int)$state,
+			intval(time()),
 			$categories
 		),
-		array('id_quiz_league_id')
+		array('id_quiz_league')
 	);
 }
 
@@ -1268,9 +1276,9 @@ function UpdateCategory($id_category, $name, $description, $parent, $image)
 		WHERE		id_category = {int:id_category}',
 		array(
 			'parent' => $parent,
-			'name' => $smcFunc['db_escape_string'] ($name),
-			'description' => $smcFunc['db_escape_string'] ($description),
-			'image' => $smcFunc['db_escape_string'] ($image),
+			'name' => Quiz\Helper::quiz_commonStringFilter($name),
+			'description' => Quiz\Helper::quiz_commonStringFilter($description),
+			'image' => Quiz\Helper::quiz_commonImageFileFilter($image),
 			'updated' => $updated,
 			'id_category' => $id_category,
 		)
@@ -1292,10 +1300,10 @@ function SaveCategory($name, $description, $id_parent, $image)
 			'image' => 'string'
 		),
 		array(
-			$smcFunc['db_escape_string'] ($name),
-			$smcFunc['db_escape_string'] ($description),
+			Quiz\Helper::quiz_commonStringFilter($name),
+			Quiz\Helper::quiz_commonStringFilter($description),
 			$id_parent,
-			$smcFunc['db_escape_string'] ($image)
+			Quiz\Helper::quiz_commonImageFileFilter($image)
 		),
 		array('id_category')
 	);
@@ -1338,7 +1346,7 @@ function DeleteQuizzes($quizInIds)
 {
 	global $smcFunc, $db_prefix;
 
-	// What we need to do now is loop through each quiz that has been deleted and decrement the quiz count for that quizzes category
+	// What we need to do now is loop through each quiz that has been deleted and decrement the quiz count for any related quiz category
 	$quizIds = array_filter(array_map('intval', explode(',', $quizInIds)));
 	foreach ($quizIds as $quizId) {
 		// We need to return the category associated to the quiz first - could have done this all using subqueries, but this seems
@@ -2281,7 +2289,7 @@ function GetTotalUserWins($id_user)
 	$smcFunc['db_free_result']($result);
 }
 
-function GetMostActivePlayers()
+function GetMostActivePlayers($limit = 10)
 {
 	global $context, $smcFunc;
 
@@ -2296,7 +2304,10 @@ function GetMostActivePlayers()
 		GROUP BY 	QR.id_user,
 					M.real_name
 		ORDER BY	total_plays DESC
-		LIMIT		0, 10'
+		LIMIT		0, {int:limit}',
+		[
+			'limit' => (int)$limit,
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2365,12 +2376,12 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 			'creator_id' => 'int',
 		),
 		array(
-			$smcFunc['db_escape_string'] ($title),
-			$smcFunc['db_escape_string'] ($description),
+			Quiz\Helper::quiz_commonStringFilter($title),
+			Quiz\Helper::quiz_commonStringFilter($description),
 			intval($play_limit),
 			intval($seconds_per_question),
 			intval($show_answers),
-			$smcFunc['db_escape_string'] ($image),
+			Quiz\Helper::quiz_commonImageFileFilter($image),
 			(int)$id_category,
 			intval($enabled),
 			time(),
@@ -2436,11 +2447,11 @@ function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer
 			'updated' => 'int'
 		),
 		array(
-			$smcFunc['db_escape_string']($question_text),
+			Quiz\Helper::quiz_commonStringFilter($question_text),
 			intval($id_question_type),
 			intval($id_quiz),
-			$smcFunc['db_escape_string']($answer_text),
-			$smcFunc['db_escape_string']($image),
+			Quiz\Helper::quiz_commonStringFilter($answer_text),
+			Quiz\Helper::quiz_commonImageFileFilter($image),
 			time()
 		),
 		array('id_question')
@@ -2467,7 +2478,7 @@ function ImportQuizAnswer($id_question, $answer_text, $is_correct)
 		),
 		array(
 			intval($id_question),
-			$smcFunc['db_escape_string'] ($answer_text),
+			Quiz\Helper::quiz_commonStringFilter($answer_text),
 			intval($is_correct),
 			$updated
 		),

@@ -18,6 +18,7 @@ class Integration
 		self::loadClasses();
 		self::quiz_uninstall_options();
 
+
 		add_integration_function('integrate_autoload', __CLASS__ . '::autoload', false);
 		add_integration_function('integrate_admin_areas', __CLASS__ . '::admin_areas', false);
 		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menu_buttons', false);
@@ -106,17 +107,16 @@ class Integration
 
 	public static function admin_areas(&$admin_areas)
 	{
-		global $txt, $modSettings, $scripturl;
-
+		global $txt, $modSettings, $scripturl, $sourcedir, $context;
 		$admin_areas['quiz'] = array(
 			'title' => $txt['SMFQuiz'],
 			'permission' => array('quiz_admin'),
 			'areas' => array(
 				'quiz' => array(
-					'label' => $txt['SMFQuiz'],
+					'label' => $txt['SMFQuizAdmin_Titles']['Main'],
 					'file' => 'Quiz/Admin.php',
 					'function' => 'SMFQuizAdmin',
-					'icon' => '../../quiz_images/quiz.png',
+					'icon' => '../../quiz_images/Admin/quiz.png',
 					'permission' => array('quiz_admin'),
 					'subsections' => array(
 						'adminCenter' => array($txt['SMFQuizAdmin_Titles']['AdminCenter']),
@@ -133,6 +133,20 @@ class Integration
 				),
 			),
 		);
+		// SMFQuiz_AdminPatch
+		$quizAdminAreas = ['quizSettings', 'quizQuizzes', 'quizQuizLeagues', 'quizCategories', 'quizQuestions', 'quizResults', 'quizDisputes', 'quizQuizImporter', 'quizMaintenance'];
+		foreach ($quizAdminAreas as $area) {
+			$key = str_replace('quiz', '', $area);
+			$admin_areas['quiz']['areas'][$area] = [
+				'label' => $txt['SMFQuizAdmin_Titles'][$key],
+				'file' => 'Quiz/Admin.php',
+				'function' => 'SMFQuiz_AdminPatch',
+				'icon' => '../../quiz_images/Admin/' . strtolower($key) . '.png',
+				'permission' => ['quiz_admin'],
+				'subsections' => [],
+			];
+
+		}
 	}
 
 	public static function menu_buttons(&$buttons)
@@ -177,6 +191,7 @@ class Integration
 		global $context, $txt;
 
 		// custom remove all data info
+		$context['html_headers'] = !empty($context['html_headers']) ? $context['html_headers'] : '';
 		foreach(array('action', 'area', 'sa', 'package') as $request) {
 			$$request = !empty($_REQUEST[$request]) && is_string($_REQUEST[$request]) ? $_REQUEST[$request] : '';
 		}

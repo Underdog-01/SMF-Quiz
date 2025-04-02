@@ -252,9 +252,9 @@ function GetQuizLeagueDetails($id_quiz_league, $id_user, $id_session, $debugOn)
 	$questionId = 0;
 	if (empty($timesPlayed))
 	{
-		$xmlFragment .= '<title>' . xmlencode(ajax_format_string($leagueRow["title"])) . '</title>';
+		$xmlFragment .= '<title>' . xmlencode(Quiz\Helper::format_infostring($leagueRow["title"])) . '</title>';
 		$xmlFragment .= '<id_session>' . $id_session . '</id_session>';
-		$xmlFragment .= '<description>' . xmlencode(ajax_format_string($leagueRow["description"])) . '</description>';
+		$xmlFragment .= '<description>' . xmlencode(Quiz\Helper::format_infostring($leagueRow["description"])) . '</description>';
 		$xmlFragment .= '<day_interval>' . $leagueRow["day_interval"] . '</day_interval>';
 		$xmlFragment .= '<question_plays>' . $leagueRow["question_plays"] . '</question_plays>';
 		$xmlFragment .= '<questions_per_session>' . $leagueRow["questions_per_session"] . '</questions_per_session>';
@@ -328,10 +328,10 @@ function GetQuizDetails($id_quiz, $id_user, $id_session, $debugOn)
 	$xmlFragment = '<quizDetail>';
 	if ($rows > 0)
 	{
-		$xmlFragment .= '<title>' . xmlencode(ajax_format_string($leagueRow["title"])) . '</title>';
+		$xmlFragment .= '<title>' . xmlencode(Quiz\Helper::format_infostring($leagueRow["title"])) . '</title>';
 		$xmlFragment .= '<id_session>' . $id_session . '</id_session>';
 		$xmlFragment .= '<creator_id>' . $leagueRow["creator_id"] . '</creator_id>';
-		$xmlFragment .= '<description>' . xmlencode(ajax_format_string($leagueRow["description"])) . '</description>';
+		$xmlFragment .= '<description>' . xmlencode(Quiz\Helper::format_infostring($leagueRow["description"])) . '</description>';
 		$xmlFragment .= '<questions_per_session>' . $questions_per_session . '</questions_per_session>';
 		$xmlFragment .= '<seconds_per_question>' . $leagueRow["seconds_per_question"] . '</seconds_per_question>';
 		$xmlFragment .= '<show_answers>' . $leagueRow["show_answers"] . '</show_answers>';
@@ -426,17 +426,6 @@ function InsertQuizSession($id_session, $id_user, $id_quiz, $id_quiz_league)
 			'id_quiz_session',
 		)
 	);
-}
-
-function ajax_format_string($stringToFormat)
-{
-	global $smcFunc;
-
-	// Remove any slashes. These should not be here, but it has been known to happen
-	$returnString = str_replace("\\", "", $smcFunc['db_unescape_string']($stringToFormat));
-
-// @TODO utf8?
-	return html_entity_decode($returnString, ENT_QUOTES, 'UTF-8');
 }
 
 ?>

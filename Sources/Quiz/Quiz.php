@@ -40,6 +40,7 @@ function SMFQuiz()
 		'statistics' => 'GetStatisticsData',
 		'userdetails' => 'GetUserDetailsData',
 		'userquizzes' => 'GetUserQuizzesData',
+		'usersmostactive' => 'GetUsersActiveData',
 		'addquiz' => 'GetAddQuizData',
 		'saveQuizAndAddQuestions' => 'SaveQuizData',
 		'saveQuiz' => 'SaveQuizData',
@@ -66,7 +67,7 @@ function SMFQuiz()
 		);
 
 // @TODO localization
-	$context['tab_links'] = array();
+	$context['tab_links'] = [];
 	$context['tab_links'][] = array(
 		'action' => 'home',
 		'label' => isset($txt['SMFQuiz_tabs']['home']) ? $txt['SMFQuiz_tabs']['home'] : 'Home'
@@ -91,6 +92,10 @@ function SMFQuiz()
 	$context['tab_links'][] = array(
 		'action' => 'userquizzes',
 		'label' => isset($txt['SMFQuiz_tabs']['userQuizzes']) ? $txt['SMFQuiz_tabs']['userQuizzes'] : 'User Quizzes'
+	);
+	$context['tab_links'][] = array(
+		'action' => 'usersmostactive',
+		'label' => isset($txt['SMFQuiz_tabs']['usersMostActive']) ? $txt['SMFQuiz_tabs']['usersMostActive'] : 'Active Players'
 	);
 
 	if (isset($_POST['formaction']))
@@ -256,7 +261,7 @@ function QuestionScript()
 
 	// Add javascript for multiple checkbox selection
 	// TODO: Make this dependant on what we are showing
-	$context['html_headers'] .= '<script type="text/javascript"><!-- // --><![CDATA[
+	$context['html_headers'] .= '<script>
 			function checkAll(selectedForm, checked)
 			{
 				for (var i = 0; i < selectedForm.elements.length; i++)
@@ -364,7 +369,7 @@ function QuestionScript()
 					form.submit();
 				}
 			}
-			// ]]></script>';
+			</script>';
 }
 
 function SaveQuestionData()
@@ -414,18 +419,10 @@ function SaveQuizData()
 	$description = isset($_POST['description']) ? $_POST['description'] : '';
 	$limit = isset($_POST['limit']) ? $_POST['limit'] : '';
 	$seconds = isset($_POST['seconds']) ? $_POST['seconds'] : '';
-	$showanswers = isset($_POST['showanswers']) ? $_POST['showanswers'] : '';
+	$showanswers = isset($_POST['showanswers']) && $_POST['showanswers'] == 'on' ? 1 : 0;
 	$categoryId = isset($_POST['id_category']) ? $_POST['id_category'] : '';
-	$image = isset($_POST['image']) ? $_POST['image'] : '';
+	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
 	$userId = $context['user']['id'];
-
-	if ($showanswers == 'on')
-		$showanswers = 1;
-	else
-		$showanswers = 0;
-
-	if ($image = '-')
-		$image = '';
 
 	// Save the data and return the identifier for this newly created quiz
 	$newQuizId = SaveQuiz($title, $description, $limit, $seconds, $showanswers, $image, $categoryId, 0, $userId, 0);
@@ -587,7 +584,7 @@ function GetHomePageData()
 	global $context, $modSettings;
 
 	$context['html_headers'] .= '
-		<script type="text/javascript">
+		<script>
 		var search_wait = false;
 		var search_url = smf_scripturl + "?action=SMFQuiz;sa=search;xml";
 		var search_divQ = "quick_div";
@@ -1759,6 +1756,102 @@ function GetQuizzesInCategoryData($id_category, $id_user)
 	$context['SMFQuiz']['Action'] = 'quizzes';
 }
 
+function GetUsersActiveData()
+{
+	global $context, $scripturl, $smcFunc, $txt, $modSettings;
+
+	list($mostPlayedUsers, $context['SMFQuiz']['mostActivePlayers'], $context['SMFQuiz']['total_user_wins'], $context['num_userdata']) = [[], [], [], 0];
+	$request = $smcFunc['db_query']('','
+		SELECT COUNT(*)
+		FROM {db_prefix}quiz_result QR
+		INNER JOIN {db_prefix}members M
+			ON QR.id_user = M.id_member
+		WHERE QR.total_seconds > 0',
+		[]
+	);
+	list ($context['num_userdata']) = $smcFunc['db_fetch_row']($request);
+	$smcFunc['db_free_result']($request);
+
+	$starts_with = isset($_GET['starts_with']) && !empty($_GET['starts_with']) ? $_GET['starts_with'] : '';
+	$limit = $modSettings['SMFQuiz_ListPageSizes'];
+	$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'down' : 'up';
+	$sort = 'total_played';
+	$context['sort_by'] = $sort;
+	$sort_methods = [
+		'total_played' => [
+			'down' => 'total_played, percentage_correct DESC',
+			'up' => 'total_played, percentage_correct ASC'
+		]
+	];
+	$context['quiz_sort_href'] = $scripturl . '?action=SMFQuiz;sa=usersmostactive;sort=' . $sort . ';start=0' . (!isset($_REQUEST['desc']) ? ';desc' : '');
+		
+	$query_parameters = array(
+		'sort' => isset($sort_methods[$sort][$context['sort_direction']]) ? $sort_methods[$sort][$context['sort_direction']] : 'total_played, percentage_correct ASC',
+		'starts_with' => $starts_with . '%',
+		'limit' => $limit,
+		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
+	);
+
+	// Construct the page index.
+	$context['page_index'] = constructPageIndex($scripturl . '?action=SMFQuiz;sa=usersmostactive;starts_with=' . $starts_with . ';sort=' . $sort . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_userdata'], $limit);
+
+	// Send the data to the template.
+	$context['start'] = $_REQUEST['start'] + 1;
+	$context['end'] = min($_REQUEST['start'] + $limit, $context['num_userdata']);
+
+
+	$result = $smcFunc['db_query']('', '
+		SELECT  SUM(QR.questions) AS total_questions,
+				SUM(QR.correct) AS total_correct,
+				SUM(QR.incorrect) AS total_incorrect,
+				SUM(QR.timeouts) AS total_timeouts,
+				SUM(QR.total_seconds) AS total_seconds,
+				COUNT(*) AS total_played,
+				round((SUM(QR.correct) / SUM(QR.questions)) * 100) AS percentage_correct,
+				COUNT(QR.id_user) as total_plays,
+				QR.id_user,
+				M.real_name
+		FROM 		{db_prefix}quiz_result QR
+		INNER JOIN 	{db_prefix}members M
+		ON 			QR.id_user = M.id_member' . (!empty($starts_with) ? '
+		WHERE M.real_name LIKE {string:starts_with}' : '') . '
+		GROUP BY 	M.real_name,
+					QR.id_user
+		ORDER BY {raw:sort}
+		LIMIT {int:start} , {int:limit}',
+		$query_parameters
+	);
+
+	// Loop through the results and populate the context accordingly
+	while ($row = $smcFunc['db_fetch_assoc']($result)) {
+		$context['SMFQuiz']['mostActivePlayers'][] = $row;
+		$mostPlayedUsers[] = $row['id_user'];
+	}
+
+	// Free the database
+	$smcFunc['db_free_result']($result);
+		$result = $smcFunc['db_query']('', '
+		SELECT	COUNT(*) AS total_user_wins,
+				Q.top_user_id
+		FROM		{db_prefix}quiz Q
+		WHERE		top_user_id IN ({array_int:id_users})
+		GROUP BY Q.top_user_id ASC',
+		[
+			'id_users' => $mostPlayedUsers,
+		]
+	);
+
+	// This should only be one value
+	$context['SMFQuiz']['total_user_wins'] = Array();
+	while ($row = $smcFunc['db_fetch_assoc']($result))
+		$context['SMFQuiz']['total_user_wins'][$row['top_user_id']] = $row['total_user_wins'];
+
+	// Free the database
+	$smcFunc['db_free_result']($result);
+
+	$context['SMFQuiz']['Action'] = 'usersmostactive';
+}
+
 // @TODO createList
 function GetQuizzesData()
 {
@@ -1801,14 +1894,26 @@ function GetQuizzesData()
 		'seconds' => array(
 			'label' => $txt['SMFQuiz_Common']['Secs'],
 			'width' => '20'
-		)
+		),
 	);
 
 	switch ($type)
 	{
 		case 'unplayed':
+			$context['columns']['quiz_plays'] = array(
+				'label' => $txt['SMFQuiz_Common']['Plays'],
+				'width' => '20'
+			);
+			$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'quiz_plays';
+			$context['sort_direction'] = !isset($_REQUEST['asc']) ? 'up' : 'down';
 			break;
 		case 'all':
+			$context['columns']['title'] = array(
+				'label' => $txt['SMFQuiz_Common']['Title'],
+				'width' => '20'
+			);
+			$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'title';
+			$context['sort_direction'] = !isset($_REQUEST['asc']) ? 'up' : 'down';
 			break;
 		case 'new':
 			$context['columns']['updated'] = array(
@@ -1842,7 +1947,19 @@ function GetQuizzesData()
 			$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'percentage_correct';
 			$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
 			break;
+		case 'owner':
+			$context['columns']['owner'] = array(
+				'label' => $txt['SMFQuiz_Common']['Owner'],
+				'width' => '20'
+			);
+			$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
+			$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'owner';
+			break;
 		default:
+			$context['columns']['title'] = array(
+				'label' => $txt['SMFQuiz_Common']['Title'],
+				'width' => '20'
+			);
 			$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
 			$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'title';
 			break;
@@ -1870,6 +1987,10 @@ function GetQuizzesData()
 	// List out the different sorting methods...
 	$sort_methods = array(
 		'title' => array(
+			'down' => 'title DESC',
+			'up' => 'title ASC'
+		),
+		'all' => array(
 			'down' => 'title DESC',
 			'up' => 'title ASC'
 		),
@@ -1908,7 +2029,7 @@ function GetQuizzesData()
 		'percentage_correct' => array(
 			'down' => 'percentage_correct DESC',
 			'up' => 'percentage_correct ASC'
-		)
+		),
 	);
 
 	$query_parameters = array(
@@ -1918,6 +2039,7 @@ function GetQuizzesData()
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
 	);
 
+	$context['SMFQuiz']['quizzes'] = [];
 	$request = $smcFunc['db_query']('','
 		SELECT COUNT(*)
 		FROM {db_prefix}quiz Q
@@ -1987,7 +2109,7 @@ function GetQuizzesData()
 		$query_parameters
 	);
 
-	$context['SMFQuiz']['quizzes'] = Array();
+
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizzes'][] = $row;
 

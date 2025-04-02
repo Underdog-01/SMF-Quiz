@@ -205,6 +205,11 @@ function showDisputeDialog()
 	$("#disputeDialog").dialog('open');
 
 }
+
+function QuizCreateNewTrigger() {
+	$("#addNewQuiz").trigger("click");
+}
+
 $(document).ready(function(){
 	$("#DeleteQuizDispute").click(function(){
 		let checkDels = false;

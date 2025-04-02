@@ -82,6 +82,7 @@ $txt['SMFQuiz_Common'] = array(
 	'PercentageCorrect' => 'Percentage Correct',
 	'Played' => 'Played',
 	'PlayedQuizzes' => 'Played Quizzes',
+	'Player' => 'Player',
 	'PlayingQuiz' => 'Playing Quiz',
 	'PlayLimit' => 'Play Limit',
 	'PlayQuizLeague' => 'Play Quiz League',
@@ -151,6 +152,7 @@ $txt['SMFQuiz_Common'] = array(
 	'topscores' => 'top scores',
 	'TopLevel' => 'Top Level',
 	'TotalCorrect' => 'Total Correct',
+	'TotalPlayed' => 'Total Played',
 	'TotalQuestionsPlayed' => 'Total Questions Played',
 	'TotalRounds' => 'Total Rounds',
 	'TotalWins' => 'Total Wins',
@@ -205,5 +207,8 @@ $txt['quizLocalizationAlertsJS'] = [
 	'quizAjaxErrorDataLoad' => 'Data Load Error',
 	'quizAjaxErrorGeneral' => 'An unexpected error has occurred while retrieving data from the server. Please contact the server administrator and inform them of this error.',
 ];
+
+$txt['quizButtonEdit'] = 'Edit';
+$txt['quizButtonChild'] = 'Children';
 
 ?>
