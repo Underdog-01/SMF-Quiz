@@ -1950,18 +1950,13 @@ function upload_image($imageString, $imageFileName)
 		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> ' . $imageFileName . ' did not upload due to unexpected error (' . $get_results . ')';
 }
 
-function escape($url)
-{
-	return str_replace(" ", "%20", $url);
-}
-
 function ImportQuizFile($urlPath, $categoryId, $isEnabled, $image, $fileCount)
 {
 	global $context, $modSettings, $sourcedir;
 
 	$isEnabled = $isEnabled == 'on' ? 1 : 0;
 	$image = !empty($image) && $image != '-' ? $image : null;
-	$newUrlPath = escape($urlPath);
+	$newUrlPath = str_replace(" ", "%20", $urlPath);
 
 	$catData = quizGetCategoryInfo();
 	$quizString = quizLoad($newUrlPath);
@@ -2612,11 +2607,11 @@ function GetQuizImportData()
 						}
 						elseif (is_dir($tempFile) && in_array(basename($tempFile), array('Quizzes', 'Questions'))) {
 							$tempFilez = glob($tempFile . '/*');
-							foreach ($tempFilez as $tempImg) {
+							foreach ($tempFilez as $tempImg) {								
 								$imgExt = pathinfo($tempImg, PATHINFO_EXTENSION);
 								@chmod($tempImg, 0644);
 								if (in_array($imgExt, array('gif', 'jpeg', 'png', 'jpg', 'bmp'))) {
-									$neweImgName = $imgExt == 'jpeg' ? pathinfo($tempImg, PATHINFO_FILENAME) . 'jpg' : pathinfo($tempImg, PATHINFO_BASENAME);
+									$newImgName = $imgExt == 'jpeg' ? pathinfo($tempImg, PATHINFO_FILENAME) . 'jpg' : basename($tempImg);
 									@rename($tempImg, $settings['default_theme_dir'] . '/images/quiz_images/' . basename($tempFile) . '/' . $newImgName);
 									continue;
 								}
