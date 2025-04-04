@@ -2607,7 +2607,7 @@ function GetQuizImportData()
 						}
 						elseif (is_dir($tempFile) && in_array(basename($tempFile), array('Quizzes', 'Questions'))) {
 							$tempFilez = glob($tempFile . '/*');
-							foreach ($tempFilez as $tempImg) {								
+							foreach ($tempFilez as $tempImg) {
 								$imgExt = pathinfo($tempImg, PATHINFO_EXTENSION);
 								@chmod($tempImg, 0644);
 								if (in_array($imgExt, array('gif', 'jpeg', 'png', 'jpg', 'bmp'))) {
