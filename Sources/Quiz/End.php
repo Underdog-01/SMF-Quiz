@@ -38,6 +38,9 @@ function endQuiz()
 				call_integration_hook('integrate_quiz_result', array($id_quiz, $id_user, $questions, $correct, $incorrect, $timeouts, $total_seconds, $totalResumes));
 			}
 		}
+		else {
+			exit('quiz-creator');
+		}
 	}
 	elseif (!empty($id_quiz_league)) {
 		InsertQuizLeagueEnd($id_quiz_league, $id_user, $questions, $correct, $incorrect, $timeouts, $total_seconds, $points, $round, $total_seconds, $name);

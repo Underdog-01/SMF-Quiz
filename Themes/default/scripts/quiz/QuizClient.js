@@ -365,6 +365,9 @@ function quizEnd()
 	$.post(smf_scripturl + "?action=SMFQuizEnd", exportData)
 	.done(function( resultData ) {
 		if (resultData) {
+			if (resultData == "quiz-creator") {
+				alert(quizCreatorReminder);
+			}
 			showResults();
 		}
 		else {
