@@ -143,7 +143,7 @@ function QuizSearchXML()
 	$limit = 5;
 
 	// @TODO check input before queries
-	$search = '%'.addslashes($_REQUEST['name']).'%';
+	$search = '%'.addslashes(Quiz\Helper::format_infostring(urldecode($_REQUEST['name']))).'%';
 	$result = $smcFunc['db_query']('', '
 		SELECT count(*) AS quizzes
 		FROM {db_prefix}quiz as Q
@@ -475,7 +475,7 @@ function AddShowImageScript()
 
 function GetUserQuizzesData()
 {
-	global $context, $sourcedir, $txt;
+	global $context, $sourcedir, $txt, $user_info;
 
 	isAllowedTo('quiz_submit');
 
@@ -484,7 +484,7 @@ function GetUserQuizzesData()
 	if (isset($_GET['id_user']))
 		$userId = $_GET['id_user'];
 	else
-		$userId = $context['user']['id'];
+		$userId = $user_info['id'];
 
 	// @TODO check input
 	if (isset($_GET['review']))
@@ -620,7 +620,7 @@ function GetHomePageData()
 
 			var i, x = new Array();
 			var n = document.getElementById("quick_name").value.trim();
-			x[0] = "name=" + escape(textToEntities(n.replace(/&#/g, "&#38;#"))).replace(/\+/g, "%2B");
+			x[0] = "name=" + encodeURIComponent(textToEntities(n.replace(/&#/g, "&#38;#"))).replace(/\+/g, "%2B")
 			sendXMLDocument(search_url, x.join("&"), onQuizSearch);
 			ajax_indicator(true);
 		}
@@ -1784,7 +1784,7 @@ function GetUsersActiveData()
 		]
 	];
 	$context['quiz_sort_href'] = $scripturl . '?action=SMFQuiz;sa=usersmostactive;sort=' . $sort . ';start=0' . (!isset($_REQUEST['desc']) ? ';desc' : '');
-		
+
 	$query_parameters = array(
 		'sort' => isset($sort_methods[$sort][$context['sort_direction']]) ? $sort_methods[$sort][$context['sort_direction']] : 'total_played, percentage_correct ASC',
 		'starts_with' => $starts_with . '%',

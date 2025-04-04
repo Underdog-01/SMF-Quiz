@@ -29,12 +29,12 @@
 	flex-wrap: wrap;
 	box-sizing: border-box;
 }
-.quizAdminMainButton {	
+.quizAdminMainButton {
 	flex: 1 0 47%;
 	padding-top: 1rem;
 	box-sizing: border-box;
 }
-.quizAdminMainButtonContainer {	
+.quizAdminMainButtonContainer {
 	width: 80%;
 }
 #quiz_maintenance_tasks {
@@ -190,4 +190,13 @@ button.quiz_task_button {
 	align-self: center;
 	margin: 0.5rem;
 	cursor: pointer;
+}
+.quiz_icon_small {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	min-width: 16px;
+	min-height: 16px;
+	max-width: 16px;
+	max-height: 16px;
 }

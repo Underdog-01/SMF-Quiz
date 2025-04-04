@@ -39,13 +39,29 @@ class Helper
 		return array_filter($members);
 	}
 
-	public static function quiz_usersAcknowledge($profileField)
+	public static function quiz_usersAcknowledge($profileField, $default = false)
 	{
 		global $smcFunc;
 
-		$members = [];
+		list($members) = [[]];
 		if (!empty($profileField))
 		{
+			// fields that require enabled as default
+			if (in_array($profileField, ['quiz_pm_alert']) || !empty($default)) {
+				$request = $smcFunc['db_query']('', '
+					SELECT m.id_member
+					FROM {db_prefix}members m
+					LEFT JOIN {db_prefix}quiz_members qm ON qm.id_member = m.id_member
+					WHERE qm.id_member IS NULL',
+					[]
+				);
+
+				while ($row = $smcFunc['db_fetch_assoc']($request)) {
+					$members[] = $row['id_member'];
+				}
+
+				$smcFunc['db_free_result']($request);
+			}
 
 			$request = $smcFunc['db_query']('', '
 				SELECT qm.id_member, qm.quiz_pm_report, qm.quiz_pm_alert, qm.quiz_count
@@ -70,16 +86,12 @@ class Helper
 	public static function quiz_pmFilter($msg)
 	{
 		global $sourcedir;
-		
-		require_once($sourcedir . '/Subs-Post.php');
-		// Strip all tags then convert line breaks to \n
+
+		// Strip all tags then convert line breaks & apostophes to character codes
 		$msg = str_replace(['\r', '\n'], ['', '__CR__'], $msg);
 		$msg = str_replace(['<br>', '<br/>', '<br />'], "__CR__", $msg);
 		$msg = stripcslashes(html_entity_decode(htmlspecialchars_decode($msg, ENT_NOQUOTES|ENT_HTML5), ENT_QUOTES, 'UTF-8'));
-		$msg = str_replace("'", "\'", $msg);		
-		$htmlmessage = htmlspecialchars(str_replace(array("&apos;", "\'"), "'", $msg), ENT_QUOTES | ENT_HTML5, 'UTF-8', false);
-		preparsecode($htmlmessage);
-		$htmlmessage = str_replace('__CR__', chr(13), $htmlmessage);
+		$htmlmessage = str_replace(["&apos;", "'", "__CR__"], [chr(39), chr(39), chr(13)], $msg);
 
 		return $htmlmessage;
 	}
@@ -100,7 +112,7 @@ class Helper
 		// Filter all input to raw HTML5 with only escaped single quotes
 		$stringToFormat = self::quiz_pmFilter(htmlspecialchars_decode($stringToFormat, ENT_QUOTES|ENT_HTML5));
 		$stringToFormat = html_entity_decode($stringToFormat, ENT_QUOTES, 'UTF-8');
-		$stringToFormat = str_replace(array("\'", "'"), "&apos;", $stringToFormat);
+		$stringToFormat = str_replace(array("\'", chr(39), "'"), "&apos;", $stringToFormat);
 		return str_replace('\n', '<br>', $stringToFormat);
 	}
 
@@ -108,13 +120,16 @@ class Helper
 	{
 		global $smcFunc;
 
+		$stringToFormat = str_replace(['quizes', 'Quizes'], ['quizzes', 'Quizzes'], $stringToFormat);
+
 		// Remove any slashes. These should not be here, but it has been known to happen
 		$returnString = str_replace("\\", "", $smcFunc['db_unescape_string']($stringToFormat));
 		$returnString = stripcslashes($returnString);
 
 		// We only want to convert from carriage returns to HTML breaks if the output is HTML
-		if ($toHtml)
+		if ($toHtml) {
 			$returnString = str_replace(chr(13), "<br>", $returnString);
+		}
 
 		//return html_entity_decode($returnString, ENT_QUOTES, 'UTF-8');
 		return $returnString;

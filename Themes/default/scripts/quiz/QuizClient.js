@@ -347,19 +347,37 @@ Function that ends the quiz
 */
 function quizEnd()
 {
-	$.ajax({
-		type: 'POST',
-		url: smf_scripturl + "?action=SMFQuizEnd",
-		data: {"id_quiz":id_quiz,"questions":number_of_questions,"correct":correct_answer_count, "incorrect":incorrect_answer_count,"timeouts":timeout_count, "id_session":id_session, "total_seconds":total_quiz_seconds, "creator_id":creator_id, "totalResumes":totalResumes, "enabled":enabled, "play_limit":play_limit},
-		cache: false,
-		dataType: "xml",
-		timeout: ajaxTimeout,
-		success: function(xml) {
+	let exportData = {
+		id_quiz_league: 0,
+		id_quiz: parseInt(id_quiz),
+		questions: parseInt(number_of_questions),
+		correct: parseInt(correct_answer_count),
+		incorrect: parseInt(incorrect_answer_count),
+		timeouts: parseInt(timeout_count),
+		id_session: encodeURIComponent(id_session),
+		total_seconds: parseInt(total_quiz_seconds),
+		creator_id: parseInt(creator_id),
+		totalResumes: parseInt(totalResumes),
+		enabled: parseInt(enabled),
+		play_limit: parseInt(play_limit),
+	};
+
+	$.post(smf_scripturl + "?action=SMFQuizEnd", exportData)
+	.done(function( resultData ) {
+		if (resultData) {
 			showResults();
-		},
-		error: function(XMLHttpRequest, textStatus, errorThrown) {
-				handleAjaxError(XMLHttpRequest, textStatus, errorThrown, "quizEnd()");
 		}
+		else {
+			console.log("Error ~ Quiz score was not submitted ~ " + resultData);
+			handleAjaxError("", "", resultData, "quizEnd()");
+		}
+
+	}).fail(function(xhr, status, error) {
+		console.log("Error ~ Quiz score was not submitted ~ " + error);
+		handleAjaxError(xhr, status, error, "quizEnd()");
+	})
+	.always(function() {
+		console.log( "quiz finished" );
 	});
 }
 
@@ -370,19 +388,39 @@ function quizLeagueEnd()
 {
 	// Calculate the points
 	points = points_for_correct * correct_answer_count;
-	$.ajax({
-		type: 'POST',
-		url: smf_scripturl + "?action=SMFQuizEnd",
-		data: {"id_quiz_league":id_quiz_league,"questions":number_of_questions,"correct":correct_answer_count, "incorrect":incorrect_answer_count,"timeouts":timeout_count, "id_session":id_session, "total_seconds":total_quiz_seconds, "points":points, "round":round, "totalResumes":totalResumes, "enabled":enabled, "play_limit":play_limit},
-		cache: false,
-		dataType: "xml",
-		timeout: ajaxTimeout,
-		success: function(xml) {
+	let exportData = {
+		id_quiz_league: parseInt(id_quiz_league),
+		id_quiz: parseInt(id_quiz),
+		questions: parseInt(number_of_questions),
+		correct: parseInt(correct_answer_count),
+		incorrect: parseInt(incorrect_answer_count),
+		timeouts: parseInt(timeout_count),
+		id_session: encodeURIComponent(id_session),
+		total_seconds: parseInt(total_quiz_seconds),
+		points: points,
+		round: round,
+		creator_id: parseInt(creator_id),
+		totalResumes: parseInt(totalResumes),
+		enabled: parseInt(enabled),
+		play_limit: parseInt(play_limit),
+	};
+
+	$.post(smf_scripturl + "?action=SMFQuizEnd", exportData)
+	.done(function( resultData ) {
+		if (resultData) {
 			showResults();
-		},
-		error: function(XMLHttpRequest, textStatus, errorThrown) {
-			handleAjaxError(XMLHttpRequest, textStatus, errorThrown, "quizLeagueEnd()");
 		}
+		else {
+			console.log("Error ~ Quiz score was not submitted ~ " + resultData);
+			handleAjaxError("", "", resultData, "quizLeagueEnd()");
+		}
+
+	}).fail(function(xhr, status, error) {
+		console.log("Error ~ Quiz score was not submitted ~ " + error);
+		handleAjaxError(xhr, status, error, "quizLeagueEnd()");
+	})
+	.always(function() {
+		console.log( "league finished" );
 	});
 }
 
@@ -1099,7 +1137,7 @@ Function that submits the Ajax dispute data
 function submitDispute()
 {
 	/* Get the reason entered */
-	let quizInputs = $('<input type="hidden" name="reason" value="' + $("#disputeText").val() + '"><input type="hidden" name="id_quiz" value="' + id_quiz + '"><input type="hidden" name="id_user" value="' + id_user + '"><input type="hidden" name="id_quiz_question" value="' + currentid_question + '">');
+	let quizInputs = $('<input type="hidden" name="reason" value="' + encodeURIComponent($("#disputeText").val()) + '"><input type="hidden" name="id_quiz" value="' + id_quiz + '"><input type="hidden" name="id_user" value="' + id_user + '"><input type="hidden" name="id_quiz_question" value="' + currentid_question + '">');
 	$("#disputeTextReason").append(quizInputs);
 	$.post(smf_scripturl + "?action=SMFQuizDispute", $("#disputeTextReason").serialize())
 	.done(function( resultData ) {

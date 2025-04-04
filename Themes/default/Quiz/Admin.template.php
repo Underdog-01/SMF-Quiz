@@ -869,10 +869,10 @@ function template_show_categories()
 										<td style="text-align: left;display: inline-flex;">
 											<div class="quizAdminListText">' , Quiz\Helper::format_string($row['name']) , '</div>
 											<div class="quizAdminListImage" title="' . $txt['quizButtonEdit'] . '" onclick="window.location.href=\'' . ($scripturl . '?action=' . $context['current_action'] . ';area=' . $context['admin_area'] . ';sa=' . $context['current_subaction'] . ';id=' . $row['id_category']) . '\'">
-												<img alt="" src="' . $settings['default_images_url'] . '/quiz_images/quiz_edit.png">
+												<img class="quiz_icon_small" alt="" src="' . $settings['default_images_url'] . '/quiz_images/quiz_edit.png">
 											</div>
 											<div class="quizAdminListImage" title="' . $txt['quizButtonChild'] . '" onclick="window.location.href=\'' . ($scripturl . '?action=' . $context['current_action'] . ';area=' . $context['admin_area'] . ';sa=' . $context['current_subaction'] . ';children=' . $row['id_category']) . '\'">
-												<img alt="" src="' . $settings['default_images_url'] . '/quiz_images/children.png">
+												<img class="quiz_icon_small" alt="" src="' . $settings['default_images_url'] . '/quiz_images/children.png">
 											</div>
 										</td>
 										<td style="text-align: left;">' , Quiz\Helper::format_string($row['description']) , '</td>
@@ -1474,7 +1474,7 @@ function template_show_disputes()
 						<td style="text-align: left;"><a href="' , $scripturl , '?action=SMFQuiz;sa=userdetails;id_user=' , $row['id_member'] , '">' , $row['real_name'] , '</a></td>
 						<td style="text-align: left;"><a href="' , $scripturl , '?action=admin;area=quiz;sa=quizzes;id=' , $row['id_quiz'] , '">' , Quiz\Helper::format_string($row['title']) , '</a></td>
 						<td style="text-align: left;"><a href="' , $scripturl , '?action=admin;area=quiz;sa=questions;id=' , $row['id_question'] , '">' , Quiz\Helper::format_string($row['question_text']) , '</a></td>
-						<td style="text-align: left;" id="reason' , $row['id_quiz_dispute'] , '">' , Quiz\Helper::format_string($row['reason']) , '</td>
+						<td style="text-align: left;" title="' . $row['reason'] . '" id="reason' , $row['id_quiz_dispute'] , '">' , Quiz\Helper::format_string($row['reason']) , '</td>
 						<td style="text-align: left;width: 4%;">
 							<img id="' , $row['id_quiz_dispute'] , '" src="' , $settings['default_images_url'] , '/quiz_images/comments.png" class="disputeDialog" style="cursor:pointer" alt="respond" title="' , $txt['SMFQuizAdmin_QuizDisputes_Page']['RespondToDispute'] , '" align="top" />
 						</td>

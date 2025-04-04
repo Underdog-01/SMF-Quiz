@@ -13,6 +13,13 @@ class Profile
 	{
 		global $modSettings, $smcFunc, $user_info;
 
+		$profileSets = [
+			'int' => array('quiz_pm_report', 'quiz_pm_alert', 'quiz_count'),
+		];
+
+		// set defaults before the quiz profile query
+		list($user_info['quiz_pm_report'], $user_info['quiz_pm_alert'], $user_info['quiz_count']) = [0, 1, 0];
+
 		// Load Quiz profile settings and add them to $user_info
 		if (!empty($user_info['id']) && $user_info['id'] > 0)
 		{
@@ -24,10 +31,6 @@ class Profile
 					'member' => $user_info['id'],
 				)
 			);
-
-			$profileSets = [
-				'int' => array('quiz_pm_report', 'quiz_pm_alert', 'quiz_count'),
-			];
 
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{

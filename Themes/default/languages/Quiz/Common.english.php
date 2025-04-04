@@ -210,5 +210,6 @@ $txt['quizLocalizationAlertsJS'] = [
 
 $txt['quizButtonEdit'] = 'Edit';
 $txt['quizButtonChild'] = 'Children';
+$txt['quizDisputeReason'] = '<br><br>User Response:<br>%s';
 
 ?>

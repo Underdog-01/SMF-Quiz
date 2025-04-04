@@ -19,6 +19,56 @@ if (!isset($smcFunc['db_list_columns']) || !isset($smcFunc['db_add_column'])) {
 	db_extend('packages');
 }
 
+if (check_table_existsQuizInstall('quiz_members')) {
+	$query = $smcFunc['db_list_columns'] ('{db_prefix}quiz_members', 'detail');
+	if (empty($query['quiz_pm_alert']['default']) || (int)$query['quiz_pm_alert']['default'] != 1) {
+		$smcFunc['db_change_column']('{db_prefix}quiz_members', 'quiz_pm_alert', array('type' => 'smallint', 'size' => 5, 'not_null' => true, 'default' => 1));
+	}
+}
+else {
+	$tableSettings = [
+		'columns' => [
+			[
+				'name' => 'id_member',
+				'type' => 'mediumint',
+				'size' => 8,
+				'not_null' => true,
+				'unsigned' => true,
+				'auto' => false
+			],
+			[
+				'name' => 'quiz_pm_report',
+				'type' => 'smallint',
+				'not_null' => true,
+				'unsigned' => true,
+				'default' => 0
+			],
+			[
+				'name' => 'quiz_pm_alert',
+				'type' => 'smallint',
+				'not_null' => true,
+				'unsigned' => true,
+				'default' => 1
+			],
+			[
+				'name' => 'quiz_count',
+				'type' => 'int',
+				'not_null' => true,
+				'unsigned' => true,
+				'default' => 0
+			],
+		],
+		'indexes' => [
+			[
+				'type' => 'primary',
+				'columns' => ['id_member']
+			],
+		],
+	];
+
+	$smcFunc['db_create_table']('{db_prefix}quiz_members', $tableSettings['columns'], $tableSettings['indexes'], array(), 'ignore');
+}
+
 $check = $smcFunc['db_list_columns'] ('{db_prefix}quiz_result', false, array());
 if (!in_array('player_limit', $check)) {
 	$smcFunc['db_add_column'](

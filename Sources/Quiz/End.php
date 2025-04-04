@@ -7,13 +7,6 @@ function endQuiz()
 {
 	global $boardurl, $context, $user_info;
 
-	if (!allowedTo('quiz_play'))
-	{
-		// @TODO implement an error handling
-		$context['quiz_error'] = 'cannot_play';
-		die();
-	}
-
 	// Get passed variables from client
 	// @TODO sanitize
 	// @TODO figure out enabled & play_limit not passed from XML
@@ -21,10 +14,11 @@ function endQuiz()
 	// @TODO permission check needed
 	$quizData = ["id_quiz_league", "id_quiz", "id_session", "questions", "correct", "incorrect", "timeouts", "total_seconds", "creator_id", "points", "round", "totalResumes", "enabled", "play_limit"];
 	$id_user = $user_info['id'];
-	$name = $context['user']['name'];
+	$name = !empty($user_info['name']) ? $user_info['name'] : $user_info['username'];
 	foreach ($quizData as $key => $quizDatum) {
-		$$quizDatum = isset($_POST[$quizDatum]) && !in_array($quizDatum, array('id_session')) ? (int)$_POST[$quizDatum] : (isset($_POST[$quizDatum]) ? (string)$_POST[$quizDatum] : 0);
+		$$quizDatum = isset($_POST[$quizDatum]) && !in_array($quizDatum, array('id_session')) ? (int)$_POST[$quizDatum] : (isset($_POST[$quizDatum]) ? urldecode((string)$_POST[$quizDatum]) : 0);
 	}
+	$id_session = !empty($id_session) ? $id_session : '';
 
 	if (!empty($id_quiz))
 	{
@@ -47,10 +41,8 @@ function endQuiz()
 
 	EndSession($id_session);
 
-	// Just write out some arbitrary XML for the client
-	header("Content-Type: text/xml");
-	echo '<xml/>';
-	die();
+	// Just write out some arbitrary page for the client
+	exit('Game Over!');
 }
 
 /*
@@ -67,7 +59,7 @@ function CheckQuizLimit($id_quiz, $id_user)
 		WHERE Q.id_quiz = {int:id_quiz}
 		LIMIT 1',
 		[
-			'id_quiz' => $id_quiz
+			'id_quiz' => (int)$id_quiz
 		]
 	);
 
@@ -123,7 +115,8 @@ function InsertQuizEnd($id_quiz, $id_user, $questions, $correct, $incorrect, $ti
 		FROM 		{db_prefix}quiz_result
 		WHERE 		id_quiz = {int:id_quiz} AND id_user = {int:id_user}',
 		[
-			'id_quiz' => $id_quiz, 'id_user' => $id_user
+			'id_quiz' => (int)$id_quiz,
+			'id_user' => (int)$id_user,
 		]
 	);
 
@@ -162,8 +155,8 @@ function InsertQuizEnd($id_quiz, $id_user, $questions, $correct, $incorrect, $ti
 			'player_limit' => 'int',
 		),
 		array(
-			$id_quiz,
-			$id_user,
+			(int)$id_quiz,
+			(int)$id_user,
 			$result_date,
 			$questions,
 			$correct,
@@ -171,7 +164,7 @@ function InsertQuizEnd($id_quiz, $id_user, $questions, $correct, $incorrect, $ti
 			$timeouts,
 			$total_seconds,
 			$totalResumes,
-			($quizResultData['player_limit']+1)
+			((int)$quizResultData['player_limit']+1)
 		),
 		array(
 			'id_quiz_result'
@@ -196,7 +189,7 @@ function EndSession($id_session)
 
 function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $name)
 {
-	global $smcFunc, $db_prefix, $scripturl, $sourcedir, $modSettings, $settings, $user_settings;
+	global $smcFunc, $db_prefix, $scripturl, $sourcedir, $modSettings, $settings, $user_settings, $user_info;
 
 	// Retrieve quiz info and top score
 	$quizTopResult = $smcFunc['db_query']('', '
@@ -273,16 +266,16 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 			$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
 
 			if (!empty($top_id_user) && !empty($usersPrefs) && in_array($top_id_user, $usersPrefs)) {
-				$sendName = !empty($user_settings['real_name']) ? $user_settings['real_name'] : $user_settings['member_name'];
+				$sendName = !empty($user_info['name']) ? $user_info['name'] : $user_info['username'];
 				$pmfrom = array(
-					'id' => $user_settings['id_member'],
+					'id' => $user_info['id'],
 					'name' => $sendName,
 					'username' => $sendName
 				);
 
 				if (!empty($modSettings['SMFQuiz_ImportQuizzesAsUserId'])) {
 					$quizResult = $smcFunc['db_query']('', '
-						SELECT real_name
+						SELECT real_name, member_name
 						FROM {db_prefix}members
 						WHERE id_member = {int:memid}',
 						array(
@@ -291,12 +284,14 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 					);
 
 					if ($smcFunc['db_num_rows']($quizResult) > 0) {
-						$sendName = !empty($quizResult['real_name']) ? $quizResult['real_name'] : $quizResult['member_name'];
-						$pmfrom = array(
-							'id' => (int)$modSettings['SMFQuiz_ImportQuizzesAsUserId'],
-							'name' => $sendName,
-							'username' => $sendName
-						);
+						while ($quizRow = $smcFunc['db_fetch_assoc']($quizResult)) {
+							$sendName = !empty($quizRow['real_name']) ? $quizRow['real_name'] : $quizRow['member_name'];
+							$pmfrom = array(
+								'id' => (int)$modSettings['SMFQuiz_ImportQuizzesAsUserId'],
+								'name' => $sendName,
+								'username' => $sendName
+							);
+						}
 					}
 
 					$smcFunc['db_free_result']($quizResult);
@@ -310,7 +305,7 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 				$message = ParseMessage($modSettings['SMFQuiz_PMBrokenTopScoreMsg'], $quizTitle, $total_seconds, $correct, $top_time, $top_correct, $quizImage, $id_quiz, $top_user_name);
 
 				// Send message
-				sendpm($pmto, $subject, Quiz\Helper::quiz_pmFilter($message), 0, $pmfrom);
+				sendpm($pmto, Quiz\Helper::quiz_pmFilter($subject), Quiz\Helper::quiz_pmFilter($message), 0, $pmfrom);
 			}
 
 		}
@@ -342,11 +337,11 @@ function UpdateQuiz($id_quiz, $questions, $correct, $total_seconds, $id_user, $n
 // @TODO complete re-work, probably a log that would allow for localization
 function AddInfoBoardentry($id_user, $name, $id_quiz, $correct, $total_seconds, $topScore, $quizTitle, $quizImage)
 {
-	global $smcFunc, $db_prefix, $boardurl, $settings, $txt;
+	global $smcFunc, $db_prefix, $boardurl, $scripturl, $settings, $txt;
 
 	// Format the infoboard entry
 	if ($topScore == true)
-		$entry = '<img src="' . $settings['default_images_url'] . '/quiz_images/cup_g.gif"/> ' . sprintf($txt['quiz_end_topscore'], '<a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=userdetails;id_user=' . $id_user . '">' . Quiz\Helper::format_infostring($name) . '</a>', $correct, '<img style="width: 17px;height: 17px;" src="' . $quizImage . '">', '<a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz . '">' . Quiz\Helper::format_infostring($quizTitle) . '</a>', $total_seconds);
+		$entry = '<img src="' . $settings['default_images_url'] . '/quiz_images/cup_g.gif"/> ' . sprintf($txt['quiz_end_topscore'], '<a href="' . $scripturl . '?action=SMFQuiz;sa=userdetails;id_user=' . $id_user . '">' . Quiz\Helper::format_infostring($name) . '</a>', $correct, '<img style="width: 17px;height: 17px;" src="' . $quizImage . '">', '<a href="' . $scripturl . '?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz . '">' . Quiz\Helper::format_infostring($quizTitle) . '</a>', $total_seconds);
 	else
 		$entry = sprintf($txt['quiz_end_score'], '<a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=userdetails;id_user=' . $id_user . '">' . Quiz\Helper::format_infostring($name) . '</a>', $correct, '<img style="width: 17px;height: 17px;" src="' . $quizImage . '">', '<a href="' . $boardurl . '/index.php?action=SMFQuiz;sa=categories;id_quiz=' . $id_quiz . '">' . Quiz\Helper::format_infostring($quizTitle) . '</a>', $total_seconds);
 

@@ -147,7 +147,7 @@ $(document).ready(function() {
 function submitResponse(remove)
 {
 	$("#disputeDialog").wrap('<form id="QuizDisputeResponseForm" action=smf_scripturl+"?action=admin;area=quiz;sa=disputes">');
-	$("#disputeText").after('<input type="hidden" name="reason" value="' + $("#disputeText").val() + '"><input type="hidden" name="id_dispute" value="' + id_dispute + '"><input type="hidden" name="remove" value="' + remove + '">');
+	$("#disputeText").after('<input type="hidden" name="reason" value="' + encodeURIComponent($("#disputeText").val()) + '"><input type="hidden" name="id_dispute" value="' + id_dispute + '"><input type="hidden" name="remove" value="' + remove + '">');
 	$.post(smf_scripturl + "?action=SMFQuizDispute", $("#QuizDisputeResponseForm").serialize())
 	.done(function( resultData ) {
 		alert('Dispute response submitted successfully');

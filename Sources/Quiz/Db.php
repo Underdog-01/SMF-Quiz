@@ -1224,7 +1224,7 @@ function SaveQuizLeague($title, $description, $day_interval, $questions_per_sess
 		[]
 	);
 	*/
-	
+
 	// Execute the query
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_league',
@@ -2608,6 +2608,9 @@ function ResetQuizResults()
 		$smcFunc['db_query']('', '
 			TRUNCATE TABLE {db_prefix}quiz_result'
 		);
+		$smcFunc['db_query']('', '
+			TRUNCATE TABLE {db_prefix}quiz_session'
+		);
 	}
 }
 
@@ -3058,6 +3061,13 @@ function CleanQuizMembers()
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}quiz_members
 			WHERE id_member IN({array_int:memIDs})',
+			array(
+				'memIDs' => $nonMembers,
+			)
+		);
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}quiz_session
+			WHERE id_user IN({array_int:memIDs})',
 			array(
 				'memIDs' => $nonMembers,
 			)
