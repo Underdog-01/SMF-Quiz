@@ -43,7 +43,7 @@ class Helper
 	{
 		global $smcFunc;
 
-		list($members) = [[]];
+		$members = [];
 		if (!empty($profileField))
 		{
 			// fields that require enabled as default
@@ -129,6 +129,8 @@ class Helper
 		// We only want to convert from carriage returns to HTML breaks if the output is HTML
 		if ($toHtml) {
 			$returnString = str_replace(chr(13), "<br>", $returnString);
+			$returnString = html_entity_decode(htmlspecialchars_decode($returnString, ENT_QUOTES|ENT_HTML5), ENT_QUOTES, 'UTF-8');
+			$returnString = str_replace(["'", '"'], [chr(39), chr(34)], $returnString);
 		}
 
 		//return html_entity_decode($returnString, ENT_QUOTES, 'UTF-8');
