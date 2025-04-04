@@ -2798,7 +2798,7 @@ function format_string2($stringToFormat)
 	$stringToFormat = str_replace(array("\\", "quizes", "Quizes"), array("", "quizzes", "Quizzes"), $smcFunc['db_unescape_string']($stringToFormat));
 
 	// Ensure double|single quotes are explicitly HTML5 entities
-	$returnString = str_replace(array("'", '"'), array('&apos;', '&quot;'), html_entity_decode($returnString, ENT_QUOTES|ENT_HTML5, 'UTF-8'));
+	$returnString = str_replace(array("'", '"'), array('&apos;', '&quot;'), html_entity_decode($stringToFormat, ENT_QUOTES|ENT_HTML5, 'UTF-8'));
 
 	return $returnString;
 }
