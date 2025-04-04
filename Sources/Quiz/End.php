@@ -7,6 +7,11 @@ function endQuiz()
 {
 	global $boardurl, $context, $user_info;
 
+	if (!allowedTo('quiz_play')) {
+ 		// @TODO implement an error handling
+ 		$context['quiz_error'] = 'cannot_play';
+ 		exit('no access');
+ 	}
 	// Get passed variables from client
 	// @TODO sanitize
 	// @TODO figure out enabled & play_limit not passed from XML
