@@ -2511,7 +2511,7 @@ function ExportQuizzes($quizIds)
 	while ($row = $smcFunc['db_fetch_assoc']($exportQuizzesResult))
 	{
 		$imgDir = $settings['default_theme_dir'] . '/images/quiz_images/Quizzes/' . $row['image'];
-		if (file_exists($imgDir))
+		if (!is_dir($imgDir) && file_exists($imgDir))
 			$row['image_data'] = base64_encode(file_get_contents($imgDir));
 		else
 			$row['image_data'] = '';
@@ -2544,7 +2544,7 @@ function ExportQuizQuestions($id_quiz)
 	while ($row = $smcFunc['db_fetch_assoc']($exportQuizQuestionResult))
 	{
 		$imgDir = $settings['default_theme_dir'] . '/images/quiz_images/Questions/' . $row['image'];
-		if (file_exists($imgDir) && !is_dir($imgDir))
+		if (!is_dir($imgDir) && file_exists($imgDir))
 			$row['image_data'] = base64_encode(file_get_contents($imgDir));
 		else
 			$row['image_data'] = '';

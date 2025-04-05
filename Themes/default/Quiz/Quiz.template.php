@@ -752,31 +752,29 @@ function template_home()
 	</div>
 </div>
 
-
-<div style="margin-top:2px; margin-bottom:4px; overflow:hidden;">
-	<div class="title_bar">
-		<h4 class="titlebg">
-			<span class="left"></span>
-			' , $txt['SMFQuiz_Home_Page']['QuizSearch'] , '
-		</h4>
-	</div>
-	<div class="blockcontent windowbg" style="margin-top:2px; ">
-		<div style="padding:4px;">
-			<div class="smalltext">
-				<div class="tborder clearfix" id="latestQuizFrame">
-					<div class="windowbg">
-						<form action="', $scripturl, '?action=SMFQuiz" onsubmit="QuizQuickSearch(); return false;" method="post">
-							<b>' , $txt['SMFQuiz_Common']['EnterQuizNametosearchfor'] , ':</b> <input id="quick_name" size="20" type="text" value="" name="name[', rand(0, 1000), ']" />
-						<div id="quick_div" class="smalltext"></div>
-						</form>
+<form action="', $scripturl, '?action=SMFQuiz" onsubmit="QuizQuickSearch(); return false;" method="post">
+	<div style="margin-top:2px; margin-bottom:4px; overflow:hidden;">
+		<div class="title_bar">
+			<h4 class="titlebg">
+				<span class="left"></span>
+				' , $txt['SMFQuiz_Home_Page']['QuizSearch'] , '
+			</h4>
+		</div>
+		<div class="blockcontent windowbg" style="margin-top:2px; ">
+			<div style="padding:4px;">
+				<div class="smalltext">
+					<div class="tborder clearfix" id="latestQuizFrame">
+						<div class="windowbg">
+							<b>' , $txt['SMFQuiz_Common']['EnterQuizNametosearchfor'] , ':</b>&nbsp;
+							<input id="quick_name" size="20" type="text" value="" name="name[', rand(0, 1000), ']">
+							<div id="quick_div" class="smalltext"></div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
-
-
+</form>
 <div style="margin-top:2px; margin-bottom:4px; overflow:hidden;">
 	<div class="title_bar">
 		<h4 class="titlebg">
@@ -787,8 +785,8 @@ function template_home()
 	<div class="blockcontent windowbg" style="margin-top:2px; ">
 		<div style="padding:4px;">
 			<div class="smalltext">
-				<table><tr>
-';
+				<table><tr>';
+
 	if (isset($context['SMFQuiz']['randomQuizzes']) && sizeof($context['SMFQuiz']['randomQuizzes']) > 0)
 	{
 		$counter = 1;
@@ -857,7 +855,7 @@ echo '
 				echo '<td>&nbsp;<img src="' , $settings['default_images_url'] , '/quiz_images/new.gif"/></td>';
 
 			echo '
-											</td></tr></table></td>
+											</tr></table></td>
 											<td class="nobr">' , date("M d Y", $latestQuizRow['updated']) , '</td>
 										</tr>
 			';
@@ -867,7 +865,7 @@ echo '
 	echo '
 										<tr>
 											<td colspan="3">[<a href="' , $scripturl , '?action=SMFQuiz;sa=quizzes;type=new">' , $txt['SMFQuiz_Common']['ViewAll'] , '</a>]</td>
-										</td>
+										</tr>
 								</table>					</div>
 				</div>
 			</div>
@@ -894,8 +892,8 @@ echo '
 		foreach ($context['SMFQuiz']['quizMasters'] as $quizMastersRow)
 		{
 			$totalWinPerc = ($quizMastersRow['total_wins'] / $context['SMFQuiz']['totalQuizzes'][0]) * 100;
-			echo '						<tr height="27" class="' , $counter % 2 == 1 ? 'windowbg' : 'windowbg' , '">
-											<td width="100%">
+			echo '						<tr class="' , $counter % 2 == 1 ? 'windowbg' : 'windowbg' , '">
+											<td style="height: 27px;width: 100%;">
 			';
 			if ($counter == 1)
 				echo '<img src="' , $settings['default_images_url'] , '/quiz_images/cup_g.gif"/>';
@@ -907,8 +905,8 @@ echo '
 			echo '
 												<a href="' , $scripturl , '?action=SMFQuiz;sa=userdetails;id_user=' , $quizMastersRow['id_user'] , '">' , $quizMastersRow['real_name'] , '</a>
 											</td>
-											<td style="text-align: center;">' , $quizMastersRow['total_wins'] , '</td>
-											<td style="text-align: center;">' , round($totalWinPerc,2) , '%</td>
+											<td style="text-align: center;height: 27px;">' , $quizMastersRow['total_wins'] , '</td>
+											<td style="text-align: center;height: 27px;">' , round($totalWinPerc,2) , '%</td>
 										</tr>
 			';
 			$counter++;
@@ -917,7 +915,7 @@ echo '
 	echo '
 										<tr>
 											<td colspan="3">[<a href="' , $scripturl , '?action=SMFQuiz;sa=quizmasters">' , $txt['SMFQuiz_Common']['ViewAll'] , '</a>]</td>
-										</td>
+										</tr>
 								</table>					</div>
 				</div>
 			</div>
@@ -955,7 +953,7 @@ echo '
 				echo '<td>&nbsp;<img src="' , $settings['default_images_url'] , '/quiz_images/new.gif"/></td>';
 
 			echo '
-											</td></tr></table></td>
+											</tr></table></td>
 											<td style="text-align: center;" class="nobr" >' , $popularQuizRow['quiz_plays'] , '</td>
 										</tr>
 			';
@@ -1010,46 +1008,57 @@ echo '
 		</td>
 	</tr>
 </table>
-
 <div style="margin-top:2px; margin-bottom:4px; overflow:hidden;">
+	<div class="quiz_details_flex_play bordercolor" style="border: 0px;">
+		<div class="quiz_details_flex_row titlebg">
+			<div class="quizH4Title">' , $txt['SMFQuiz_Home_Page']['InfoBoard'] , '</div>
+		</div>
+	</div>
+	<div class="righttext">
+		<span>&nbsp;</span>
+	</div>
 	<div class="title_bar">
-		<h4 class="titlebg">
-			<span class="left"></span>
-			' , $txt['SMFQuiz_Home_Page']['InfoBoard'] , '
+		<h4 class="titlebg quizH4Title">
+			<img class="icon quizH4TitleIcon" src="' , $settings['default_images_url'] , '/quiz_images/information.png" alt="">
+			<span class="quizH4StatsTitle">' , $txt['SMFQuiz_Home_Page']['InfoBoard'] , '</span>
 		</h4>
 	</div>
 	<div class="blockcontent windowbg" style="margin-top:2px; ">
 		<div style="padding:4px;">
-					<div id="smfAnnouncements" style="height: 30ex; overflow: auto; padding-right: 1ex;">
-
-						<div id="upshrinkHeaderIB">
-							<div class="windowbg">
-								<table border="0" width="100%" class="windowbg">
-									<tr class="titlebg">
-										<td>' , $txt['SMFQuiz_Common']['Date'] , '</td>
-										<td>' , $txt['SMFQuiz_Common']['Notice'] , '</td>
-									</tr>
-	';
+			<div id="smfAnnouncements" style="height: 30ex; overflow: auto; padding-right: 1ex;">
+				<div class="quiz_info_flex_row cat_bar">
+					<h3 class="quiz_details_flex catbg">
+						<span class="quiz_flex_info_date_title">
+							', $txt['SMFQuiz_Common']['Date'], '
+						</span>
+						<span class="quiz_flex_info_data_title">
+							', $txt['SMFQuiz_Common']['Notice'], '
+						</span>
+					</h3>
+				</div>
+				<div class="quiz_details_flex_row windowbg">';
 	$counter = 1;
 	if (isset($context['SMFQuiz']['infoBoard']))
 		foreach ($context['SMFQuiz']['infoBoard'] as $infoboardRow)
 		{
-			echo '						<tr class="windowbg">
-											<td style="width: 12%;text-align: left;vertical-align: top;" class="nobr" >' , date("M d Y H:i", $infoboardRow['entry_date']) , '</td>
-											<td style="width: 88%;text-align: left;vertical-align: top;">' , Quiz\Helper::format_string($infoboardRow['Entry']) , '</td>
-										</tr>
-			';
+			echo '
+					<div class="quiz_details_flex quiz_highlight">
+						<div class="quiz_flex_info_date">
+							' , date("M d Y H:i", $infoboardRow['entry_date']) , '
+						</div>
+						<div class="quiz_flex_info_data">
+							' , Quiz\Helper::format_string($infoboardRow['Entry']) , '
+						</div>
+					</div>';
 			$counter++;
 		}
 
 	echo '
-								</table>
-							</div>
-						</div>
-					</div>		</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>';
-
 }
 
 			// @TODO createList?
@@ -2425,8 +2434,7 @@ function template_edit_quiz()
 				</td>
 			</tr>
 		</tbody>
-	</table>
-		';
+	</table>';
 	}
 }
 

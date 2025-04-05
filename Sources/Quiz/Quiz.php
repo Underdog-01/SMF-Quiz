@@ -1779,14 +1779,14 @@ function GetUsersActiveData()
 	$context['sort_by'] = $sort;
 	$sort_methods = [
 		'total_played' => [
-			'down' => 'total_played, percentage_correct DESC',
-			'up' => 'total_played, percentage_correct ASC'
+			'down' => 'total_played DESC, percentage_correct DESC',
+			'up' => 'total_played ASC, percentage_correct ASC'
 		]
 	];
 	$context['quiz_sort_href'] = $scripturl . '?action=SMFQuiz;sa=usersmostactive;sort=' . $sort . ';start=0' . (!isset($_REQUEST['desc']) ? ';desc' : '');
 
 	$query_parameters = array(
-		'sort' => isset($sort_methods[$sort][$context['sort_direction']]) ? $sort_methods[$sort][$context['sort_direction']] : 'total_played, percentage_correct ASC',
+		'sort' => isset($sort_methods[$sort][$context['sort_direction']]) ? $sort_methods[$sort][$context['sort_direction']] : 'total_played ASC, percentage_correct ASC',
 		'starts_with' => $starts_with . '%',
 		'limit' => $limit,
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
@@ -1818,7 +1818,7 @@ function GetUsersActiveData()
 		GROUP BY 	M.real_name,
 					QR.id_user
 		ORDER BY {raw:sort}
-		LIMIT {int:start} , {int:limit}',
+		LIMIT {int:start}, {int:limit}',
 		$query_parameters
 	);
 

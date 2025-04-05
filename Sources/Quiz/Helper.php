@@ -83,6 +83,30 @@ class Helper
 		return array_filter($members);
 	}
 
+	public static function quiz_userInfoName($id = 0)
+	{
+		global $modSettings, $smcFunc;
+
+		if (!empty($id)) {
+			$request = $smcFunc['db_query']('', '
+				SELECT real_name, member_name
+				FROM {db_prefix}members
+				WHERE id_member = {int:val}',
+				[
+					'val' => $id,
+				]
+			);
+
+			while ($row = $smcFunc['db_fetch_assoc']($request)) {
+				$quiz_name = !empty($row['real_name']) ? $row['real_name'] : (!empty($row['member_name']) ? $row['member_name'] : '');
+			}
+
+			$smcFunc['db_free_result']($request);
+		}
+
+		return !empty($quiz_name) ? $quiz_name : '';
+	}
+
 	public static function quiz_pmFilter($msg)
 	{
 		global $sourcedir;

@@ -68,7 +68,7 @@ $txt['SMFQuiz_UserQuizzes_Page'] = array(
 $txt['SMFQuiz_UsersMostPlayed_Page'] = array(
 	'Title' => 'SMFQuiz - Most Active Players',
 	'Description' => 'This section displays a list of the most active SMF-Quiz players including some of their statistics.',
-	'MostActivePlayers' => 'Active Players List',	
+	'MostActivePlayers' => 'Active Players List',
 );
 
 // Language text located in the add quiz page
@@ -205,8 +205,8 @@ $txt['SMFQuiz_QuizEnd_Page'] = array(
 $txt['quiz_xml_error_no_id'] = 'No id_quiz_league or id_quiz specified';
 $txt['quiz_xml_error_no_quizzes'] = 'There are no Quizzes defined';
 $txt['quiz_league_end_infoboard'] = '<b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' <b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizLeagueInATimeOf'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['Seconds'] . '.';
-$txt['quiz_end_topscore'] = '<b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' %s<b> %s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizInATimeOf'] . ' <b>%d</b>  ' . $txt['SMFQuiz_QuizEnd_Page']['SecondsThisIsANewTopScore'] . '.';
-$txt['quiz_end_score'] = '<b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' %s<b> %s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizInATimeOf'] . ' <b>%d</b>';
+$txt['quiz_end_topscore'] = '<b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' %s<b> %s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizInATimeOf'] . ' <b>%d</b>  ' . $txt['SMFQuiz_QuizEnd_Page']['SecondsThisIsANewTopScore'];
+$txt['quiz_end_score'] = '<b>%s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['JustAnswered'] . ' <b>%d</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuestionsCorrectlyInThe'] . ' %s<b> %s</b> ' . $txt['SMFQuiz_QuizEnd_Page']['QuizInATimeOf'] . ' <b>%d</b>.';
 
 
 // Quiz profile
@@ -217,7 +217,7 @@ $txt['quiz_pm_alert'] = 'Receive PM for Quiz notifications';
 
 // Quiz Dispute
 $txt['quiz_dispute_userpm_subject'] = 'Quiz Dispute Response #%d';
-$txt['quiz_dipute_userpm_message'] = "Your dispute [b]%s[/b] against the question [b]%s[/b] in the quiz [b]%s[/b] has had the following response from the Quiz Administrator:\n\n[i]%s[/i]";
+$txt['quiz_dipute_userpm_message'] = "Your Quiz dispute has received a response from a Quiz adminstrator.[hr]\n[b]Quiz name:[/b]\n[pre]%s[/pre][hr]\n[b]Your dispute:[/b]\n[quote]%s[/quote][hr]\n[b]Quiz question[/b]:\n[pre]%s[/pre][hr]\n[b]Quiz administrator response:[/b]\n[quote][i]%s[/i][/quote]";
 $txt['quiz_dipute_userpm_msg_del'] = '\n\nThis dispute has now been removed';
 $txt['quiz_dispute_pmtitle'] = 'New Quiz Dispute!';
 $txt['quiz_dispute_report'] = 'There is a new quiz dispute awaiting a response.\n\nLink to the dispute: %s';

@@ -245,7 +245,8 @@ $txt['SMFQuizAdmim_Settings_Page'] = [
 	'Score60to79' => 'Score 60-79%',
 	'Score80to99' => 'Score 80-99%',
 	'Score100' => 'Score 100%',
-	'ImportQuizzesAsUser' => 'Import Quizzes as User ID',
+	'ImportQuizzesAsUser' => 'Auxiliary User ID',
+	'DisputeAuxUser' => 'Use AUX ID For Dispute Responses',
 	'QuizMessagingSettings' => 'Quiz Messaging Settings',
 	'SendPMOnBrokenTopScore' => 'Send PM on Broken Top Score',
 	'SendPMOnLeagueRoundUpdate' => 'Send PM on Quiz League Round Update',
@@ -319,6 +320,7 @@ $txt['SMFQuiz_SessionTimeLimit'] = 'This is the value in minutes before a user c
 $txt['SMFQuiz_ImportQuizzesAsUserId'] = 'When importing quizzes the mod needs to set the owner of the quiz. The ID you specify here is the ID for the user you wish to make the owner of the imported quizzes. You may wish to create a special user for quiz importing so that you can play the imported quizzes as well.';
 $txt['SMFQuiz_SendPMOnBrokenTopScore'] = 'When checked a PM will be sent to the person who had the top score when their top score is broken and if Quiz PMs are enabled in their profile. You can control the message sent to them in the next setting.';
 $txt['SMFQuiz_AutoClean'] = 'When this option is selected the quiz scheduled task that updates the league will also automatically clean up the data in the database';
+$txt['SMFQuiz_ImportQuizzesAsUserHelp'] = 'The user ID for importing Quizzes, dispute responses, etc.<br>You can create a user for this purpose.';
 $txt['SMFQuiz_PMBrokenTopScoreMsg'] =
 '
 Use the following placeholders in your message for the real values to be replaced when the message is sent
