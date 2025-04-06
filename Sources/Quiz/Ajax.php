@@ -139,7 +139,7 @@ function ImageUpload()
 		else
 			$imageFolder = '';
 
-		$destination = Quiz\Helper::quiz_commonImageFileFilter($settings['default_theme_dir'] . '/images/quiz_images/' . $imageFolder . $_FILES['fileToUpload']['name']);
+		$destination = $settings['default_theme_dir'] . '/images/quiz_images/' . $imageFolder . Quiz\Helper::quiz_commonImageFileFilter($_FILES['fileToUpload']['name']);
 		// @TODO chmod??
 		@chmod($destination, 0644);
 
