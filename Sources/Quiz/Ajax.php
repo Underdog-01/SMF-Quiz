@@ -42,8 +42,6 @@ is returned as XML for use in displaying the file listing as part of an AJAX cal
 */
 function GetImages()
 {
-	global $boarddir;
-
 	header("Content-Type: text/xml");
 
 	if (isset($_GET['imageFolder']))
@@ -51,28 +49,15 @@ function GetImages()
 	else
 		$imageFolder = '';
 
-	$path = $boarddir . '/Themes/default/images/quiz_images/' . $imageFolder;
+	$files = Quiz\Helper::get_image_files($imageFolder);
 
-	//using the opendir function
-		// @TODO check?
-	$dir_handle = @opendir($path) or die("Unable to open $path");
-
-		// @TODO init $file
-	//running the while loop
-	while ($file = readdir($dir_handle))
-		if($file!="." && $file!="..")
-			$files[] = $file;
-
-	// @TODO quotes
 	sort($files);
 	echo '<files>';
-	for ($i = 0; $i < sizeof($files); $i++)
-		echo "<file>$files[$i]</file>";
+	foreach ($files as $file) {
+		echo '<file>' . basename($file) . '</file>';
+	}
 
 	echo '</files>';
-
-	//closing the directory
-	closedir($dir_handle);
 }
 
 /*

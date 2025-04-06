@@ -112,7 +112,7 @@ class Helper
 		global $settings;
 
 		//define the path as relative
-		list($files, $path) = [[], $settings['default_theme_dir'] . '/images/quiz_images/' . $imageFolder];
+		list($files, $path) = [[], rtrim($settings['default_theme_dir'] . '/images/quiz_images/' . $imageFolder, '/')];
 
 		if (is_dir($path)) {
 			clearstatcache($settings['default_theme_dir'] . '/images/quiz_images');
