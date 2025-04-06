@@ -418,7 +418,7 @@ function template_new_question()
 								<tr class="windowbg" valign="top">
 									<td class="quiz_adminHeading"><b>' , $txt['SMFQuiz_Common']['ImageURL'] , ':</b></td>
 									<td style="text-align: left;">
-										<div class="quiz_inlineRow">' , template_quiz_image_dropdown('', '', 'Questions') , '</div>
+										<div class="quiz_inlineRow">' , template_quiz_image_dropdown('', 'quiz.png', 'Questions') , '</div>
 									</td>
 								</tr>
 								<tr class="windowbg" valign="top">
@@ -427,7 +427,7 @@ function template_new_question()
 										<div class="quiz_inlineRow">
 											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
 											<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Questions\');">Upload</button>
-											<img id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
+											<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 										</div>
 									</td>
 								</tr>
@@ -535,7 +535,7 @@ function template_edit_question()
 										<div class="quiz_inlineRow">
 											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
 											<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Questions\');">Upload</button>
-											<img id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
+											<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 										</div>
 									</td>
 								</tr>
@@ -643,7 +643,7 @@ function template_edit_category()
 											<div class="quiz_inlineRow">
 												<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
 												<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Quizzes\');">', $txt['SMFQuiz_Upload'], '</button>
-												<img id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
+												<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 											</div>
 										</td>
 									</tr>
@@ -690,7 +690,7 @@ function template_new_category()
 								<tr class="windowbg" valign="top">
 									<td class="quiz_adminHeading"><b>' , $txt['SMFQuiz_Common']['ImageURL'] , ':</b></td>
 									<td style="text-align: left;">
-										<div class="quiz_inlineRow">' , template_quiz_image_dropdown('Default-64.png') , '</div>
+										<div class="quiz_inlineRow">' , template_quiz_image_dropdown('', 'Default-64.png') , '</div>
 									</td>
 								</tr>
 								<tr class="windowbg" valign="top">
@@ -699,7 +699,7 @@ function template_new_category()
 										<div class="quiz_inlineRow">
 											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
 											<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Quizzes\');">', $txt['SMFQuiz_Upload'], '</button>
-											<img id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
+											<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 										</div>
 									</td>
 								</tr>
@@ -1000,7 +1000,7 @@ function template_new_quiz()
 										<div class="quiz_inlineRow">
 											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
 											<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Quizzes\');">', $txt['SMFQuiz_Upload'], '</button>
-											<img id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
+											<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 										</div>
 									</td>
 								</tr>
@@ -1075,7 +1075,7 @@ function template_edit_quiz()
 											<div class="quiz_inlineRow">
 												<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
 												<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Quizzes\');">', $txt['SMFQuiz_Upload'], '</button>
-												<img id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
+												<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 											</div>
 										</td>
 									</tr>
@@ -1854,7 +1854,7 @@ function template_quiz_importer()
 
 	// Get the local image files into an array, as we need to see if the quiz
 	// images already exist
-// 	$imageFiles = get_image_files();
+// 	$imageFiles = Quiz\Helper::get_image_files();
 
 	echo '
 	<div id="admincenter">
@@ -2027,7 +2027,7 @@ function template_quiz_image_dropdown($index = "", $selectedValue = "", $imageFo
 	else
 		echo '<option>-</option>';
 
-	$files = get_image_files($imageFolder);
+	$files = Quiz\Helper::get_image_files($imageFolder);
 
 	if (isset($files))
 	{
@@ -2047,28 +2047,6 @@ function template_quiz_image_dropdown($index = "", $selectedValue = "", $imageFo
 		echo '<img class="quiz_inlineRowImage" id="icon' , $index , '" name="icon' , $index , '" src="', $settings['default_images_url'], '/quiz_images/blank.gif">';
 	else
 		echo '<img class="quiz_inlineRowImage" id="icon' , $index , '" name="icon' , $index , '" src="', $settings['default_images_url'], '/quiz_images/' , $imageFolder , '/' , $selectedValue , '">';
-}
-
-function get_image_files($imageFolder = 'Quizzes')
-{
-	global $settings;
-
-	//define the path as relative
-	$path = $settings['default_theme_dir'] . '/images/quiz_images/' . $imageFolder . '/';
-
-	//using the opendir function
-		// @TODO fatal_lang?
-	$dir_handle = @opendir($path) or die("Unable to open $path");
-
-	$files = array();
-	while ($file = readdir($dir_handle))
-		if($file != "." && $file != "..")
-			$files[] = $file;
-
-	//closing the directory
-	closedir($dir_handle);
-
-	return $files;
 }
 
 ?>

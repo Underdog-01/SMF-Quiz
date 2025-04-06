@@ -1,8 +1,7 @@
 /* SMFQuiz */
 let id_dispute = 0;
 if(typeof jQuery == "undefined") {
-	var headTag = document.getElementsByTagName("head")[0];
-	var jqTag = document.createElement("script");
+	let headTag = document.getElementsByTagName("head")[0], jqTag = document.createElement("script");
 	jqTag.src = smf_default_theme_url + "/scripts/quiz/jquery-3.7.0.min.js";
 	jqTag.onload = myJQueryCode;
 	headTag.appendChild(jqTag);
@@ -137,13 +136,6 @@ function verifyQuizzesChecked(selectedForm)
 	}
 }
 
-$(document).ready(function() {
-	$(".disputeDialog").click(function() {
-		id_dispute = this.id;
-		showDisputeDialog();
-	});
-});
-
 function submitResponse(remove)
 {
 	$("#disputeDialog").wrap('<form id="QuizDisputeResponseForm" action=smf_scripturl+"?action=admin;area=quiz;sa=disputes">');
@@ -210,7 +202,69 @@ function QuizCreateNewTrigger() {
 	$("#addNewQuiz").trigger("click");
 }
 
+$("#fileToUpload").on("click", function(){
+	$(this).prop("accept", "image/png, image/gif, image/jpeg, image/bmp");
+});
+
+function ajaxFileUpload(subFolder) {
+	/* start setting some animation when the ajax starts and completes */
+	$(".preview_loading").each(function(event) {
+		$(this).show();
+	});
+	let filenamex = $("#fileToUpload").val().replace(/\\/g, "/"), postFile = $("#fileToUpload").prop("files")[0], exportData = new FormData();
+	filenamex = filenamex.substring(filenamex.lastIndexOf("/") + 1);
+	exportData.append("fileToUpload", postFile);
+	$.ajax({
+		url: smf_scripturl + "?action=SMFQuizAjax;sa=imageUpload;xml;imageFolder="+subFolder,
+		type: "POST",
+		data: exportData,
+		contentType: false,
+		processData: false,
+		error: function() {
+			$(".preview_loading").each(function(event) {
+				$(this).hide();
+			});
+			alert("Error uploading image file");
+		},
+		success: function(result) {
+			$(".preview_loading").each(function(event) {
+				$(this).hide();
+			});
+			refreshImageList(subFolder, filenamex);
+			$("#icon").prop("src", smf_default_theme_url + "/images/quiz_images/" + subFolder + "/" + filenamex);
+			$("#fileToUpload").val(null);
+			$("#fileToUpload").prop("files")[0] = "";
+		}
+	});
+	return false;
+}
+
+/* Refreshes all images in the image dropdown box */
+function refreshImageList(subFolder, sel_file) {
+	$("#imageList").removeOption(/./);
+	$("#imageList").addOption("-", "-", sel_file == undefined);
+	$.ajax({
+		url: smf_scripturl + "?action=SMFQuizAjax;sa=imageList;xml;imageFolder="+ subFolder,
+		type: "GET",
+		dataType: "xml",
+		timeout: 2000,
+		error: function() {
+			alert("Error loading XML file list");
+		},
+		success: function(xml) {
+			$(xml).find("file").each(function() {
+				var item_text = $(this).text();
+				$("#imageList").addOption(item_text, item_text, sel_file != undefined && sel_file == item_text);
+			});
+		}
+	});
+}
+
 $(document).ready(function(){
+	$(".disputeDialog").click(function() {
+		id_dispute = this.id;
+		showDisputeDialog();
+	});
 	$("#DeleteQuizDispute").click(function(){
 		let checkDels = false;
 		$("input.quiz_disputes:checked").each(function(){

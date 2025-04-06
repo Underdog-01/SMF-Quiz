@@ -1302,7 +1302,7 @@ function SaveCategory($name, $description, $id_parent, $image)
 		array(
 			Quiz\Helper::quiz_commonStringFilter($name),
 			Quiz\Helper::quiz_commonStringFilter($description),
-			$id_parent,
+			(int)$id_parent,
 			Quiz\Helper::quiz_commonImageFileFilter($image)
 		),
 		array('id_category')

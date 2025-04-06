@@ -141,7 +141,7 @@ function ImageUpload()
 
 		$destination = $boarddir . '/Themes/default/images/quiz_images/' . $imageFolder . $_FILES['fileToUpload']['name'];
 		// @TODO chmod??
-		@chmod($destination, 0777);
+		@chmod($destination, 0644);
 
 		// It is already here
 		if (file_exists($destination))
@@ -150,7 +150,7 @@ function ImageUpload()
 		// Move and make writable
 		// @TODO chmod??
 		move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $destination);
-		@chmod($destination, 0777);
+		@chmod($destination, 0644);
 	}
 		// @TODO echo
 	echo "{";
@@ -158,6 +158,8 @@ function ImageUpload()
 	echo				"msg: '" . $msg . "',\n";
 	echo				"filename: '" . $fileName . "'\n";
 	echo "}";
+
+	clearstatcache();
 }
 
 ?>

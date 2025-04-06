@@ -107,6 +107,24 @@ class Helper
 		return !empty($quiz_name) ? $quiz_name : '';
 	}
 
+	public static function get_image_files($imageFolder = 'Quizzes')
+	{
+		global $settings;
+
+		//define the path as relative
+		list($files, $path) = [[], $settings['default_theme_dir'] . '/images/quiz_images/' . $imageFolder];
+
+		if (is_dir($path)) {
+			clearstatcache($settings['default_theme_dir'] . '/images/quiz_images');
+			$getFiles = glob($path . '/*.{jpg,png,gif,bmp,jpeg}', GLOB_BRACE);
+			foreach ($getFiles as $file) {
+				$files[] = basename($file);
+			}
+		}
+
+		return $files;
+	}
+
 	public static function quiz_pmFilter($msg)
 	{
 		global $sourcedir;

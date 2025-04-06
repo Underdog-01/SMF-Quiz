@@ -24,11 +24,10 @@ function SMFQuizAdmin()
 	$context['html_headers'] .= '
 		<script>
 			' . ($quizVarsJS) . '
-		</script>';
-
-	$context['html_headers'] .= '
+		</script>
 		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/QuizAdmin.css?v=' . $qv . '"/>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizAdmin.js?v=' . $qv . '"></script>';
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.selectboxes.js?v=' . $qv . '"></script>
+		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizAdmin.js?v=' . $qv . '"></script>';
 
 	// This uses admin tabs - as it should!
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -458,9 +457,6 @@ function GetNewCategoryData()
 {
 	global $context;
 
-	// Append required javascript to context
-	SetImageUploadJavascript();
-
 	// The new category page provides a list of categories to select as a parent for the new category. Therefore we need to obtain
 	// a list of category data
 	GetAllCategoryDetails();
@@ -473,9 +469,6 @@ function GetNewCategoryData()
 function GetNewQuestionData()
 {
 	global $context;
-
-	// Append required javascript to context
-	SetImageUploadJavascript();
 
 	if (isset($_POST['id_quiz']))
 		$context['SMFQuiz']['id_quiz'] = $_POST['id_quiz'];
@@ -495,9 +488,6 @@ function GetEditQuestionData()
 {
 	global $context;
 
-	// Append required javascript to context
-	SetImageUploadJavascript();
-
 		// @TODO ???
 	isset($_GET['id']) ? $questionId = $_GET['id'] : 0;
 
@@ -512,9 +502,6 @@ function GetEditCategoryData()
 {
 	global $context;
 
-	// Append required javascript to context
-	SetImageUploadJavascript();
-
 		// @TODO ???
 	isset($_GET['id']) ? $categoryId = $_GET['id'] : 0;
 
@@ -528,89 +515,12 @@ function GetEditCategoryData()
 	$context['SMFQuiz']['Action'] = 'EditCategory';
 }
 
-/*
-Function used to set the jscript/javascript required for the image upload functionality
-*/
-function SetImageUploadJavascript()
-{
-	global $context, $boardurl, $settings, $modSettings;
-
-		// @TODO update jQuery + CDN + local loading, etc.
-	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
-	$context['html_headers'] .= '
-		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.selectboxes.js?v=' . $qv . '"></script>
-		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/ajaxfileupload.js?v=' . $qv . '"></script>
-		<script>
-		function ajaxFileUpload(subFolder) {
-			/* start setting some animation when the ajax starts and completes */
-			$(".preview_loading").each().on( "ajaxStart", function() {
-				$(this).show();
-			}).on( "ajaxComplete", function() {
-				$(this).hide();
-			});
-			$.ajaxFileUpload (
-				{
-					url:"' . $boardurl . '/index.php?action=SMFQuizAjax;sa=imageUpload;xml;imageFolder="+subFolder,
-					secureuri:false,
-					fileElementId: "fileToUpload",
-					dataType: "json",
-					success: function (data, status)
-					{
-						if(typeof(data.error) != "undefined")
-						{
-							if(data.error != "")
-							{
-								alert(data.error);
-							}
-							else
-							{
-								alert(data.msg);
-								refreshImageList(subFolder, data.filename);
-							}
-						}
-					},
-					error: function (data, status, e)
-					{
-						alert(e);
-					}
-				}
-			);
-			return false;
-		}
-
-		/* Refreshes all images in the image dropdown box */
-		function refreshImageList(subFolder, sel_file) {
-			$("#imageList").removeOption(/./);
-			$("#imageList").addOption("-", "-", sel_file == undefined);
-			$.ajax({
-				url: "' . $boardurl . '/index.php?action=SMFQuizAjax;sa=imageList;xml;imageFolder="+ subFolder,
-				type: "GET",
-				dataType: "xml",
-				timeout: 2000,
-				error: function() {
-					alert("Error loading XML file list");
-				},
-				success: function(xml) {
-					$(xml).find("file").each(function() {
-						var item_text = $(this).text();
-						$("#imageList").addOption(item_text, item_text, sel_file != undefined && sel_file == item_text);
-					});
-				}
-			});
-		}
-		</script>
-	';
-}
-
 function GetEditQuizData()
 {
 	global $context;
 
 		// @TODO ???
 	isset($_GET['id']) ? $quizId = $_GET['id'] : 0;
-
-	// Append required javascript to context
-	SetImageUploadJavascript();
 
 	GetQuiz($quizId);
 
@@ -642,9 +552,6 @@ function GetEditQuizLeagueData()
 function GetNewQuizData()
 {
 	global $context;
-
-	// Append required javascript to context
-	SetImageUploadJavascript();
 
 	// The new quiz page also shows a list of categories, so we must get this data
 	GetAllCategoryDetails();
@@ -795,7 +702,7 @@ function GetUpdateQuizData()
 	$seconds = isset($_POST['seconds']) ? $_POST['seconds'] : '';
 	$showanswers = isset($_POST['show_answers']) && strval($_POST['show_answers']) == 'on' ? 1 : 0;
 	$enabled = isset($_POST['enabled']) && strval($_POST['enabled']) == 'on' ? 1 : 0;
-	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
+	$image = isset($_POST['image']) && $_POST['image'] != '-' ? Quiz\Helper::quiz_commonImageFileFilter($_POST['image']) : '';
 	$categoryId = isset($_POST['id_category']) ? $_POST['id_category'] : '';
 	$quizId = isset($_POST['id_quiz']) ? $_POST['id_quiz'] : '';
 	$oldCategoryId = isset($_POST["oldCategoryId"]) ? $_POST["oldCategoryId"] : ''; // Need the old category, as if it is different we need to change quiz counts
@@ -839,7 +746,7 @@ function GetSaveQuizData()
 	$seconds = isset($_POST['seconds']) ? $_POST['seconds'] : '';
 	$showanswers = isset($_POST['showanswers']) && strval($_POST['showanswers']) == 'on' ? 1 : 0;
 	$enabled = isset($_POST['enabled']) && strval($_POST['enabled']) == 'on' ? 1 : 0;
-	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
+	$image = isset($_POST['image']) && $_POST['image'] != '-' ? Quiz\Helper::quiz_commonImageFileFilter($_POST['image']) : '';
 	$categoryId = isset($_POST['id_category']) ? $_POST['id_category'] : '';
 
 	// Save the data and return the identifier for this newly created quiz
@@ -882,7 +789,7 @@ function GetUpdateQuestionData($addMore)
 	// TODO - Need some validation on front end
 	$questionId = isset($_POST["questionId"]) ? $_POST["questionId"] : '';
 	$questionText = isset($_POST['question_text']) ? ReplaceCurlyQuotes($_POST['question_text']) : '';
-	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
+	$image = isset($_POST['image']) && $_POST['image'] != '-' ? Quiz\Helper::quiz_commonImageFileFilter($_POST['image']) : '';
 	$answerText = isset($_POST['quiz_answer_text']) ? ReplaceCurlyQuotes($_POST['quiz_answer_text']) : '';
 	$questionTypeId = isset($_POST['id_question_type']) ? $_POST['id_question_type'] : '';
 	// @TODO check input
@@ -937,7 +844,7 @@ function GetSaveQuestionData($addMore)
 	$questionText = isset($_POST['question_text']) ? ReplaceCurlyQuotes($_POST['question_text']) : '';
 	$questionTypeId = isset($_POST['id_question_type']) ? $_POST['id_question_type'] : '';
 	$quizId = isset($_POST['id_quiz']) ? $_POST['id_quiz'] : 0;
-	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
+	$image = isset($_POST['image']) && $_POST['image'] != '-' ? Quiz\Helper::quiz_commonImageFileFilter($_POST['image']) : '';
 	$answerText = isset($_POST['question_answer_text']) ? ReplaceCurlyQuotes($_POST['question_answer_text']) : '';
 
 	// Save the Question
@@ -1159,7 +1066,7 @@ function GetUpdateCategoryData()
 	$name = isset($_POST["name"]) ? $_POST["name"] : '';
 	$description = isset($_POST['description']) ? $_POST['description'] : '';
 	$parent = isset($_POST["parentId"]) ? $_POST["parentId"] : '';
-	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
+	$image = isset($_POST['image']) && $_POST['image'] != '-' ? Quiz\Helper::quiz_commonImageFileFilter($_POST['image']) : '';
 
 	// Save the data
 	UpdateCategory($categoryId, $name, $description, $parent, $image);
@@ -1320,10 +1227,6 @@ function GetQuizzesData()
 	// If user has clicked button to enable quiz
 	if (isset($_GET['enable_quiz_id']))
 		UpdateQuizStatus($_GET['enable_quiz_id'], 1);
-
-	// If user has clicked button to upload quiz
-	if (isset($_GET['upload_quiz_id']))
-		UploadQuiz($_GET['upload_quiz_id'], 1);
 
 	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
 	$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'updated';
@@ -1544,17 +1447,9 @@ function GetShowDisputesData()
 	global $context, $scripturl, $smcFunc, $txt, $modSettings, $settings, $boardurl;
 
 	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
-	$quizDialogButtons = 'let smfQuizVersion = "' . $modSettings['smf_quiz_version'] . '",';
-	foreach ($txt['quizLocalizationTextJS'] as $key => $val) {
-		$quizDialogButtons .= ' ' . $key . ' = "' . $val . '",';
-	}
-
 	$context['html_headers'] .= '
 		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/jquery-ui-1.14.1.css?v=' . $qv . '"/>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-ui-1.14.1.min.js?v=' . $qv . '"></script>
-		<script>
-			' . (rtrim($quizDialogButtons, ',')) . ';
-		</script>';
+		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery-ui-1.14.1.min.js?v=' . $qv . '"></script>';
 
 	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
 	$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'updated';
@@ -1843,7 +1738,7 @@ function GetShowResultsData()
 	$context['SMFQuiz']['Action'] = 'results';
 }
 
-// Function that handles the saving of the specified new quiz league data
+// Function that handles the saving of the specified new quiz category data
 function GetSaveCategoryData()
 {
 	global $context;
@@ -1853,7 +1748,9 @@ function GetSaveCategoryData()
 	$name = isset($_POST["name"]) ? $_POST["name"] : '';
 	$description = isset($_POST['description']) ? $_POST['description'] : '';
 	$parent = isset($_POST["parentId"]) ? $_POST["parentId"] : '';
-	$image = isset($_POST['image']) && $_POST['image'] != '-' ? $_POST['image'] : '';
+	$image = isset($_POST['image']) && $_POST['image'] != '-' ? Quiz\Helper::quiz_commonImageFileFilter($_POST['image']) : '';
+	$image = !empty($_POST['imageDefault-64_png']) ? Quiz\Helper::quiz_commonImageFileFilter($_POST['imageDefault-64_png']) : $image;
+	$image = !empty($_POST['fileToUpload']) ? Quiz\Helper::quiz_commonImageFileFilter($_POST['fileToUpload']) : $image;
 
 	// Save the data
 	SaveCategory($name, $description, $parent, $image);
@@ -1861,35 +1758,6 @@ function GetSaveCategoryData()
 	GetAllCategoryDetails();
 
 	$context['SMFQuiz']['Action'] = 'SaveCategory';
-}
-
-	// @TODO to remove
-function UploadQuiz($id_quiz)
-{
-	global $context, $settings, $txt;
-
-	$content = BuildQuizXml($id_quiz);
-
-	$server  = 'www.smfmodding.com';
-	//$server  = 'localhost';
-	$port    = '443';
-	$uri     = '/Sources/SMFQuizUpload.php';
-	//$uri     = '/smf2/Sources/SMFQuizUpload.php';
-
-	$post_results = httpFunc('POST',$server,$port,$uri,$content);
-
-	if (!is_string($post_results))
-		$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizzes_Page']['QuizUploadError'];
-	else
-	{
-		if (strpos($post_results,'exists'))
-			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizzes_Page']['QuizUploadExists'];
-		else
-		{
-			$context['SMFQuiz']['uploadResponse'] = '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" />&nbsp;' . $txt['SMFQuizAdmin_Quizzes_Page']['QuizUploadedSuccessfully'];
-			upload_images($id_quiz);
-		}
-	}
 }
 
 function upload_images($id_quiz)
@@ -1911,7 +1779,7 @@ function upload_images($id_quiz)
 	$id_questions = '';
 	$status = '';
 	while ($row = $smcFunc['db_fetch_assoc']($result))
-		$status .= '<br/>' . load_image($row['image']);
+		$status .= '<br>' . load_image($row['image']);
 
 	$smcFunc['db_free_result']($result);
 	$context['SMFQuiz']['uploadResponse'] .= $status;
@@ -1919,36 +1787,24 @@ function upload_images($id_quiz)
 
 function load_image($imageFileName)
 {
-	global $boarddir, $boarddir;
+	global $settings;
 
-	$filename = $boarddir . '/Themes/default/images/quiz_images/Questions/' . $imageFileName;
+	$filename = $settings['default_theme_dir'] . '/images/quiz_images/Questions/' . $imageFileName;
 	// @TODO check if file exists
+
+
 	$handle = fopen($filename, "rb");
 	$contents = fread($handle, filesize($filename));
 	fclose($handle);
 
-	return upload_image($contents, $imageFileName);
-}
+	clearstatcache();
 
-	// @TODO to remove
-function upload_image($imageString, $imageFileName)
-{
-	global $boarddir, $settings;
-
-	$server  = 'www.smfmodding.com';
-	//$server  = 'localhost';
-	$port    = '80';
-	$uri     = '/Sources/SMFQuizImageUpload.php?filename=' . urlencode($imageFileName);
-	//$uri     = '/smf2/Sources/SMFQuizImageUpload.php?filename=' . $imageFileName;
-	$content = $imageString;
-
-	$get_results = httpFunc('POST',$server,$port,$uri,$content);
-	if (strstr($get_results,'done'))
-		return '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" /> ' . $imageFileName . ' uploaded successfully';
-	elseif (strstr($get_results,'exists'))
-		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> ' . $imageFileName . ' already exists on server';
-	else
-		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> ' . $imageFileName . ' did not upload due to unexpected error (' . $get_results . ')';
+	if (!is_dir($filename) && file_exists($filename)) {
+		return '<img src="' . $settings['default_images_url'] . '/quiz_images/Questions/' . $imageFileName . '" alt="yes" title="Information" style="vertical-align: top;"><span style="padding-left: 1rem;">' . $imageFileName . ' uploaded successfully</span>';
+	}
+	else {
+		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="Warning" title="Information" style="vertical-align: top;"><span style="padding-left: 1rem;">' . $imageFileName . ' did not upload due to unexpected error</span>';
+	}
 }
 
 function ImportQuizFile($urlPath, $categoryId, $isEnabled, $image, $fileCount)
@@ -2636,7 +2492,7 @@ function GetQuizImportData()
 				if (isset($validImageTypes[$size[2]]))
 				{
 					$imgFile = un_htmlspecialchars($file);
-					$img_destination = $settings['default_theme_dir'] . '/images/quiz_images/Quizzes/' . $imgFile;
+					$img_destination = $settings['default_theme_dir'] . '/images/quiz_images/Quizzes/' . Quiz\Helper::quiz_commonImageFileFilter($imgFile);
 					if (!file_exists($img_destination) && is_writable($settings['default_theme_dir'] . '/images/quiz_images/Quizzes'))
 						move_uploaded_file($_FILES['imported_quiz_img']['tmp_name'][$i], $img_destination);
 				}
