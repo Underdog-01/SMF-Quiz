@@ -146,7 +146,8 @@ class Helper
 
 	public static function quiz_commonImageFileFilter($image_filename)
 	{
-		return preg_replace('#[^a-zA-Z0-9\-\._\/]#','', $image_filename);
+		$image_filename = str_replace(' ', '_', $image_filename);
+		return preg_replace('#[^a-zA-Z0-9\-\._\/]#', '', $image_filename);
 	}
 
 	public static function format_infostring($stringToFormat, $toHtml = true)

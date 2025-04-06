@@ -80,7 +80,7 @@ Function used for uploading an image to the quiz images folder, or the specified
 */
 function ImageUpload()
 {
-	global $boarddir;
+	global $settings;
 
 	$error = "";
 	$msg = "";
@@ -139,7 +139,7 @@ function ImageUpload()
 		else
 			$imageFolder = '';
 
-		$destination = $boarddir . '/Themes/default/images/quiz_images/' . $imageFolder . $_FILES['fileToUpload']['name'];
+		$destination = Quiz\Helper::quiz_commonImageFileFilter($settings['default_theme_dir'] . '/images/quiz_images/' . $imageFolder . $_FILES['fileToUpload']['name']);
 		// @TODO chmod??
 		@chmod($destination, 0644);
 
