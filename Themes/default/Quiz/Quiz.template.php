@@ -733,48 +733,51 @@ function template_home()
 	<div style="margin-top:2px; ">
 		<div style="padding:4px;">
 			<div class="smalltext">
-				<img src="' , $settings["default_images_url"] , '/quiz_images/Quizzes/quiz_home.png"/>
-				<br/>' , $txt['SMFQuiz_Home_Page']['Welcome'];
+				<img src="' , $settings["default_images_url"] , '/quiz_images/Quizzes/quiz_home.png">
+				<div>', $txt['SMFQuiz_Home_Page']['Welcome'], '</div>';
 	if (!empty($context['SMFQuiz']['quizSessions']))
 	{
 		echo '
-				<br/><font color="red">' , $txt['SMFQuiz_Home_Page']['OutstandingQuizzes'] , ':</font>
-		';
-		if (isset($context['SMFQuiz']['quizSessions']))
+				<div>
+					<span class="alert">' , $txt['SMFQuiz_Home_Page']['OutstandingQuizzes'] , ':</span>
+				</div>';
+
+		if (isset($context['SMFQuiz']['quizSessions'])) {
+			echo '
+				<ul>';
 			foreach($context['SMFQuiz']['quizSessions'] as $quizSessions)
 				echo '
-					<li>' , date("M d Y", $quizSessions['last_question_start']) , ' - <a href="' , $scripturl , '?action=SMFQuiz;sa=categories;id_quiz=' , $quizSessions['id_quiz'] , '">' , Quiz\Helper::format_string($quizSessions['title']) , '</a> -' , $txt['SMFQuiz_Common']['Question'] , ' ' , $quizSessions['question_count'] , '</li>
-				';
+					<li>' , date("M d Y", $quizSessions['last_question_start']) , ' - <a href="' , $scripturl , '?action=SMFQuiz;sa=categories;id_quiz=' , $quizSessions['id_quiz'] , '">' , Quiz\Helper::format_string($quizSessions['title']) , '</a> - ' , $txt['SMFQuiz_Common']['Question'] , ' ' , (!empty($quizSessions['question_count']) ? $quizSessions['question_count'] : '1') , '</li>';
+			echo '
+				</ul>';
+		}
 	}
 	echo '
-				</div>
+			</div>
 		</div>
 	</div>
 </div>
-
-<form action="', $scripturl, '?action=SMFQuiz" onsubmit="QuizQuickSearch(); return false;" method="post">
-	<div style="margin-top:2px; margin-bottom:4px; overflow:hidden;">
-		<div class="title_bar">
-			<h4 class="titlebg">
-				<span class="left"></span>
-				' , $txt['SMFQuiz_Home_Page']['QuizSearch'] , '
-			</h4>
-		</div>
-		<div class="blockcontent windowbg" style="margin-top:2px; ">
-			<div style="padding:4px;">
-				<div class="smalltext">
-					<div class="tborder clearfix" id="latestQuizFrame">
-						<div class="windowbg">
-							<b>' , $txt['SMFQuiz_Common']['EnterQuizNametosearchfor'] , ':</b>&nbsp;
-							<input id="quick_name" size="20" type="text" value="" name="name[', rand(0, 1000), ']">
-							<div id="quick_div" class="smalltext"></div>
-						</div>
+<div style="margin-top:2px; margin-bottom:4px; overflow:hidden;">
+	<div class="title_bar">
+		<h4 class="titlebg">
+			<span class="left"></span>
+			' , $txt['SMFQuiz_Home_Page']['QuizSearch'] , '
+		</h4>
+	</div>
+	<div class="blockcontent windowbg" style="margin-top:2px; ">
+		<div style="padding:4px;">
+			<div class="smalltext">
+				<div class="tborder clearfix" id="latestQuizFrame">
+					<div class="windowbg">
+						<b>' , $txt['SMFQuiz_Common']['EnterQuizNametosearchfor'] , ':</b>&nbsp;
+						<input id="quick_name" size="20" type="text" value="" name="name[', rand(0, 1000), ']">
+						<div id="quick_div" class="smalltext"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</form>
+</div>
 <div style="margin-top:2px; margin-bottom:4px; overflow:hidden;">
 	<div class="title_bar">
 		<h4 class="titlebg">
@@ -820,8 +823,6 @@ echo '
 		</div>
 	</div>
 </div>
-
-
 <table border="0" cellpadding="1" cellspacing="1" width="100%">
 	<tr>
 		<td style="width: 50%;vertical-align: top;">
@@ -1019,22 +1020,21 @@ echo '
 	</div>
 	<div class="title_bar">
 		<h4 class="titlebg quizH4Title">
-			<img class="icon quizH4TitleIcon" src="' , $settings['default_images_url'] , '/quiz_images/information.png" alt="">
 			<span class="quizH4StatsTitle">' , $txt['SMFQuiz_Home_Page']['InfoBoard'] , '</span>
 		</h4>
 	</div>
 	<div class="blockcontent windowbg" style="margin-top:2px; ">
 		<div style="padding:4px;">
 			<div id="smfAnnouncements" style="height: 30ex; overflow: auto; padding-right: 1ex;">
-				<div class="quiz_info_flex_row cat_bar">
-					<h3 class="quiz_details_flex catbg">
+				<div class="quiz_info_flex_row">
+					<div class="quiz_details_flex">
 						<span class="quiz_flex_info_date_title">
 							', $txt['SMFQuiz_Common']['Date'], '
 						</span>
 						<span class="quiz_flex_info_data_title">
 							', $txt['SMFQuiz_Common']['Notice'], '
 						</span>
-					</h3>
+					</div>
 				</div>
 				<div class="quiz_details_flex_row windowbg">';
 	$counter = 1;
@@ -1183,7 +1183,7 @@ function template_statistics()
 						<div style="padding:4px;height: 100%;">
 							<div style="height: 100%;">
 								<div class="quiz_details_flex_scores" style="height: 100%;">
-									<div class="titlebg quiz_details_flex_scores_title">';
+									<div class="quiz_details_flex_scores_title">';
 
 	list($counter, $maxScore, $medals) = [1, 0, ['g', 's', 'b']];
 	foreach($context['SMFQuiz']['quizMasters'] as $quizStatsRow) {
@@ -1233,7 +1233,7 @@ function template_statistics()
 						<div style="padding:4px;height: 100%;">
 							<div style="height: 100%;">
 								<div class="quiz_details_flex_scores" style="height: 100%;">
-									<div class="titlebg quiz_details_flex_scores_title">';
+									<div class="quiz_details_flex_scores_title">';
 
 	list($max, $percentage) = [0, 0];
 	foreach($context['SMFQuiz']['popularQuizzes'] as $popularQuizzesRow)
@@ -1280,7 +1280,7 @@ function template_statistics()
 						<div style="padding:4px;height: 100%;">
 							<div style="height: 100%;">
 								<div class="quiz_details_flex_scores" style="height: 100%;">
-									<div class="titlebg quiz_details_flex_scores_title">';
+									<div class="quiz_details_flex_scores_title">';
 
 	$max = 0;
 	foreach($context['SMFQuiz']['hardestQuizzes'] as $hardestQuizzesRow)
@@ -1328,7 +1328,7 @@ function template_statistics()
 						<div style="padding:4px;height: 100%;">
 							<div style="height: 100%;">
 								<div class="quiz_details_flex_scores" style="height: 100%;">
-									<div class="titlebg quiz_details_flex_scores_title">';
+									<div class="quiz_details_flex_scores_title">';
 
 	$max = 0;
 	foreach($context['SMFQuiz']['easiestQuizzes'] as $easiestQuizzesRow)
@@ -1376,7 +1376,7 @@ function template_statistics()
 						<div style="padding:4px;height: 100%;">
 							<div style="height: 100%;">
 								<div class="quiz_details_flex_scores" style="height: 100%;">
-									<div class="titlebg quiz_details_flex_scores_title">';
+									<div class="quiz_details_flex_scores_title">';
 
 	list($counter, $maxPlays) = [1, 0];
 	foreach($context['SMFQuiz']['mostActivePlayers'] as $mostActivePlayersRow)
@@ -1424,7 +1424,7 @@ function template_statistics()
 						<div style="padding:4px;height: 100%;">
 							<div style="height: 100%;">
 								<div class="quiz_details_flex_scores" style="height: 100%;">
-									<div class="titlebg quiz_details_flex_scores_title">';
+									<div class="quiz_details_flex_scores_title">';
 
 	$max = 0;
 	foreach($context['SMFQuiz']['mostQuizCreators'] as $mostQuizCreatorsRow)
@@ -1555,7 +1555,7 @@ function template_quiz_details()
 								<span style="width: 16px;">&nbsp;</span>') . '
 							</div>
 							<div class="quiz_details_flex_scores_med" style="cursor: pointer;" title="' , date("M d Y H:i", $quizResultsRow['result_date']) , '">' , date("m/d/Y", $quizResultsRow['result_date']) , '</div>
-							<div class="quiz_details_flex_scores_lge" style="text-overflow: ellipsis;"><a href="' . $scripturl . '?action=SMFQuiz;sa=userdetails;id_user=' . $quizResultsRow['id_user'] . '">' . $quizResultsRow['real_name'] . '</a></div>
+							<div class="quiz_details_flex_scores_lge" style="text-overflow: ellipsis;"><a href="' . $scripturl . '?action=SMFQuiz;sa=userdetails;id_user=' . $quizResultsRow['id_user'] . '"><span style="cursor: pointer;font-weight: 600;">' . $quizResultsRow['real_name'] . '</span></a></div>
 							<div class="quiz_details_flex_scores_small">' , $quizResultsRow['questions'] , '</div>
 							<div class="quiz_details_flex_scores_small">' , $quizResultsRow['correct'] , '</div>
 							<div class="quiz_details_flex_scores_small">' , $quizResultsRow['incorrect'] , '</div>
