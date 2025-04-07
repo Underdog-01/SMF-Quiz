@@ -772,7 +772,7 @@ function template_show_questions()
 		foreach ($context['SMFQuiz']['questions'] as $row)
 			echo '					<tr class="windowbg">
 										<td style="text-align: center;width: 5%;"><input class="quizCheckbox" type="checkbox" name="question' , $row['id_question'] , '"/></td>
-										<td style="text-align: left;">
+										<td style="text-align: left;display: inline-flex;justify-content: space-between;width: 100%;">
 											<div class="quizAdminListText">' , Quiz\Helper::format_string($row['question_text']) , '</div>
 											<div class="quizAdminListImage" title="' . $txt['quizButtonEdit'] . '" onclick="window.location.href=\'' . ($scripturl . '?action=' . $context['current_action'] . ';area=' . $context['admin_area'] . ';sa=' . $context['current_subaction'] . ';id=' . $row['id_question']) . '\'">
 												<img alt="" src="' . $settings['default_images_url'] . '/quiz_images/quiz_edit.png">
@@ -866,7 +866,7 @@ function template_show_categories()
 		foreach ($context['SMFQuiz']['categories'] as $row)
 			echo '					<tr class="windowbg">
 										<td style="text-align: center;width: 5%;"><input class="quizCheckbox" type="checkbox" name="cat' , $row['id_category'] , '"/></td>
-										<td style="text-align: left;display: inline-flex;">
+										<td style="text-align: left;display: inline-flex;justify-content: space-between;width: 100%;">
 											<div class="quizAdminListText">' , Quiz\Helper::format_string($row['name']) , '</div>
 											<div class="quizAdminListImage" title="' . $txt['quizButtonEdit'] . '" onclick="window.location.href=\'' . ($scripturl . '?action=' . $context['current_action'] . ';area=' . $context['admin_area'] . ';sa=' . $context['current_subaction'] . ';id=' . $row['id_category']) . '\'">
 												<img class="quiz_icon_small" alt="" src="' . $settings['default_images_url'] . '/quiz_images/quiz_edit.png">
