@@ -342,4 +342,20 @@ $(document).ready(function(){
 		$("#moreQuizzes > tbody").append($clone);
 		return true;
 	});
+	/* Select element for categories that have children */
+	$('#quizParentCat').on('change', function(index) {
+		if (typeof($('option:selected', this).data('quizcatid')) !== "undefined") {
+			let quizParentCat = $('option:selected', this).data('quizcatid');
+			switch(quizParentCat) {
+				case 0:
+					window.location.href = smf_scripturl + "?index.php;action=admin;area=quiz;sa=categories";
+					break;
+				default:
+					window.location.href = smf_scripturl + "?index.php;action=admin;area=quiz;sa=categories;children=" + String(quizParentCat);
+			}
+		}
+		else {
+			window.location.href = smf_scripturl + "?index.php;action=admin;area=quiz;sa=categories";
+		}
+	});
 });

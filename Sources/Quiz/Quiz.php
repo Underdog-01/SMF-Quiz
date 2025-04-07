@@ -1691,10 +1691,10 @@ function GetUsersActiveData()
 			'up' => 'total_played ASC, percentage_correct ASC'
 		]
 	];
-	$context['quiz_sort_href'] = $scripturl . '?action=SMFQuiz;sa=usersmostactive;sort=' . $sort . ';start=0' . (!isset($_REQUEST['desc']) ? ';desc' : '');
+	$context['quiz_sort_href'] = $scripturl . '?action=SMFQuiz;sa=usersmostactive;sort=' . $sort . ';start=0' . (!isset($_REQUEST['asc']) ? ';asc' : '');
 
 	$query_parameters = array(
-		'sort' => isset($sort_methods[$sort][$context['sort_direction']]) ? $sort_methods[$sort][$context['sort_direction']] : 'total_played ASC, percentage_correct ASC',
+		'sort' => !isset($_REQUEST['asc']) ? 'total_played DESC, percentage_correct DESC' : 'total_played DESC, percentage_correct ASC',
 		'starts_with' => $starts_with . '%',
 		'limit' => $limit,
 		'start' => isset($_GET['start']) ? $_GET['start'] : 0,
@@ -1736,9 +1736,13 @@ function GetUsersActiveData()
 		$mostPlayedUsers[] = $row['id_user'];
 	}
 
-	// Free the database
 	$smcFunc['db_free_result']($result);
-		$result = $smcFunc['db_query']('', '
+
+	if (isset($_REQUEST['asc'])) {
+		$mostPlayedUsers = array_reverse($mostPlayedUsers, true);
+	}
+
+	$result = $smcFunc['db_query']('', '
 		SELECT	COUNT(*) AS total_user_wins,
 				Q.top_user_id
 		FROM		{db_prefix}quiz Q
@@ -1750,7 +1754,7 @@ function GetUsersActiveData()
 	);
 
 	// This should only be one value
-	$context['SMFQuiz']['total_user_wins'] = Array();
+	$context['SMFQuiz']['total_user_wins'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['total_user_wins'][$row['top_user_id']] = $row['total_user_wins'];
 

@@ -861,7 +861,7 @@ function template_show_categories()
 										</td>
 									</tr>
 	';
-	if (sizeof($context['SMFQuiz']['categories']) > 0)
+	if (count($context['SMFQuiz']['categories']) > 0)
 	{
 		foreach ($context['SMFQuiz']['categories'] as $row)
 			echo '					<tr class="windowbg">
@@ -900,21 +900,32 @@ function template_show_categories()
 
 	echo '
 										</td>
-									</tr>
-	';
-// @TODO check input?
+									</tr>';
+
 	$parentLink = !empty($_GET['children']) ? $_GET['children'] : 0;
 	echo '
 									<tr class="windowbg">
 										<td colspan="8">
 											<input type="submit" class="button quizAdminButtonGap" name="NewCategory" value="' , $txt['SMFQuizAdmin_Categories_Page']['NewCategory'] , '"/>
-											<input type="submit" class="button quizAdminButtonGap" name="DeleteCategory" value="' , $txt['SMFQuizAdmin_Categories_Page']['DeleteCategory'] , '"/>
-											<input type="button quizAdminButtonGap" name="CategoryAction" value="' , $txt['SMFQuizAdmin_Categories_Page']['ParentCategory'] , '" onclick="window.location=\'', $scripturl, '?action=' . $context['current_action'] . ';area=' . $context['admin_area'] . ';sa=' . $context['current_subaction'] . ';parent=' , $parentLink , '\'"/>
+											<input type="submit" class="button quizAdminButtonGap" name="DeleteCategory" value="' , $txt['SMFQuizAdmin_Categories_Page']['DeleteCategory'] , '"/>';
+	if (!empty($context['SMFQuiz']['parent_categories']) && count($context['SMFQuiz']['parent_categories']) > 1) {
+		$currentParent = isset($_REQUEST['children']) && is_string($_REQUEST['children']) ? (int)$_REQUEST['children'] : 0;
+		echo '
+											<select style="line-height: 1.5rem;height: 1.5rem;font-style: oblique;font-size: smaller;" class="quizAdminButtonGap" id="quizParentCat">';
+		foreach ($context['SMFQuiz']['parent_categories'] as $key => $parentCategory) {
+			echo '
+												<option id="quiz_cat_' . $key . '" data-quizcatid="' . (int)$parentCategory['id_category'] . '"' . ($currentParent == (int)$parentCategory['id_category'] ? ' selected' : '') . '>' . $parentCategory['name'] . '</option>';
+		}
+
+		echo '
+											</select>';
+	}
+
+	echo '
 										</td>
 									</tr>
 							</tbody>
-						</table>
-	';
+						</table>';
 }
 
 // @TODO createList?

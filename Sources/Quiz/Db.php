@@ -21,12 +21,12 @@ function GetQuizCount()
 }
 
 /* Retrieves the count of categories and stores this in the context */
-function GetCategoryCount($id_category)
+function GetCategoryCount($id_category = 0)
 {
 	global $context, $smcFunc;
 
 	if (isset($id_category) && $id_category != 0)
-		$categoryWhereClause = ' WHERE id_category = ' . $id_category;
+		$categoryWhereClause = ' WHERE id_category = ' . (int)$id_category;
 	else
 		$categoryWhereClause = '';
 
@@ -864,9 +864,43 @@ function GetCategoryChildren($page = 1, $orderBy = 'C.name', $orderDir = 'up', $
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['categories'] = array();
+	$context['SMFQuiz']['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['categories'][] = $row;
+
+	// Free the database
+	$smcFunc['db_free_result']($result);
+}
+
+function QuizGetCategoryParentsWithChild()
+{
+	global $txt, $context, $smcFunc;
+
+	$result = $smcFunc['db_query']('', "
+		SELECT 		C.id_category,
+					C.name,
+					IFNULL(C.name, 'Top Level') AS parent_name
+		FROM 		{db_prefix}quiz_category C
+		WHERE C.id_category IN (SELECT CC.id_parent FROM {db_prefix}quiz_category CC)
+		ORDER BY 	C.name ASC",
+		array(
+			'id_category' => 0,
+		)
+	);
+
+	$context['SMFQuiz']['parent_categories'] = [];
+	$context['SMFQuiz']['parent_categories'][] = [
+		'id_category' => 0,
+		'name' => $txt['SMFQuizAdmin_Categories_Page']['ParentCategory']
+	];
+	while ($row = $smcFunc['db_fetch_assoc']($result)) {
+		$context['SMFQuiz']['parent_categories'][] = [
+			'id_category' => (int)$row['id_category'],
+			'name' => $row['name']
+		];
+	}
+
+	$context['SMFQuiz']['parent_categories'] = array_filter($context['SMFQuiz']['parent_categories']);
 
 	// Free the database
 	$smcFunc['db_free_result']($result);
@@ -910,7 +944,7 @@ function GetCategoryParent($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pa
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['categories'] = Array();
+	$context['SMFQuiz']['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['categories'][] = $row;
 

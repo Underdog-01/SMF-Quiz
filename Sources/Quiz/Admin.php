@@ -311,13 +311,17 @@ function GetCategoryData()
 	{
 		if (isset($_GET["id"]))
 			GetEditCategoryData();
-		elseif (isset($_GET["children"]))
+		elseif (isset($_GET["children"])) {
 			GetCategoryChildrenData($_GET["children"]);
+			QuizGetCategoryParentsWithChild();
+		}
 		elseif (isset($_GET["parent"]))
 			GetParentCategoryData($_GET["parent"]);
 		// Otherwise just get the default category data
-		else
+		else {
 			GetCategoryChildrenData(0);
+			QuizGetCategoryParentsWithChild();
+		}
 	}
 }
 
@@ -1857,6 +1861,10 @@ function ImportQuizzes($quizDetails)
 {
 	global $boarddir, $context, $boardurl;
 
+	if (intval(@ini_get('memory_limit')) < 512) {
+		@ini_set('memory_limit', '512M');
+	}
+
 	// Retrieve indexes of files and post values into array
 	$fileIndexesToImport = Array();
 	$fileCategoriesToImport = Array();
@@ -1970,6 +1978,10 @@ function import_quiz($quizXmlString, $image = 'Default-64.png', $catOverride = 0
 		return;
 	// @TODO this function still needs a bit of work
 
+	if (intval(@ini_get('memory_limit')) < 512) {
+		@ini_set('memory_limit', '512M');
+	}
+
 	$unsuccessful = array();
 	$successful = array();
 	// These are the only valid image types for SMF.
@@ -2023,14 +2035,19 @@ function import_quiz($quizXmlString, $image = 'Default-64.png', $catOverride = 0
 				{
 					$imageData = base64_decode($quiz->fetch('imageData'));
 					file_put_contents($dest, $imageData);
-					$size = @getimagesize($dest);
-					// Default to png (3)
-					$fileType = isset($validImageTypes[$size[2]]) ? $size[2] : 3;
-					require_once($sourcedir . '/Subs-Graphics.php');
-					if (!reencodeImage($dest, $fileType))
-					{
-						@unlink($dest);
-						@unlink($dest . '.tmp');
+					clearstatcache(dirname($dest));
+					if (!is_dir($dest) && file_exists($dest)) {
+						$mimeType = @mime_content_type($dest);
+						$mimeTypes = ['auto', 'image/gif', 'image/jpeg', 'image/png', 'image/avif', 'image/tiff', 'image/bmp'];
+						// Default to png
+						$fileType = in_array($mimeType, $mimeTypes) ? array_search($mimeType, $mimeTypes) : 3;
+						$fileType = !in_array($fileType, [1, 2, 3, 6]) ? 3 : $fileType;
+						require_once($sourcedir . '/Subs-Graphics.php');
+						if (!reencodeImage($dest, $fileType))
+						{
+							@unlink($dest);
+							@unlink($dest . '.tmp');
+						}
 					}
 				}
 			}
