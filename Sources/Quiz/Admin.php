@@ -2567,7 +2567,8 @@ function quizGetPhpData($tempFile, $catOverride = 0)
 		$z,
 		$isEnabled,
 		$creator_id,
-		$catData
+		$catData,
+		$randClassName,
 	) = [
 		[],
 		[],
@@ -2578,16 +2579,25 @@ function quizGetPhpData($tempFile, $catOverride = 0)
 		1,
 		!empty($modSettings['SMFQuiz_ImportQuizzesAsUserId']) ? (int)$modSettings['SMFQuiz_ImportQuizzesAsUserId'] : $user_info['id'],
 		quizGetCategoryInfo(),
+		'QuizImport_' . substr(md5(rand(1000, 9999999)), 0, 8),
 	];
 
 	if (file_exists($tempFile) && is_file($tempFile)) {
+		// Alter the temporary file to implement a random variable class name
+		$filecontent = file_get_contents($tempFile);
+		$filecontent = str_replace('class QuizImport', 'class ' . $randClassName, $filecontent);
+		file_put_contents($tempFile, $filecontent);
+		$newClassName = 'Quiz\\' . $randClassName;
+
+		// Use the variable class to retrieve the Quiz data
 		require_once($tempFile);
 
-		if (!class_exists('Quiz\QuizImport')) {
+		if (!class_exists($newClassName)) {
 			$unsuccessful[] = array($txt['quiz_mod_unknown_quiz'], 'quiz_mod_error_reading_file');
 		}
 		else {
-			$newQuizLoadData = Quiz\QuizImport::quizImportData();
+			$quizClass = new $newClassName();
+			$newQuizLoadData = $quizClass::quizImportData();
 			// Quiz objects
 			while (array_key_exists('quiz' . $x, $newQuizLoadData['quizzes'])) {
 				$quiz = $newQuizLoadData['quizzes']['quiz' . $x];
@@ -2595,7 +2605,6 @@ function quizGetPhpData($tempFile, $catOverride = 0)
 				$currentCat = !empty($quiz['categoryName']) ? strtolower(trim(format_string2(strval($quiz['categoryName'])))) : '';
 				$findCat = !empty($currentCat) ? array_search($currentCat, array_column($catData, 'cat_name')) : 0;
 				$id_category = !empty($catOverride) ? $catOverride : (!empty($findCat) ? $catData[$findCat]['id_cat'] : 0);
-
 				$image = !empty($quiz['image']) && $quiz['image'] != '-' ? format_string2($quiz['image']) : 'Default-64.png';
 				$newQuizId = ImportQuiz(format_string2($quiz['title']), format_string2($quiz['description']), (int)$quiz['playLimit'], (int)$quiz['secondsPerQuestion'], (int)$quiz['showAnswers'], (int)$id_category, $isEnabled, $image, $creator_id);
 				if (!is_numeric($newQuizId)) {
