@@ -1997,7 +1997,7 @@ function import_quiz($quizXmlString, $image = 'Default-64.png', $catOverride = 0
 		14 => 'iff'
 	);
 
-	require_once($sourcedir . '/Class-Package.php'); // ENT_DISALLOWED
+	require_once($sourcedir . '/Class-Package.php');
 	$quizXmlString = format_string2(($quizXmlString));
 	$quizzes = New xmlArray($quizXmlString);
 	$catData = quizGetCategoryInfo();

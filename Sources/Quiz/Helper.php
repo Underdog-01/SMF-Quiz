@@ -3,7 +3,7 @@
 namespace Quiz;
 
 use Quiz\Integration;
-use Quiz\ForceUTF8;
+use Quiz\ForceEncoding;
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
@@ -160,13 +160,13 @@ class Helper
 		return str_replace('\n', '<br>', $stringToFormat);
 	}
 
-	public static function format_string($stringToFormat, $toHtml = true)
+	public static function format_string($stringToFormat, $input = false, $toHtml = true)
 	{
 		global $smcFunc;
 
 		$stringToFormat = str_replace(['quizes', 'Quizes'], ['quizzes', 'Quizzes'], $stringToFormat);
 
-		$stringToFormat = self::format_entities($stringToFormat, false);
+		$stringToFormat = self::format_entities($stringToFormat, $input, false);
 
 		// Remove any slashes. These should not be here, but it has been known to happen
 		$returnString = str_replace("\\", "", stripcslashes($stringToFormat));
@@ -180,7 +180,7 @@ class Helper
 		}
 
 		//return html_entity_decode($returnString, ENT_QUOTES, 'UTF-8');
-		return $returnString;
+		return !empty($input) ? str_replace('"', '&quot;', $returnString) : $returnString;
 	}
 
 	public static function format_entities($string, $decoded = true)

@@ -2391,7 +2391,7 @@ function template_edit_quiz()
 			</tr>
 			<tr class="windowbg" valign="top">
 				<td align="left"><b>' , $txt['SMFQuiz_Common']['Title'] , ':</b></td>
-				<td align="left"><input type="text" name="title" id="title" maxlength="400" size="50" value="' , Quiz\Helper::format_string($row['title'], false) , '"/></td>
+				<td align="left"><input type="text" name="title" id="title" maxlength="400" size="50" value="' , Quiz\Helper::format_string($row['title'], true, false) , '"/></td>
 			</tr>
 			<tr class="windowbg" valign="top">
 				<td align="left"><b>' , $txt['SMFQuiz_Common']['Category'] , ':</b></td>
@@ -2399,7 +2399,7 @@ function template_edit_quiz()
 			</td>
 			<tr class="windowbg" valign="top">
 				<td align="left"><b>' , $txt['SMFQuiz_Common']['Description'] , ':</b></td>
-				<td align="left"><textarea name="description" cols="50" rows="5">' , Quiz\Helper::format_string($row['description'], false) , '</textarea></td>
+				<td align="left"><textarea name="description" cols="50" rows="5">', Quiz\Helper::format_string($row['description'], false, false) , '</textarea></td>
 			</tr>
 			<tr class="windowbg" valign="top">
 				<td align="left"><b>' , $txt['SMFQuiz_Common']['ImageURL'] , ':</b></td>
@@ -2456,7 +2456,7 @@ function template_edit_question()
 						</tr>
 						<tr class="windowbg" valign="top">
 							<td align="left"><b>' , $txt['SMFQuiz_Common']['QuestionText'] , ':</b></td>
-							<td align="left"><input type="text" name="question_text" id="question_text" maxlength="400" size="90" value="' , Quiz\Helper::format_string($row['question_text'], false) , '"/></td>
+							<td align="left"><input type="text" name="question_text" id="question_text" maxlength="400" size="90" value="' , Quiz\Helper::format_string($row['question_text'], true, false) , '"/></td>
 						</tr>
 						<tr class="windowbg" valign="top">
 							<td align="left"><b>' , $txt['SMFQuiz_Common']['QuestionType'] , ':</b></td>
@@ -2486,7 +2486,7 @@ function template_edit_question()
 				echo '
 											<tr>
 												<td><input type="radio" name="correctAnswer" value="' , $answerRow['id_answer'] , '"' , $answerRow['is_correct'] ? ' checked="checked"' : '' , '/></td>
-												<td><input type="text" name="answer' , $answerRow['id_answer'] , '" size="50" value="', Quiz\Helper::format_string($answerRow['answer_text']) , '"/></td>
+												<td><input type="text" name="answer' , $answerRow['id_answer'] , '" size="50" value="', Quiz\Helper::format_string($answerRow['answer_text'], true) , '"/></td>
 											</tr>
 				';
 
@@ -2502,7 +2502,7 @@ function template_edit_question()
 			foreach ($context['SMFQuiz']['answers'] as $answerRow)
 				echo '
 								<input type="hidden" name="id_answer" value="' , $answerRow['id_answer'] , '"/>
-								<input type="text" name="freeTextAnswer" id="freeTextAnswer" size="50" maxlength="400" value="' , Quiz\Helper::format_string($answerRow['answer_text']) , '"/>
+								<input type="text" name="freeTextAnswer" id="freeTextAnswer" size="50" maxlength="400" value="' , Quiz\Helper::format_string($answerRow['answer_text'], true) , '"/>
 				';
 		}
 		else
@@ -2510,7 +2510,7 @@ function template_edit_question()
 			foreach($context['SMFQuiz']['answers'] as $answerRow)
 				echo '
 								<input type="radio" name="trueFalseAnswer" value="' , $answerRow['id_answer'] , '"' , $answerRow['is_correct'] == 1 ? ' checked="checked"' : '' , '></option> ' , Quiz\Helper::format_string($answerRow['answer_text']) , '<br/>
-								<input type="hidden" id="id_answer' , $answerRow['id_answer'] , '" name="id_answer' , $answerRow['id_answer'] , '" value="' , Quiz\Helper::format_string($answerRow['answer_text']) ,'"/>
+								<input type="hidden" id="id_answer' , $answerRow['id_answer'] , '" name="id_answer' , $answerRow['id_answer'] , '" value="' , Quiz\Helper::format_string($answerRow['answer_text'], true) ,'"/>
 				';
 		}
 		echo '
@@ -2589,7 +2589,7 @@ function template_show_questions()
 											</div>
 										</td>
 										<td style="text-align: left;">' , $row['question_type'] , '</td>
-										<td style="text-align: left;">' , $row['quiz_title'] == 'None Assigned' ? '<font color="red">' . $txt['SMFQuiz_Common']['NoneAssigned'] . '</font>' :  Quiz\Helper::format_string($row['quiz_title']) , '</td>
+										<td style="text-align: left;">' , $row['quiz_title'] == 'None Assigned' ? '<span class="alert">' . $txt['SMFQuiz_Common']['NoneAssigned'] . '</span>' :  Quiz\Helper::format_string($row['quiz_title']) , '</td>
 									</tr>';
 	}
 	else
@@ -3157,7 +3157,7 @@ function template_preview_quiz()
 				';
 			}
 			echo '
-				<tr class="windowbg"><td colspan="2">', $row['is_correct'] == 1 ? '<font color="red">' : '' , $count , '.', Quiz\Helper::format_string($row['answer_text']) , $row['is_correct'] == 1 ? '</font>' : '' , '</td></tr>
+				<tr class="windowbg"><td colspan="2">', $row['is_correct'] == 1 ? '<span class="alert">' : '' , $count , '.', Quiz\Helper::format_string($row['answer_text']) , $row['is_correct'] == 1 ? '</span>' : '' , '</td></tr>
 			';
 			$count++;
 			$lastQuestion = $row['id_question'];
