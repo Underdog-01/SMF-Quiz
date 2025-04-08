@@ -8,6 +8,7 @@
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added Quiz member profile settings for PM alerts.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Aesthetic changes to maintenance template.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added category override for Quiz imports.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added UTF-8 conversion for older Quiz imports.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Obsolete ajax upload script removed.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed image uploading and select options.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed player quiz limit adheres to quiz setting.

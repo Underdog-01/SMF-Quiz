@@ -3,6 +3,7 @@
 namespace Quiz;
 
 use Quiz\Integration;
+use Quiz\ForceUTF8;
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
@@ -10,7 +11,6 @@ if (!defined('SMF'))
 class Helper
 {
 	// Useful helper functions for various tasks
-
 	public static function quiz_usersAllowedTo($permission)
 	{
 		global $smcFunc;
@@ -156,6 +156,7 @@ class Helper
 		$stringToFormat = self::quiz_pmFilter(htmlspecialchars_decode($stringToFormat, ENT_QUOTES|ENT_HTML5));
 		$stringToFormat = html_entity_decode($stringToFormat, ENT_QUOTES, 'UTF-8');
 		$stringToFormat = str_replace(array("\'", chr(39), "'"), "&apos;", $stringToFormat);
+		$stringToFormat = self::format_entities($stringToFormat, true);
 		return str_replace('\n', '<br>', $stringToFormat);
 	}
 
@@ -165,8 +166,10 @@ class Helper
 
 		$stringToFormat = str_replace(['quizes', 'Quizes'], ['quizzes', 'Quizzes'], $stringToFormat);
 
+		$stringToFormat = self::format_entities($stringToFormat, false);
+
 		// Remove any slashes. These should not be here, but it has been known to happen
-		$returnString = str_replace("\\", "", $smcFunc['db_unescape_string']($stringToFormat));
+		$returnString = str_replace("\\", "", stripcslashes($stringToFormat));
 		$returnString = stripcslashes($returnString);
 
 		// We only want to convert from carriage returns to HTML breaks if the output is HTML
@@ -180,4 +183,32 @@ class Helper
 		return $returnString;
 	}
 
+	public static function format_entities($string, $decoded = true)
+	{
+		// this should remove the character padding from mixed 3 & 4 Byte strings
+		$encodedString = ForceEncoding::toUTF8(stripcslashes($string));
+		$string = ForceEncoding::fixUTF8($encodedString, ForceEncoding::QUIZ_ICONV_IGNORE);
+
+		// Literal replacements ~ this needs refinement and may have more characters added for any older Quiz formats
+		// .. ST/OSC padding was removed therefore left|right/single|double quotes become standard quotes
+		$find = [
+			'â', 'Ã¢ÂÂ', 'ÃƒÂ¡', 'ÃƒÂ¤', 'Ãƒâ€ž', 'ÃƒÂ§', 'ÃƒÂ©', 'Ãƒâ€°', 'ÃƒÂ¨', 'ÃƒÂ¬', 'ÃƒÂª', 'ÃƒÂ­', 'ÃƒÂ¯', 'Ã„Â©', 'ÃƒÂ³', 'ÃƒÂ¸', 'ÃƒÂ¶', 'Ãƒâ€“', 'Ã…Â¡', 'ÃƒÂ¼', 'LÃƒÂº', 'Ã…Â©', 'ÃƒÂ±', 'Ã¥',
+			'Ã¤', 'Ã¶', 'Ã…', 'Ã„', 'Ã–', 'Ã©', 'Ã¸', 'Ã¦', 'Ã˜', 'Ãµ', 'â€¢', 'Ãº', 'Ã', 'Ãƒ', 'Ã‡', 'â€', 'â€œ', 'Ã‰', 'Â”', 'Ã™', 'Â„', 'Â´', 'Â†', 'Ã¿', 'Ã«', 'Â›', 'Ã€', 'Ã‚', 'Ãƒ', 'Ãˆ', 'Ã‰', 'ÃŠ', 'Ã‹', 'ÃŒ',
+		];
+		$replace = [
+			'"', '"', 'á', 'ä', 'ä', 'ç', 'é', 'É', 'è', 'ě', 'ê', 'í', 'ï', 'ĩ', 'ó', 'ø', 'ö', 'ö', 'š', 'ü', 'ú', 'ũ', 'ñ', 'å', 'ä', 'ö', 'Å', 'Ä', 'Ö', '©', 'œ', 'æ', 'Ø', 'õ', '-', 'ú', 'À', 'Ã',
+			'Ç', '"', '"', 'É', 'ö', 'Ù', 'Ä', 'ô', 'Æ', 'ÿ', 'ë', 'Û', 'À', 'Â', 'Ã', 'È', 'É', 'Ê', 'Ë', 'Ì',
+		];
+
+		if (empty($decoded)) {
+			array_walk($replace, function ($value, $key) {
+				$replace[$key] = htmlspecialchars($value);
+			});
+		}
+
+		$string = str_replace($find, $replace, $string);
+
+		// any other non-utf8 characters can be ignored
+		return iconv('UTF-8', 'UTF-8//IGNORE', $string);
+	}
 }

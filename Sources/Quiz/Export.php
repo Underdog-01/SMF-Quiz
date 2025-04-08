@@ -98,14 +98,14 @@ function quiz_format_xml_array($quizArray)
 	global $smcFunc;
 
 	if(is_string($quizArray)) {
-		$quizArray = html_entity_decode($smcFunc['db_unescape_string']($quizArray), ENT_QUOTES|ENT_HTML5, 'UTF-8');
+		$quizArray = html_entity_decode(stripcslashes($quizArray), ENT_QUOTES|ENT_HTML5, 'UTF-8');
 		$quizArray = htmlspecialchars($quizArray, ENT_XML1 | ENT_QUOTES, 'UTF-8');
 	}
 	else {
 		$quizData = ['title', 'description', 'category_name', 'question_text', 'answer_text'];
 		foreach ($quizData as $index => $data) {
 			if (!empty($quizArray[$index]) && is_string($quizArray[$index])) {
-				$quizArray[$index] = html_entity_decode($smcFunc['db_unescape_string']($quizArray[$index]), ENT_QUOTES|ENT_HTML5, 'UTF-8');
+				$quizArray[$index] = html_entity_decode(stripcslashes($quizArray[$index]), ENT_QUOTES|ENT_HTML5, 'UTF-8');
 				$quizArray[$index] = htmlspecialchars($quizArray[$index], ENT_XML1 | ENT_QUOTES, 'UTF-8');
 			}
 		}

@@ -1997,7 +1997,7 @@ function import_quiz($quizXmlString, $image = 'Default-64.png', $catOverride = 0
 		14 => 'iff'
 	);
 
-	require_once($sourcedir . '/Class-Package.php');
+	require_once($sourcedir . '/Class-Package.php'); // ENT_DISALLOWED
 	$quizXmlString = format_string2(($quizXmlString));
 	$quizzes = New xmlArray($quizXmlString);
 	$catData = quizGetCategoryInfo();
@@ -2664,10 +2664,12 @@ function format_string2($stringToFormat)
 	global $smcFunc;
 
 	// Remove any backslashes
-	$stringToFormat = str_replace(array("\\", "quizes", "Quizes"), array("", "quizzes", "Quizzes"), $smcFunc['db_unescape_string']($stringToFormat));
+	$stringToFormat = str_replace(array("\\", "quizes", "Quizes"), array("", "quizzes", "Quizzes"), stripcslashes($stringToFormat));
 
 	// Ensure double|single quotes are explicitly HTML5 entities
+	$returnString = htmlspecialchars_decode($stringToFormat, ENT_NOQUOTES);
 	$returnString = str_replace(array("'", '"'), array('&apos;', '&quot;'), html_entity_decode($stringToFormat, ENT_QUOTES|ENT_HTML5, 'UTF-8'));
+	$returnString = Quiz\Helper::format_entities($returnString, true);
 
 	return $returnString;
 }

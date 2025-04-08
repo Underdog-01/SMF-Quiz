@@ -35,7 +35,7 @@ class Integration
 		global $sourcedir;
 
 		// Ensure the Quiz classes are available
-		$neededClasses = ['Tasks\Scheduled', 'Helper'];
+		$neededClasses = ['Tasks\Scheduled', 'Helper', 'ForceUTF8'];
 		foreach ($neededClasses as $class) {
 			if (!class_exists(__NAMESPACE__  . '\\' . $class)) {
 				require_once($sourcedir . '/' . __NAMESPACE__  . '/' . (str_replace('\\', '/', $class)) . '.php');
