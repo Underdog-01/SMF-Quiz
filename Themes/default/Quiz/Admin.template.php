@@ -1738,11 +1738,11 @@ function template_admin_center()
 							</div>
 							<div>
 								' , $txt['SMFQuizAdmin_AdminCenter_Page']['QuizzesNotEnabled'] , ':
-								<i id="yourVersion" style="white-space: nowrap;">' . (!empty($context['SMFQuiz_totalDisabledQuizzes']) ? '<font color="red">' . $context['SMFQuiz_totalDisabledQuizzes'] . '</font> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;disabled">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<font color="green">0</font>') . '</i>
+								<i id="yourVersion" style="white-space: nowrap;">' . (!empty($context['SMFQuiz_totalDisabledQuizzes']) ? '<span class="alert">' . $context['SMFQuiz_totalDisabledQuizzes'] . '</span> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;disabled">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<span style="color: green;">0</span>') . '</i>
 							</div>
 							<div>
 								' , $txt['SMFQuizAdmin_AdminCenter_Page']['QuizzesWaitingReview'] , ':
-								<i id="yourVersion" style="white-space: nowrap;">' . (!empty($context['SMFQuiz_totalQuizzesWaitingReview']) ? '<font color="red">' . $context['SMFQuiz_totalQuizzesWaitingReview'] . '</font> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;review">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<font color="green">0</font>') . '</i>
+								<i id="yourVersion" style="white-space: nowrap;">' . (!empty($context['SMFQuiz_totalQuizzesWaitingReview']) ? '<span class="alert">' . $context['SMFQuiz_totalQuizzesWaitingReview'] . '</span> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;review">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]' : '<span style="color: green;">0</span>') . '</i>
 							</div>
 							<div>
 								' , $txt['SMFQuizAdmin_AdminCenter_Page']['TotalResults'] , ':
@@ -1750,7 +1750,7 @@ function template_admin_center()
 							</div>
 							<div>
 								' , $txt['SMFQuizAdmin_AdminCenter_Page']['OutstandingDisputes'] , ':
-								<i id="yourVersion" style="white-space: nowrap;">' , !empty($context['SMFQuiz_totalDisputes']) ? '<font color="red">' . $context['SMFQuiz_totalDisputes'] . '</font><span style="padding-left: 1.5rem;"> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=disputes">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]</span>' : '<font color="green">0</font>' , '</i>
+								<i id="yourVersion" style="white-space: nowrap;">' , !empty($context['SMFQuiz_totalDisputes']) ? '<span class="alert">' . $context['SMFQuiz_totalDisputes'] . '</span><span style="padding-left: 1.5rem;"> [<a href="' . $scripturl . '?action=admin;area=quiz;sa=disputes">' . $txt['SMFQuiz_Common']['ViewAll'] . '</a>]</span>' : '<span style="color: green;">0</span>' , '</i>
 							</div>
 						</div>
 					</div>
@@ -1771,7 +1771,7 @@ function template_admin_center()
 							' , $txt['SMFQuizAdmin_AdminCenter_Page']['ModVersion'] , ':
 							<i id="yourVersion" style="white-space: nowrap;">' , $modSettings['SMFQuiz_version'] , '</i><br />
 							' , !empty($context['SMFQuiz_currentVersion']) ? $txt['SMFQuizAdmin_AdminCenter_Page']['CurrentSMFQuizVersion'] . ':
-							<i id="smfVersion" style="white-space: nowrap;">' . ($context['SMFQuiz_currentVersion'] == $modSettings['SMFQuiz_version'] ? '<font color="green">' : '<font color="red">') . $context['SMFQuiz_currentVersion'] . '</font>' . '</i>' : '', '
+							<i id="smfVersion" style="white-space: nowrap;">' . ($context['SMFQuiz_currentVersion'] == $modSettings['SMFQuiz_version'] ? '<span style="color: green;">' : '<span class="alert">') . $context['SMFQuiz_currentVersion'] . '</span>' . '</i>' : '', '
 						</div>
 					</div>
 					<span class="botslice"><span></span></span>

@@ -346,11 +346,11 @@ function template_quiz_league()
 
 		// @TODO css
 		if ($quizLeagueRow['state'] == 0)
-			echo '<font color="red">' , $txt['SMFQuiz_Common']['Disabled'] , '</font>';
+			echo '<span class="alert">' , $txt['SMFQuiz_Common']['Disabled'] , '</span>';
 		elseif ($quizLeagueRow['state'] == 1)
-			echo '<font color="green">' , $txt['SMFQuiz_Common']['Enabled'] , '</font>';
+			echo '<span style="color: green;">' , $txt['SMFQuiz_Common']['Enabled'] , '</span>';
 		elseif ($quizLeagueRow['state'] == 2)
-			echo '<font color="blue">' , $txt['SMFQuiz_Common']['Completed'] , '</font>';
+			echo '<span style="color: blue;">' , $txt['SMFQuiz_Common']['Completed'] , '</span>';
 
 		$nextUpdate = strtotime("+" . $quizLeagueRow['day_interval'] . " day", $quizLeagueRow['updated']);
 		echo '
@@ -364,7 +364,7 @@ function template_quiz_league()
 		if (isset($context['SMFQuiz']['CanPlayQuizLeague']))
 			// @TODO css
 			foreach($context['SMFQuiz']['CanPlayQuizLeague'] as $row)
-				echo '<font color="red">' , $txt['SMFQuiz_QuizLeague_Page']['PlayedQuiz'] , ' ' , date("M d Y H:i", $row['result_date']) , ' ' , $txt['SMFQuiz_Common']['with'] , ' ' , $row['correct'] , ' ' , $txt['SMFQuiz_QuizLeague_Page']['QuestionsCorrectIn'] , ' ' , $row['seconds'] , ' ' , $txt['SMFQuiz_Common']['Seconds'] , '.';
+				echo '<span class="alert">' , $txt['SMFQuiz_QuizLeague_Page']['PlayedQuiz'] , ' ' , date("M d Y H:i", $row['result_date']) , ' ' , $txt['SMFQuiz_Common']['with'] , ' ' , $row['correct'] , ' ' , $txt['SMFQuiz_QuizLeague_Page']['QuestionsCorrectIn'] , ' ' , $row['seconds'] , ' ' , $txt['SMFQuiz_Common']['Seconds'] , '.';
 		elseif ($quizLeagueRow['state'] == 1)
 			echo '		' , $txt['SMFQuiz_QuizLeague_Page']['NotPlayedQuiz'] , ' <a href="#" onclick="window.open(\'' , $scripturl , '?action=SMFQuiz;sa=play;id_quiz_league=' , $quizLeagueRow['id_quiz_league'] , '\',\'playnew\',\'height=625,width=720,toolbar=no,scrollbars=yes,location=no,statusbar=no,menubar=no,resizable=yes\')"><img src="' , $settings['default_images_url'] , '/quiz_images/Play-24.png" alt="' , $txt['SMFQuiz_Common']['PlayQuizLeague'] , '" border="0" height="24" width="24"/></a>';
 
@@ -399,9 +399,9 @@ function template_quiz_league()
 			// @TODO css
 			$movement = $quizTableRow['last_position'] - $quizTableRow['current_position'];
 			if ($movement > 0)
-				echo  '				<font color="green"> ' , $movement , '</font>';
+				echo  '				<span style="color: green;"> ' , $movement , '</span>';
 			elseif ($movement < 0 && $quizTableRow['last_position'] > 0)
-				echo  '				<font color="red"> ' , $movement , '</font>';
+				echo  '				<span class="alert"> ' , $movement , '</span>';
 			else
 				echo  '				-';
 
@@ -511,7 +511,7 @@ function template_quiz_leagues()
 		echo '
 								<tr style="text-align: left;">
 									<td class="windowbg"><a href="' , $scripturl , '?action=' , $context['current_action'] , '&sa=quizleagues&id=' , $quizLeaguesRow['id_quiz_league'] , '">' , Quiz\Helper::format_string($quizLeaguesRow['title']) , '</a></td>
-									<td class="windowbg">' , $quizLeaguesRow['state'] == 1 ? '<font color="green">' . $txt['SMFQuiz_Common']['Inprogress'] . '</font>' : '<font color="blue">' . $txt['SMFQuiz_Common']['Complete'] . '</font>' , '</td>
+									<td class="windowbg">' , $quizLeaguesRow['state'] == 1 ? '<span style="color: green;">' . $txt['SMFQuiz_Common']['Inprogress'] . '</span>' : '<span style="color: blue;">' . $txt['SMFQuiz_Common']['Complete'] . '</span>' , '</td>
 									<td class="windowbg">' , $quizLeaguesRow['current_round'] , '</td>
 									<td class="windowbg">
 		';
@@ -1842,17 +1842,17 @@ elseif ($column['selected'])
 												<td align="left"><a href="' , $scripturl , '?action=SMFQuiz;sa=categories;id_quiz=' , $row['id_quiz'] , '">' , Quiz\Helper::format_string($row['title']) , '</a></td>
 												<td align="left">';
 				if ($row['percentage'] > 80)
-					echo '<font color="green">' , $txt['SMFQuiz_Common']['VeryEasy'] , '</font>';
+					echo '<span style="color: green;">' , $txt['SMFQuiz_Common']['VeryEasy'] , '</span>';
 				elseif ($row['percentage'] > 60)
-					echo '<font color="green">' , $txt['SMFQuiz_Common']['Easy'] , '</font>';
+					echo '<span style="color: green;">' , $txt['SMFQuiz_Common']['Easy'] , '</span>';
 				elseif ($row['percentage'] > 40)
-					echo '<font color="orange">' , $txt['SMFQuiz_Common']['Average'] , '</font>';
+					echo '<span style="color: orange;">' , $txt['SMFQuiz_Common']['Average'] , '</span>';
 				elseif ($row['percentage'] > 20)
-					echo '<font color="red">' , $txt['SMFQuiz_Common']['Difficult'] , '</font>';
+					echo '<span class="alert">' , $txt['SMFQuiz_Common']['Difficult'] , '</span>';
 				elseif ($row['quiz_plays'] == 0)
-					echo '<font color="red">' , $txt['SMFQuiz_n_a'] , '</font>';
+					echo '<span class="alert">' , $txt['SMFQuiz_n_a'] , '</span>';
 				else
-					echo '<font color="red">' , $txt['SMFQuiz_Common']['Tough'] , '</font>';
+					echo '<span class="alert">' , $txt['SMFQuiz_Common']['Tough'] , '</span>';
 
 				echo '
 												</td>
@@ -2021,17 +2021,17 @@ function template_user_details()
 										<td>
 			';
 			if ($statisticsRow['percentage_correct'] > 90)
-				echo '<font color="green">' , $txt['SMFQuiz_UserRatings']['QuizMaster'] , '</font> <img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" /><img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" /><img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" />';
+				echo '<span style="color: green;">' , $txt['SMFQuiz_UserRatings']['QuizMaster'] , '</span> <img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" /><img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" /><img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" />';
 			elseif ($statisticsRow['percentage_correct'] > 80)
-				echo '<font color="green">' , $txt['SMFQuiz_UserRatings']['VeryGood'] , '</font> <img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" /><img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" />';
+				echo '<span style="color: green;">' , $txt['SMFQuiz_UserRatings']['VeryGood'] , '</span> <img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" /><img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" />';
 			elseif ($statisticsRow['percentage_correct'] > 60)
-				echo '<font color="green">' , $txt['SMFQuiz_UserRatings']['Good'] , '</font> <img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" />';
+				echo '<span style="color: green;">' , $txt['SMFQuiz_UserRatings']['Good'] , '</span> <img src="' , $settings['default_images_url'] , '/star.gif" width="12" height="12" alt="" />';
 			elseif ($statisticsRow['percentage_correct'] > 40)
-				echo '<font color="orange">' , $txt['SMFQuiz_UserRatings']['Average'] , '</font>';
+				echo '<span style="color: orange;">' , $txt['SMFQuiz_UserRatings']['Average'] , '</span>';
 			elseif ($statisticsRow['percentage_correct'] > 20)
-				echo '<font color="red">' , $txt['SMFQuiz_UserRatings']['Poor'] , '</font>';
+				echo '<span class="alert">' , $txt['SMFQuiz_UserRatings']['Poor'] , '</span>';
 			else
-				echo '<font color="red">' , $txt['SMFQuiz_UserRatings']['Dumb'] , '</font>';
+				echo '<span class="alert">' , $txt['SMFQuiz_UserRatings']['Dumb'] , '</span>';
 
 			echo '							</td>
 										</tr>
@@ -3009,9 +3009,9 @@ function template_quiz_league_table()
 			if ($row['pos_move'] == 0 || $row['plays'] < 2)
 				echo '-';
 			elseif ($row['pos_move'] > 0)
-				echo '<font color="green">+' , $row['pos_move'] , '</font>';
+				echo '<span style="color: green;">+' , $row['pos_move'] , '</span>';
 			else
-				echo '<font color="red">' , $row['pos_move'] , '</font>';
+				echo '<span class="alert">' , $row['pos_move'] , '</span>';
 
 			echo '						</td>
 										<td align="left"><a href="' , $scripturl , '?action=SMFQuiz;sa=userdetails;id_user=' , $row['id_user'] , '">' , $row['real_name'] , '</a></td>
@@ -3138,7 +3138,7 @@ function template_preview_quiz()
 		';
 
 	if (!isset($context['SMFQuiz']['questions']))
-		echo '	<tr class="windowbg"><td colspan="2"><font color="red">No questions have been added</font></td></tr>';
+		echo '	<tr class="windowbg"><td colspan="2"><span class="alert">No questions have been added</span></td></tr>';
 	else
 	{
 		$lastQuestion = 0;
