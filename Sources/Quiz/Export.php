@@ -79,13 +79,13 @@ function PackageQuiz()
 function quiz_format_array($quizArray)
 {
 	if(is_string($quizArray)) {
-		$quizArray = format_string2($quizArray);
+		$quizArray = Quiz\Helper::format_string_subedit($quizArray);
 	}
 	else {
 		$quizData = ['title', 'description', 'category_name', 'question_text', 'answer_text'];
 		foreach ($quizData as $index => $data) {
 			if (!empty($quizArray[$index]) && is_string($quizArray[$index])) {
-				$quizArray[$index] = format_string2($quizArray[$index]);
+				$quizArray[$index] = Quiz\Helper::format_string_subedit($quizArray[$index]);
 			}
 		}
 	}
@@ -131,7 +131,6 @@ function BuildQuizFileXML($packageName, $quizRows, $packageDescription, $package
 
 		foreach ($quizRows as $row)
 		{
-// @TODO double quotes
 			$quizXML .= "
 	<quiz>
 		<title><![CDATA[" . $row['title'] . "]]></title>

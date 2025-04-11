@@ -32,6 +32,7 @@ $txt['SMFQuiz_Categories_Page'] = array(
 $txt['SMFQuiz_QuizLeagues_Page'] = array(
 	'Title' => 'SMFQuiz - Leagues',
 	'TopLevel' => 'Top Level',
+	'None' => 'No Results',
 );
 
 // Language text located in the quiz league page
@@ -42,7 +43,7 @@ $txt['SMFQuiz_QuizLeague_Page'] = array(
 	'NotPlayedQuiz' => 'You have not played this round, play now',
 	'QuestionsCorrectIn' => 'questions correct in',
 	'TableGeneratedOn' => 'This table is from the last week and was generated on',
-	'DoesNotIncludeRoundResults' => 'It does not include this rounds results',
+	'DoesNotIncludeRoundResults' => 'It does not include the results from this round',
 );
 
 // Language text located in the user quizzes page
@@ -125,6 +126,7 @@ $txt['SMFQuiz_Statistics_Page'] = array(
 	'10EasiestQuizzes' => '10 Easiest Quizzes',
 	'10MostActivePlayers' => '10 Most Active Players',
 	'10MostQuizCreators' => '10 Most Quiz Creators',
+	'Plays' => '%s plays',
 );
 
 // Language text located in the top tab control

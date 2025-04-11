@@ -118,7 +118,7 @@ function GetQuizQuestionCount($id_quiz)
 // Data class for question details
 function GetAllQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 'up', $id_quiz = 0)
 {
-	global $context, $smcFunc, $modSettings;
+	global $context, $smcFunc, $txt, $modSettings;
 
 	// Work out paging
 	$startPage = ($page - 1) * $modSettings['SMFQuiz_ListPageSizes'];
@@ -140,7 +140,7 @@ function GetAllQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = '
 				Q.id_question,
 				Q.question_text,
 				QT.description AS question_type,
-				IFNULL(QI.title, 'None Assigned') AS quiz_title
+				IFNULL(QI.title, {string:none}) AS quiz_title
 			FROM {db_prefix}quiz_question Q
 			LEFT JOIN {db_prefix}quiz QI
 				ON Q.id_quiz = QI.id_quiz
@@ -149,9 +149,10 @@ function GetAllQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = '
 			WHERE Q.id_quiz = {int:id_quiz}
 			ORDER BY {$orderBy} {$orderDir}
 			LIMIT {$startPage}, {$modSettings['SMFQuiz_ListPageSizes']}",
-			array(
-				'id_quiz' => $id_quiz
-			)
+			[
+				'id_quiz' => $id_quiz,
+				'none' => $txt['SMFQuiz_Common']['NoneAssigned'],
+			]
 		);
 	}
 	else
@@ -162,14 +163,17 @@ function GetAllQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = '
 				Q.id_question,
 				Q.question_text,
 				QT.description AS question_type,
-				IFNULL(QI.title, 'None Assigned') AS quiz_title
+				IFNULL(QI.title, {string:none}) AS quiz_title
 			FROM {db_prefix}quiz_question Q
 			LEFT JOIN {db_prefix}quiz QI
 				ON Q.id_quiz = QI.id_quiz
 			INNER JOIN {db_prefix}quiz_question_type QT
 				ON Q.id_question_type = QT.id_question_type
 			ORDER BY {$orderBy} {$orderDir}
-			LIMIT {$startPage}, {$modSettings['SMFQuiz_ListPageSizes']}"
+			LIMIT {$startPage}, {$modSettings['SMFQuiz_ListPageSizes']}",
+			[
+				'none' => $txt['SMFQuiz_Common']['NoneAssigned'],
+			]
 		);
 	}
 
@@ -182,7 +186,7 @@ function GetAllQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = '
 
 function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = false, $id_quiz = 0, $id_user = 0)
 {
-	global $context, $smcFunc;
+	global $context, $txt, $smcFunc;
 
 	// Work out paging
 	$startPage = ($page - 1) * 20;
@@ -200,7 +204,7 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 			SELECT 		Q.id_question,
 						Q.question_text,
 						QT.description AS question_type,
-						IFNULL(QI.title, \'None Assigned\') AS quiz_title
+						IFNULL(QI.title, {string:none}) AS quiz_title
 			FROM 		{db_prefix}quiz_question Q
 			LEFT JOIN 	{db_prefix}quiz QI
 			ON 			Q.id_quiz = QI.id_quiz
@@ -214,7 +218,8 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 				'id_user' => $id_user,
 				'orderBy' => $orderBy,
 				'orderDir' => $orderDir,
-				'startPage' => $startPage
+				'startPage' => $startPage,
+				'none' => $txt['SMFQuiz_Common']['NoneAssigned'],
 			)
 		);
 	}
@@ -226,7 +231,7 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 			SELECT 		Q.id_question,
 						Q.question_text,
 						QT.description AS question_type,
-						IFNULL(QI.title, \'None Assigned\') AS quiz_title
+						IFNULL(QI.title, {string:none}) AS quiz_title
 			FROM 		{db_prefix}quiz_question Q
 			LEFT JOIN 	{db_prefix}quiz QI
 			ON 			Q.id_quiz = QI.id_quiz
@@ -239,7 +244,8 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 				'id_user' => $id_user,
 				'orderBy' => $orderBy,
 				'orderDir' => $orderDir,
-				'startPage' => $startPage
+				'startPage' => $startPage,
+				'none' => $txt['SMFQuiz_Common']['NoneAssigned'],
 			)
 		);
 	}
@@ -254,7 +260,7 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 // Retrieve all quiz details and populate results in the context
 function GetAllQuizDetails($page = 0, $orderBy = 'Q.Title', $orderDir = 'up')
 {
-	global $context, $smcFunc;
+	global $context, $txt, $smcFunc;
 
 	$startPage = ($page - 1) * 20;
 
@@ -283,7 +289,7 @@ function GetAllQuizDetails($page = 0, $orderBy = 'Q.Title', $orderDir = 'up')
 					Q.show_answers,
 					Q.enabled,
 					QC.id_category,
-					(CASE WHEN Q.id_category = 0 THEN 'Top Level' ELSE QC.name END) AS category_name,
+					(CASE WHEN Q.id_category = 0 THEN {string:toplvl} ELSE QC.name END) AS category_name,
 					COUNT(U.id_quiz) AS questions_per_session
 		FROM 		{db_prefix}quiz Q
 		LEFT JOIN	{db_prefix}quiz_category QC
@@ -306,7 +312,10 @@ function GetAllQuizDetails($page = 0, $orderBy = 'Q.Title', $orderDir = 'up')
 					QC.name,
 					U.id_quiz
 		ORDER BY 	{$orderBy} {$orderDir}
-		{$limit}"
+		{$limit}",
+		[
+			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
+		]
 	);
 
 	$context['SMFQuiz']['quizzes'] = Array();
@@ -729,7 +738,7 @@ function GetQuizLeagueTable($id_quiz_league, $round)
 // Data class for user Quiz League details
 function GetUserQuizLeagueDetails($id_user)
 {
-	global $context, $smcFunc;
+	global $context, $txt, $smcFunc;
 
 		// @TODO query
 	$result = $smcFunc['db_query']('', '
@@ -740,7 +749,7 @@ function GetUserQuizLeagueDetails($id_user)
 					QL.state,
 					QL.day_interval,
 					IFNULL(QL.id_leader,0) AS id_leader,
-					IFNULL(M.real_name,\'None\') AS leader_name,
+					IFNULL(M.real_name, {string:none}) AS leader_name,
 					IFNULL(QLT.points,0) AS user_points,
 					IFNULL(QLT.current_position,0) AS user_position
 		FROM 		{db_prefix}quiz_league QL
@@ -754,7 +763,8 @@ function GetUserQuizLeagueDetails($id_user)
 		ORDER BY 	QL.state ASC,
 					QL.title ASC',
 		array(
-			'id_user' => $id_user
+			'id_user' => $id_user,
+			'none' => $txt['SMFQuiz_Common']['None'],
 		)
 	);
 
@@ -790,7 +800,7 @@ function GetAllQuestionTypes()
 // Data class for the category details
 function GetAllCategoryDetails($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pageSize = 5000)
 {
-	global $context, $smcFunc;
+	global $context, $txt, $smcFunc;
 
 	// Work out paging
 	$startPage = ($page - 1) * $pageSize;
@@ -809,12 +819,15 @@ function GetAllCategoryDetails($page = 1, $orderBy = 'C.name', $orderDir = 'up',
 					C.id_parent,
 					C.image,
 					C.quiz_count,
-					IFNULL(C2.name, 'Top Level') AS parent_name
+					IFNULL(C2.name, {string:toplvl}) AS parent_name
 		FROM 		{db_prefix}quiz_category C
 		LEFT JOIN 	{db_prefix}quiz_category C2
 		ON 			C.id_parent = C2.id_category
 		ORDER BY 	{$orderBy} {$orderDir}
-		LIMIT		{$startPage}, {$pageSize}"
+		LIMIT		{$startPage}, {$pageSize}",
+		[
+			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -828,7 +841,7 @@ function GetAllCategoryDetails($page = 1, $orderBy = 'C.name', $orderDir = 'up',
 
 function GetCategoryChildren($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pageSize = 5000, $id_category = 0)
 {
-	global $context, $smcFunc;
+	global $context, $txt, $smcFunc;
 
 	// Work out paging
 	$startPage = ($page - 1) * $pageSize;
@@ -847,7 +860,7 @@ function GetCategoryChildren($page = 1, $orderBy = 'C.name', $orderDir = 'up', $
 					C.id_parent,
 					C.image,
 					C.quiz_count,
-					IFNULL(C2.name, \'Top Level\') AS parent_name
+					IFNULL(C2.name, {string:toplvl}) AS parent_name
 		FROM 		{db_prefix}quiz_category C
 		LEFT JOIN 	{db_prefix}quiz_category C2
 		ON 			C.id_parent = C2.id_category
@@ -859,7 +872,8 @@ function GetCategoryChildren($page = 1, $orderBy = 'C.name', $orderDir = 'up', $
 			'startPage' => $startPage,
 			'pageSize' => $pageSize,
 			'orderBy' => $orderBy,
-			'orderDir' => $orderDir
+			'orderDir' => $orderDir,
+			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
 		)
 	);
 
@@ -879,13 +893,14 @@ function QuizGetCategoryParentsWithChild()
 	$result = $smcFunc['db_query']('', "
 		SELECT 		C.id_category,
 					C.name,
-					IFNULL(C.name, 'Top Level') AS parent_name
+					IFNULL(C.name, {string:toplvl}) AS parent_name
 		FROM 		{db_prefix}quiz_category C
 		WHERE C.id_category IN (SELECT CC.id_parent FROM {db_prefix}quiz_category CC)
 		ORDER BY 	C.name ASC",
-		array(
+		[
 			'id_category' => 0,
-		)
+			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
+		]
 	);
 
 	$context['SMFQuiz']['parent_categories'] = [];
@@ -908,7 +923,7 @@ function QuizGetCategoryParentsWithChild()
 
 function GetCategoryParent($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pageSize = 5000, $id_category = 0)
 {
-	global $context, $smcFunc;
+	global $context, $txt, $smcFunc;
 
 	// Work out paging
 	$startPage = ($page - 1) * $pageSize;
@@ -927,7 +942,7 @@ function GetCategoryParent($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pa
 					C.id_parent,
 					C.image,
 					C.quiz_count,
-					IFNULL(C2.name, 'Top Level') AS parent_name
+					IFNULL(C2.name, {string:toplvl}) AS parent_name
 		FROM 		{db_prefix}quiz_category C
 		LEFT JOIN 	{db_prefix}quiz_category C2
 		ON 			C.id_parent = C2.id_category
@@ -940,6 +955,7 @@ function GetCategoryParent($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pa
 		LIMIT		{$startPage}, {$pageSize}",
 		array(
 			'id_category' => $id_category,
+			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
 		)
 	);
 
@@ -955,7 +971,7 @@ function GetCategoryParent($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pa
 // Data class for the category details
 function GetParentCategoryDetails($parentId = 0)
 {
-	global $context, $smcFunc;
+	global $context, $txt, $smcFunc;
 
 		// @TODO query
 	$result = $smcFunc['db_query']('', '
@@ -965,15 +981,16 @@ function GetParentCategoryDetails($parentId = 0)
 					C.id_parent,
 					C.image,
 					C.quiz_count,
-					IFNULL(C2.name, \'Top Level\') AS parent_name
+					IFNULL(C2.name, {string:toplvl}) AS parent_name
 		FROM 		{db_prefix}quiz_category C
 		LEFT JOIN 	{db_prefix}quiz_category C2
 		ON 			C.id_parent = C2.id_category
 		WHERE		C.id_parent = {int:id_parent}
 		ORDER BY	C.name',
-		array(
+		[
 			'id_parent' => $parentId,
-		)
+			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
+		]
 	);
 
 	// Loop through the results and populate the context accordingly

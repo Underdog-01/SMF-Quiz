@@ -198,11 +198,16 @@
 	justify-content: center;
 }
 .quiz_highlight:hover {
-	background-color: #0005;
-	background-blend-mode: darken;
+	backdrop-filter: invert(15%);
+	background-blend-mode: screen, difference, color-dodge;
 	padding: 0rem 0.35rem;
 	overflow: hidden;
 	border-radius: 3px;
+}
+.quiz_highlight {
+	border: ridge 0.2rem;
+	border-radius: 0.025rem;
+	box-sizing: border-box;
 }
 .quiz_inline_left {
 	width: 80%;

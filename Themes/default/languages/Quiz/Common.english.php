@@ -49,6 +49,7 @@ $txt['SMFQuiz_Common'] = array(
 	'Functions' => 'Functions',
 	'Go' => 'Go',
 	'HardestQuizzes' => 'Hardest Quizzes',
+	'Image' => 'Image',
 	'ImageURL' => 'Image URL',
 	'ImageUpload' => 'Upload Image',
 	'in' => 'in',
@@ -177,6 +178,7 @@ $txt['SMFQuiz_Common'] = array(
 	'YouHavePlayedThisQuiz' => 'You have played this quiz',
 	'YourPoints' => 'Your Points',
 	'YourPosition' => 'Your Position',
+	'None' => 'None',
 );
 
 $txt['SMFQuiz_n_a'] = 'Not applicable';

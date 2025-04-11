@@ -1,0 +1,122 @@
+
+$test = $smcFunc['db_query']('', '
+    SELECT
+        q.title, q.description, qq.id_question, qq.answer_text AS at
+    FROM quiz q
+	UNION ALL
+	SELECT a.answer_text
+	FROM {db_prefix}quiz_answer a
+    LEFT JOIN {db_prefix}quiz_question AS qq ON (q.id_quiz = qq.id_quiz)
+    LEFT JOIN {db_prefix}quiz_answer AS a ON (qq.id_question = a.id_question)
+    WHERE creator_id = '1''
+    );
+
+    while ($row = $smcFunc['db_fetch_assoc']($test))
+    {
+        $data['quiz-usuarios'][] = array(
+        'titulo' => $row['title'],
+        'descripcion' => $row['description'],
+        'question' => array(
+            'pregunta' => $row['answer_text'],
+            'answer' => array(
+                'respuestas' => $row['at'],
+            ),
+        ),
+        );
+    }
+
+
+	SELECT id, First_Name, Last_Name, 'Email' Name, Email Value
+    FROM table1
+UNION ALL /* or UNION DISTINCT */
+    SELECT tb1.id, tb1.First_Name, tb1.Last_Name, tb2.Name, tb2.Value,
+    FROM  table1 tb1
+    LEFT JOIN table2 tb2
+        ON tb2.Name LIKE '%email%'
+       AND tb2.Value LIKE '%@%'
+       AND tb2.client_id = tb1.id
+
+
+
+	global $smcFunc;
+	$data['quiz-usuarios'] = [];
+
+	$test = $smcFunc['db_query']('', '
+		SELECT
+			q.id_quiz, q.title, q.description, qq.answer_text, a.answer_text AS at,
+			qq.id_question, qq.question_text, a.is_correct
+		FROM {db_prefix}quiz as q
+		INNER JOIN {db_prefix}quiz_question AS qq ON (q.id_quiz = qq.id_quiz)
+		INNER JOIN {db_prefix}quiz_answer AS a ON (qq.id_question = a.id_question)
+		WHERE q.creator_id = {int:id}
+		ORDER BY qq.id_question, q.id_quiz',
+		['id' => 2]
+	);
+
+	while ($row = $smcFunc['db_fetch_assoc']($test))
+	{
+		if (empty($data['quiz-usuarios'][$row['id_question']])) {
+			$data['quiz-usuarios'][$row['id_question']] = [
+				'id_quiz' => $row['id_quiz'],
+				'id_question' => $row['id_question'],
+				'titulo' => $row['title'],
+				'descripcion' => $row['description'],
+				'questions' => [],
+				'additional dialogue' => $row['answer_text'],
+				'correct_answer' => '',
+				'answers' => [],
+			];
+			$data['quiz-usuarios'][$row['id_question']]['questions'][] = $row['question_text'];
+		}
+
+		$data['quiz-usuarios'][$row['id_question']]['answers'][] = $row['at'];
+		$data['quiz-usuarios'][$row['id_question']]['correct_answer'] = !empty($row['is_correct']) ? $row['at'] : '';
+	}
+
+	$smcFunc['db_free_result']($test);
+
+	foreach ($data['quiz-usuarios'] as $key => $val){
+		echo $key . ' => ' . json_encode($val) . '<br><br>';
+	}
+	
+	//print_r($data);
+	
+	
+	global $smcFunc;
+	$data['quiz-usuarios'] = [];
+
+	$test = $smcFunc['db_query']('', '
+		SELECT
+			q.id_quiz, q.title, q.description, qq.answer_text, a.answer_text AS at,
+			qq.id_question, qq.question_text
+		FROM {db_prefix}quiz as q
+		INNER JOIN {db_prefix}quiz_question AS qq ON (q.id_quiz = qq.id_quiz)
+		INNER JOIN {db_prefix}quiz_answer AS a ON (qq.id_question = a.id_question)
+		WHERE q.creator_id = {int:id}
+		ORDER BY qq.id_question',
+		['id' => 2]
+	);
+
+	while ($row = $smcFunc['db_fetch_assoc']($test))
+	{
+		if (empty($data['quiz-usuarios'][$row['id_question']])) {
+			$data['quiz-usuarios'][$row['id_question']] = [
+				'titulo' => $row['title'],
+				'descripcion' => $row['description'],
+				'questions' => [],
+				'answer' => $row['answer_text'],
+				'answers' => [],
+			];
+		}
+		$data['quiz-usuarios'][$row['id_question']]['questions'][] = $row['question_text'];
+		$data['quiz-usuarios'][$row['id_question']]['answers'][] = $row['at'];
+	}
+
+	$smcFunc['db_free_result']($test);
+
+	$a = json_encode($data['quiz-usuarios']);
+	$b = json_decode($a);
+
+	foreach ($b as $key => $val){
+		echo $key . ' => ' . json_encode($val) . '<br><br>';
+	}

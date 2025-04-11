@@ -10,10 +10,14 @@ $(document).ready(function(){
 			heightQuizRight = Math.ceil($(this).height());
 			if (heightQuizLeft > heightQuizRight) {
 				$(this).height(heightQuizLeft);
+				$(this).css("min-height", String(heightQuizLeft) + "px");
+				$("#quizDetailCell" + (cellindex-1)).css("min-height", String(heightQuizLeft) + "px");
 				$("#quizDetailCell" + (cellindex-1)).height(heightQuizLeft);
 			}
 			else {
 				$("#quizDetailCell" + (cellindex-1)).height(heightQuizRight);
+				$("#quizDetailCell" + (cellindex-1)).css("min-height", String(heightQuizRight) + "px");
+				$(this).css("min-height", String(heightQuizRight) + "px");
 				$(this).height(heightQuizRight);
 			}
 		}
@@ -29,23 +33,25 @@ $(document).ready(function(){
 	});
 });
 function quizSearchLoader() {
-	var quizSearchTrigger = document.getElementById("quick_name");
-	sessionStorage.setItem("quizQuickNameVal", quizSearchTrigger.value.trim());
-	if (quizSearchTrigger) {
-		quizSearchTrigger.onkeypress = function(){
-			QuizQuickSearch();
-			setTimeout(function(){
-				var quick_name = document.getElementById("quick_name").value.trim();
-				if (sessionStorage.getItem("quizQuickNameVal") != quick_name)
-					QuizQuickSearch();
-			}, 2000);
-		};
+	if ($("#quick_name").length) {
+		var quizSearchTrigger = $("#quick_name");
+		sessionStorage.setItem("quizQuickNameVal", quizSearchTrigger.val().trim());
+		if (quizSearchTrigger) {
+			quizSearchTrigger.onkeypress = function(){
+				QuizQuickSearch();
+				setTimeout(function(){
+					let quick_name = $("#quick_name").val().trim();
+					if (sessionStorage.getItem("quizQuickNameVal") != quick_name)
+						QuizQuickSearch();
+				}, 2000);
+			};
+		}
+		setInterval(function(){
+			let quick_name = $("#quick_name").val().trim();
+			if (quick_name == "")
+				$("#quiz_search_divQ").html("");
+		}, 5000);
 	}
-	setInterval(function(){
-		var quick_name = document.getElementById("quick_name").value.trim();
-		if (quick_name == "")
-			document.getElementById(quiz_search_divQ).innerHTML = "";
-	}, 5000);
 }
 function QuizQuickSearch()
 {

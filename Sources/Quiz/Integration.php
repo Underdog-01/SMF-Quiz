@@ -107,7 +107,7 @@ class Integration
 
 	public static function admin_areas(&$admin_areas)
 	{
-		global $txt, $modSettings, $scripturl, $sourcedir, $context;
+		global $txt, $modSettings, $scripturl, $sourcedir, $settings, $context;
 		$admin_areas['quiz'] = array(
 			'title' => $txt['SMFQuiz'],
 			'permission' => array('quiz_admin'),
@@ -147,6 +147,32 @@ class Integration
 			];
 
 		}
+		// Fix the small Quiz admin icons
+		$context['html_headers'] = !empty($context['html_headers']) ? $context['html_headers'] : '';
+		$context['html_headers'] .= '
+		<script>
+			$(document).ready(function(){
+				$("span[class*=\'../../quiz_images/Admin/\']").each(function(index) {
+					let i=0, imgPath, imgFile, currentClasses = $(this).attr("class").split(/\s+/);
+					for(i=0;i<currentClasses.length;i++) {
+						if (~currentClasses[i].indexOf("../../quiz_images/Admin")) {
+							imgPath = currentClasses[i];
+							break;
+						}
+					}
+					if (imgPath) {
+						if (index == 0) {
+							$(this).parent().remove();
+						}
+						else {
+							$(this).removeClass("main_icons");
+							imgFile = "' . $settings['default_images_url'] . '/quiz_images/Admin/" +  imgPath.split(/[\\/]/).pop();
+							$(this).prepend(\'<img style="width: 16px;height: 16px;" src="\' + imgFile + \'"  alt="">\');
+						}
+					}
+				});
+			});
+		</script>';
 	}
 
 	public static function menu_buttons(&$buttons)

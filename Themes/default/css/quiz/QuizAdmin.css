@@ -200,3 +200,38 @@ button.quiz_task_button {
 	max-width: 16px;
 	max-height: 16px;
 }
+.quiz_sort_img {
+	width: 12px;
+	height: 12px;
+	display: inline-block;
+	position: relative;
+	padding: 0.25rem 0.25rem 0rem 0rem;
+}
+.quiz_headings_img {
+	width: 20px;
+	height: 20px;
+	min-width: 20px;
+	min-height: 20px;
+	max-width: 20px;
+	max-height: 20px;
+	vertical-align: bottom;
+}
+.quizzes_headings_cell {
+	text-align: center;
+	height: 32px;
+	min-width: 32px;
+	min-height: 32px;
+	margin: auto;
+	padding: 0rem 0.1rem;
+}
+.admin_viewall {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	padding-left: 0.35rem;
+	bottom: 0.115rem;
+	overflow: hidden;
+	transform: scale(1.01, 0.85);
+	filter: brightness(95%);
+	background-color: transparent;
+}

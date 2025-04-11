@@ -26,6 +26,7 @@ function SMFQuizAdmin()
 			' . ($quizVarsJS) . '
 		</script>
 		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/QuizAdmin.css?v=' . $qv . '"/>
+		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/QuizMain.css?v=' . $qv . '"/>
 		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/jquery.selectboxes.js?v=' . $qv . '"></script>
 		<script src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizAdmin.js?v=' . $qv . '"></script>';
 
@@ -1251,8 +1252,9 @@ function GetQuizzesData()
 			'width' => '2'
 		),
 		'image' => array(
-			'label' => 'Image',
-			'width' => '2'
+			'label' => $txt['SMFQuiz_Common']['Image'],
+			'width' => '32',
+			'image' => $settings['default_images_url'] . '/quiz_images/image.png',
 		),
 		'title' => array(
 			'label' => $txt['SMFQuiz_Common']['Title']
@@ -1262,35 +1264,41 @@ function GetQuizzesData()
 		),
 		'owner' => array(
 			'label' => $txt['SMFQuiz_Common']['Owner'],
-			'width' => '25'
+			'width' => '32'
 		),
 		'description' => array(
 			'label' => $txt['SMFQuiz_Common']['Description']
 		),
 		'category' => array(
 			'label' => $txt['SMFQuiz_Common']['Category'],
-			'width' => '20',
+			'width' => '32',
 			'link_with' => 'website',
+			'image' => $settings['default_images_url'] . '/quiz_images/Admin/categories.png',
 		),
 		'play_limit' => array(
 			'label' => $txt['SMFQuiz_Common']['PlayLimit'],
-			'width' => '20'
+			'width' => '32',
+			'image' => $settings['default_images_url'] . '/quiz_images/limit.png',
 		),
 		'questions' => array(
-			'label' => $txt['SMFQuiz_Common']['Qs'],
-			'width' => '20'
+			'label' => $txt['SMFQuiz_Common']['Questions'],
+			'width' => '32',
+			'image' => $settings['default_images_url'] . '/quiz_images/questions.png',
 		),
 		'seconds' => array(
 			'label' => $txt['SMFQuiz_Common']['Secs'],
-			'width' => '20'
+			'width' => '32',
+			'image' => $settings['default_images_url'] . '/quiz_images/clock.png',
 		),
 		'answers' => array(
 			'label' => $txt['SMFQuiz_Common']['Answers'],
-			'width' => '20'
+			'width' => '32',
+			'image' => $settings['default_images_url'] . '/quiz_images/answers.png',
 		),
 		'enabled' => array(
 			'label' => $txt['SMFQuiz_Common']['Functions'],
-			'width' => '20'
+			'width' => '48',
+			'image' => $settings['default_images_url'] . '/quiz_images/Admin/settings.png',
 		)
 	);
 
@@ -1364,7 +1372,11 @@ function GetQuizzesData()
 		'for_review' => array(
 			'down' => 'for_review DESC',
 			'up' => 'for_review ASC'
-		)
+		),
+		'image' => [
+			'down' => 'image DESC',
+			'up' => 'image ASC'
+		],
 	);
 
 	$query_parameters = array(
@@ -1838,18 +1850,18 @@ function ImportQuizFile($urlPath, $categoryId, $isEnabled, $image, $fileCount)
 		@unlink($tempFile);
 		foreach($myxml->quiz as $quiz)
 		{
-			$currentCat = $quiz->exists('categoryName') ? strtolower(trim(format_string2((string)$quiz->fetch('categoryName')))) : '';
+			$currentCat = $quiz->exists('categoryName') ? strtolower(trim(Quiz\Helper::format_string_subedit((string)$quiz->fetch('categoryName')))) : '';
 			$findCat = !empty($currentCat) ? array_search($currentCat, array_column($catData, 'cat_name')) : 0;
 			$id_category = !empty($findCat) ? $catData[$findCat]['id_cat'] : 0;
-			$newQuizId = ImportQuiz(format_string2($quiz->title), format_string2($quiz->description), $quiz->playLimit, $quiz->secondsPerQuestion, $quiz->showAnswers, $id_category, $isEnabled, $image, $creator_id);
+			$newQuizId = ImportQuiz(Quiz\Helper::format_string_subedit($quiz->title), Quiz\Helper::format_string_subedit($quiz->description), $quiz->playLimit, $quiz->secondsPerQuestion, $quiz->showAnswers, $id_category, $isEnabled, $image, $creator_id);
 
 			foreach($quiz->questions->children() as $questions)
 			{
-				$qImage = $questions->exists('image') ? format_string2($questions->image) : '';
+				$qImage = $questions->exists('image') ? Quiz\Helper::format_string_subedit($questions->image) : '';
 				$qImageData = $questions->exists('imageData') ? $questions->imageData : '';
-				$newQuestionId = ImportQuizQuestion($newQuizId, format_string2($questions->questionText), $questions->questionTypeId, format_string2($questions->answerText), $qImage, $qImageData);
+				$newQuestionId = ImportQuizQuestion($newQuizId, Quiz\Helper::format_string_subedit($questions->questionText), $questions->questionTypeId, Quiz\Helper::format_string_subedit($questions->answerText), $qImage, $qImageData);
 				foreach ($questions->children()->answers->children() as $answers)
-					ImportQuizAnswer($newQuestionId, format_string2($answers->answerText), $answers->isCorrect);
+					ImportQuizAnswer($newQuestionId, Quiz\Helper::format_string_subedit($answers->answerText), $answers->isCorrect);
 			}
 		}
 		$context['SMFQuiz']['SMFQuizImported'] = $fileCount+1;
@@ -1998,7 +2010,7 @@ function import_quiz($quizXmlString, $image = 'Default-64.png', $catOverride = 0
 	);
 
 	require_once($sourcedir . '/Class-Package.php');
-	$quizXmlString = format_string2(($quizXmlString));
+	$quizXmlString = Quiz\Helper::format_string_subedit(($quizXmlString));
 	$quizzes = New xmlArray($quizXmlString);
 	$catData = quizGetCategoryInfo();
 
@@ -2016,7 +2028,7 @@ function import_quiz($quizXmlString, $image = 'Default-64.png', $catOverride = 0
 			$creator_id = isset($modSettings['SMFQuiz_ImportQuizzesAsUserId']) ? $modSettings['SMFQuiz_ImportQuizzesAsUserId'] : 1;
 
 			// Check for a matching category
-			$currentCat = $quiz->exists('categoryName') ? strtolower(trim(format_string2((string)$quiz->fetch('categoryName')))) : '';
+			$currentCat = $quiz->exists('categoryName') ? strtolower(trim(Quiz\Helper::format_string_subedit((string)$quiz->fetch('categoryName')))) : '';
 			$findCat = !empty($currentCat) ? array_search($currentCat, array_column($catData, 'cat_name')) : 0;
 			$id_category = !empty($catOverride) ? $catOverride : (!empty($findCat) ? $catData[$findCat]['id_cat'] : 0);
 
@@ -2602,25 +2614,25 @@ function quizGetPhpData($tempFile, $catOverride = 0)
 			while (array_key_exists('quiz' . $x, $newQuizLoadData['quizzes'])) {
 				$quiz = $newQuizLoadData['quizzes']['quiz' . $x];
 				// Check for a matching category
-				$currentCat = !empty($quiz['categoryName']) ? strtolower(trim(format_string2(strval($quiz['categoryName'])))) : '';
+				$currentCat = !empty($quiz['categoryName']) ? strtolower(trim(Quiz\Helper::format_string_subedit(strval($quiz['categoryName'])))) : '';
 				$findCat = !empty($currentCat) ? array_search($currentCat, array_column($catData, 'cat_name')) : 0;
 				$id_category = !empty($catOverride) ? $catOverride : (!empty($findCat) ? $catData[$findCat]['id_cat'] : 0);
-				$image = !empty($quiz['image']) && $quiz['image'] != '-' ? format_string2($quiz['image']) : 'Default-64.png';
-				$newQuizId = ImportQuiz(format_string2($quiz['title']), format_string2($quiz['description']), (int)$quiz['playLimit'], (int)$quiz['secondsPerQuestion'], (int)$quiz['showAnswers'], (int)$id_category, $isEnabled, $image, $creator_id);
+				$image = !empty($quiz['image']) && $quiz['image'] != '-' ? Quiz\Helper::format_string_subedit($quiz['image']) : 'Default-64.png';
+				$newQuizId = ImportQuiz(Quiz\Helper::format_string_subedit($quiz['title']), Quiz\Helper::format_string_subedit($quiz['description']), (int)$quiz['playLimit'], (int)$quiz['secondsPerQuestion'], (int)$quiz['showAnswers'], (int)$id_category, $isEnabled, $image, $creator_id);
 				if (!is_numeric($newQuizId)) {
-					$unsuccessful[md5(format_string2($quiz['title']))] = array(format_string2($quiz['title']), 'quiz_mod_quiz_already_exists');
+					$unsuccessful[md5(Quiz\Helper::format_string_subedit($quiz['title']))] = array(Quiz\Helper::format_string_subedit($quiz['title']), 'quiz_mod_quiz_already_exists');
 				}
 				else {
-					$successful[] = array(format_string2($quiz['title']), null);
+					$successful[] = array(Quiz\Helper::format_string_subedit($quiz['title']), null);
 					// Question objects
 					while (array_key_exists('question' . $y, $quiz['questions'])) {
 						$questions = $quiz['questions']['question' . $y];
-						$qImage = !empty($questions['image']) ? format_string2($questions['image']) : '';
-						$newQuestionId = ImportQuizQuestion($newQuizId, format_string2($questions['questionText']), (int)$questions['questionTypeId'], format_string2($questions['answerText']), $qImage, '');
+						$qImage = !empty($questions['image']) ? Quiz\Helper::format_string_subedit($questions['image']) : '';
+						$newQuestionId = ImportQuizQuestion($newQuizId, Quiz\Helper::format_string_subedit($questions['questionText']), (int)$questions['questionTypeId'], Quiz\Helper::format_string_subedit($questions['answerText']), $qImage, '');
 						// Answer objects
 						while (array_key_exists('answer' . $z, $questions['answers'])) {
 							$answers = $questions['answers']['answer' . $z];
-							ImportQuizAnswer($newQuestionId, format_string2($answers['answerText']), (int)$answers['isCorrect']);
+							ImportQuizAnswer($newQuestionId, Quiz\Helper::format_string_subedit($answers['answerText']), (int)$answers['isCorrect']);
 							$z++;
 						}
 						$z = 0;
@@ -2657,7 +2669,7 @@ function quizGetCategoryInfo()
 	while ($row = $smcFunc['db_fetch_assoc']($result)) {
 		$catData[] = [
 			'id_cat' => (int)$row['id_category'],
-			'cat_name' => strtolower(trim(format_string2($row['name']))),
+			'cat_name' => strtolower(trim(Quiz\Helper::format_string_subedit($row['name']))),
 		];
 	}
 
@@ -2665,93 +2677,6 @@ function quizGetCategoryInfo()
 	$smcFunc['db_free_result']($result);
 
 	return !empty($catData) ? array_filter($catData) : ['id_cat' => 0, 'cat_name' => ''];
-}
-
-// TODO
-function format_string2($stringToFormat)
-{
-	global $smcFunc;
-
-	// Remove any backslashes
-	$stringToFormat = str_replace(array("\\", "quizes", "Quizes"), array("", "quizzes", "Quizzes"), stripcslashes($stringToFormat));
-
-	// Ensure double|single quotes are explicitly HTML5 entities
-	$returnString = htmlspecialchars_decode($stringToFormat, ENT_NOQUOTES);
-	$returnString = str_replace(array("'", '"'), array('&apos;', '&quot;'), html_entity_decode($stringToFormat, ENT_QUOTES|ENT_HTML5, 'UTF-8'));
-	$returnString = Quiz\Helper::format_entities($returnString, true);
-
-	return $returnString;
-}
-
-function BuildQuizXml($id_quiz)
-{
-	global $context, $modSettings, $user_settings, $settings;
-
-	$quizXml = '<?xml version="1.0" encoding="utf-8"?>
-			<quizzes>
-	';
-	$quizRows = ExportQuizzes($id_quiz);
-	foreach ($quizRows as $row)
-	{
-	// @TODO double quotes
-		$quizXml .= "
-				<quiz>
-					<title><![CDATA[{$row['title']}]]></title>
-					<description><![CDATA[{$row['description']}]]></description>
-					<playLimit>{$row['play_limit']}</playLimit>
-					<secondsPerQuestion>{$row['seconds_per_question']}</secondsPerQuestion>
-					<showAnswers>{$row['show_answers']}</showAnswers>
-					<categoryName><![CDATA[{$row['category_name']}]]></categoryName>
-					<image><![CDATA[{$row['image']}]]></image>
-					<image_data><![CDATA[{$row['image_data']}]]></image_data>
-					<user_name><![CDATA[{$user_settings['member_name']}]]></user_name>
-					<email_address><![CDATA[{$user_settings['email_address']}]]></email_address>
-					<theme_url><![CDATA[{$settings['theme_url']}]]></theme_url>
-					<questions>
-		";
-
-		$quizQuestionRows = ExportQuizQuestions($row['id_quiz']);
-
-		foreach ($quizQuestionRows as $questionRow)
-		{
-			$questionRow['image_data'] = !empty($questionRow['image_data']) ? $questionRow['image_data'] : '';
-	// @TODO double quotes
-			$quizXml .= "
-						<question>
-							<questionText><![CDATA[{$questionRow['question_text']}]]></questionText>
-							<questionTypeId>{$questionRow['id_question_type']}</questionTypeId>
-							<answerText><![CDATA[{$questionRow['answer_text']}]]></answerText>
-							<image><![CDATA[{$questionRow['image']}]]></image>
-							<image_data><![CDATA[{$questionRow['image_data']}]]></image_data>
-							<answers>
-			";
-
-			$quizAnswerRows = ExportQuizAnswers($questionRow['id_question']);
-
-			foreach ($quizAnswerRows as $answerRow)
-	// @TODO double quotes
-				$quizXml .= "
-								<answer>
-									<answerText><![CDATA[{$answerRow['answer_text']}]]></answerText>
-									<isCorrect>{$answerRow['is_correct']}</isCorrect>
-								</answer>
-				";
-
-			$quizXml .= "
-							</answers>
-						</question>
-			";
-		}
-
-		$quizXml .= "
-					</questions>
-				</quiz>";
-	}
-
-	$quizXml .= "
-			</quizzes>
-	";
-	return $quizXml;
 }
 
 function quizRmdir($dir, $ignore = '')

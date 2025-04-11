@@ -160,13 +160,12 @@ class Helper
 		return str_replace('\n', '<br>', $stringToFormat);
 	}
 
-	public static function format_string($stringToFormat, $input = false, $toHtml = true)
+	public static function format_string($stringToFormat, $inputType = '', $toHtml = true)
 	{
 		global $smcFunc;
 
 		$stringToFormat = str_replace(['quizes', 'Quizes'], ['quizzes', 'Quizzes'], $stringToFormat);
-
-		$stringToFormat = self::format_entities($stringToFormat, $input, false);
+		$stringToFormat = self::format_entities($stringToFormat, false);
 
 		// Remove any slashes. These should not be here, but it has been known to happen
 		$returnString = str_replace("\\", "", stripcslashes($stringToFormat));
@@ -179,8 +178,33 @@ class Helper
 			$returnString = str_replace(["'", '"'], [chr(39), chr(34)], $returnString);
 		}
 
-		//return html_entity_decode($returnString, ENT_QUOTES, 'UTF-8');
-		return !empty($input) ? str_replace('"', '&quot;', $returnString) : $returnString;
+		switch ($inputType){
+			case 'input':
+				$returnString = strip_tags($returnString);
+				$returnString = str_replace(['"'], ['&quot;'], $returnString);
+				break;
+			case 'textarea':
+				$returnString = str_replace(['<br>', '<br/>', '<br />'], chr(13), $returnString);
+				$returnString = str_replace(['"'], ['&quot;'], $returnString);
+				break;
+		}
+
+		return $returnString;
+	}
+
+	public static function format_string_subedit($stringToFormat)
+	{
+		global $smcFunc;
+
+		// Remove any backslashes
+		$stringToFormat = str_replace(array("\\", "quizes", "Quizes"), array("", "quizzes", "Quizzes"), stripcslashes($stringToFormat));
+
+		// Ensure double|single quotes are explicitly HTML5 entities
+		$returnString = str_replace(["'", '"'], ['&apos;', '&quot;'],  htmlspecialchars_decode($stringToFormat, ENT_QUOTES));
+		$returnString = str_replace(["'", '"'], ['&apos;', '&quot;'], html_entity_decode($stringToFormat, ENT_QUOTES|ENT_HTML5, 'UTF-8'));
+		$returnString = self::format_entities($returnString, true);
+
+		return $returnString;
 	}
 
 	public static function format_entities($string, $decoded = true)
@@ -210,5 +234,20 @@ class Helper
 
 		// any other non-utf8 characters can be ignored
 		return iconv('UTF-8', 'UTF-8//IGNORE', $string);
+	}
+
+	public static function view_all($link = '')
+	{
+		global $txt, $scripturl;
+
+		$output = '
+											<button style="font-size: x-small;" title="' . $txt['SMFQuiz_Common']['ViewAll'] . '" type="button" class="quiz_viewall_button" onclick="window.location.href=\'' . (!empty($link) ? $link : $scripturl . '?action=SMFQuiz;sa=home') . '\'">
+												<svg class="quiz_viewall_svg" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 18 18">
+													<path fill="currentColor" fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10"></path>
+												</svg>
+												' . $txt['SMFQuiz_Common']['ViewAll'] . '
+											</button>';
+
+		return $output;
 	}
 }
