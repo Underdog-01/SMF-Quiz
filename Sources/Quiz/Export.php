@@ -80,12 +80,14 @@ function quiz_format_array($quizArray)
 {
 	if(is_string($quizArray)) {
 		$quizArray = Quiz\Helper::format_string_subedit($quizArray);
+		$quizArray = htmlspecialchars($quizArray, ENT_HTML5 | ENT_QUOTES, 'UTF-8');
 	}
 	else {
 		$quizData = ['title', 'description', 'category_name', 'question_text', 'answer_text'];
 		foreach ($quizData as $index => $data) {
 			if (!empty($quizArray[$index]) && is_string($quizArray[$index])) {
 				$quizArray[$index] = Quiz\Helper::format_string_subedit($quizArray[$index]);
+				$quizArray[$index] =  htmlspecialchars($quizArray[$index], ENT_HTML5 | ENT_QUOTES, 'UTF-8');
 			}
 		}
 	}
@@ -114,12 +116,17 @@ function quiz_format_xml_array($quizArray)
 	return $quizArray;
 }
 
+function quiz_formatImageFileName($image_filename)
+{
+	$image_filename = str_replace(' ', '_', $image_filename);
+	return preg_replace('#[^a-zA-Z0-9\-\._\/]#', '', $image_filename);
+}
+
 function BuildQuizFileXML($packageName, $quizRows, $packageDescription, $packageAuthor, $packageSiteAddress)
 {
 	global $context, $modSettings, $user_settings, $settings, $sourcedir;
 
 	$tempPath = 'temp_' . substr(md5(rand(1000, 9999999)), 0, 10);
-	$quizRows = quiz_format_xml_array($quizRows);
 	$quizXML = '<?xml version="1.0" encoding="utf-8"?>
 <quizzes>
 	<description>' . quiz_format_xml_array($packageDescription) . '</description>
@@ -133,13 +140,13 @@ function BuildQuizFileXML($packageName, $quizRows, $packageDescription, $package
 		{
 			$quizXML .= "
 	<quiz>
-		<title><![CDATA[" . $row['title'] . "]]></title>
-		<categoryName><![CDATA[" . $row['category_name'] . "]]></categoryName>
-		<description><![CDATA[" . $row['description'] . "]]></description>
+		<title><![CDATA[" . quiz_format_xml_array($row['title']) . "]]></title>
+		<categoryName><![CDATA[" . quiz_format_xml_array($row['category_name']) . "]]></categoryName>
+		<description><![CDATA[" . quiz_format_xml_array($row['description']) . "]]></description>
 		<playLimit>" . $row['play_limit'] . "</playLimit>
 		<secondsPerQuestion>" . $row['seconds_per_question'] . "</secondsPerQuestion>
 		<showAnswers>" . $row['show_answers'] . "</showAnswers>
-		<image><![CDATA[" . $row['image'] . "]]></image>
+		<image><![CDATA[" . quiz_formatImageFileName($row['image']) . "]]></image>
 		<imageData><![CDATA[" . $row['image_data'] . "]]></imageData>
 		<questions>";
 
@@ -150,11 +157,11 @@ function BuildQuizFileXML($packageName, $quizRows, $packageDescription, $package
 			{
 				$quizXML .= "
 			<question>
-				<questionText><![CDATA[" . $questionRow['question_text'] . "]]></questionText>
+				<questionText><![CDATA[" . quiz_format_xml_array($questionRow['question_text']) . "]]></questionText>
 				<questionTypeId>" . $questionRow['id_question_type'] . "</questionTypeId>
-				<image>" . $questionRow['image'] . "</image>
+				<image>" . quiz_formatImageFileName($questionRow['image']) . "</image>
 				<imageData>" . $questionRow['image_data'] . "</imageData>
-				<answerText><![CDATA[" . $questionRow['answer_text'] . "]]></answerText>
+				<answerText><![CDATA[" . quiz_format_xml_array($questionRow['answer_text']) . "]]></answerText>
 				<answers>";
 
 				$quizAnswerRows = quiz_format_xml_array(ExportQuizAnswers($questionRow['id_question']));
@@ -163,7 +170,7 @@ function BuildQuizFileXML($packageName, $quizRows, $packageDescription, $package
 				foreach ($quizAnswerRows as $answerRow)
 					$quizXML .= "
 					<answer>
-						<answerText><![CDATA[" . $answerRow['answer_text'] . "]]></answerText>
+						<answerText><![CDATA[" . quiz_format_xml_array($answerRow['answer_text']) . "]]></answerText>
 						<isCorrect>" . $answerRow['is_correct'] . "</isCorrect>
 					</answer>";
 
@@ -201,7 +208,6 @@ function BuildQuizPHP($packageName, $quizRows, $packageDescription, $packageAuth
 	global $context, $modSettings, $user_settings, $settings, $sourcedir;
 
 	$tempPath = 'temp_' . substr(md5(rand(1000, 9999999)), 0, 10);
-	$quizRows = quiz_format_array($quizRows);
 	list($images, $qImages) = [[], []];
 	$quizPHP = '<?php
 /*---------------------------------------------------------------*/
@@ -230,16 +236,13 @@ class QuizImport
 		$images[] = $row['image'];
 		$quizPHP .= '
 				"quiz' . $key0 . '" => [
-					"title" => "' . $row['title'] . '",
-					"description" => "' . $row['description'] . '",
+					"title" => "' . quiz_format_array($row['title']) . '",
+					"description" => "' . quiz_format_array($row['description']) . '",
 					"playLimit" => "' . $row['play_limit'] . '",
 					"secondsPerQuestion" => "' . $row['seconds_per_question'] . '",
 					"showAnswers" => "' . $row['show_answers'] . '",
-					"categoryName" => "' . $row['category_name'] . '",
-					"image" => "' . $row['image'] . '",
-					"user_name" => "' . $user_settings['member_name'] . '",
-					"email_address" => "' . $user_settings['email_address'] . '",
-					"theme_url" => "' . $settings['theme_url'] . '",
+					"categoryName" => "' . quiz_format_array($row['category_name']) . '",
+					"image" => "' . quiz_formatImageFileName($row['image']) . '",
 					"questions" => [';
 
 		$quizQuestionRows = quiz_format_array(ExportQuizQuestions($row['id_quiz']));
@@ -248,10 +251,10 @@ class QuizImport
 			$qImages[] = $questionRow['image'];
 			$quizPHP .= '
 						"question' . $key1 . '" => [
-							"questionText" => "' . $questionRow['question_text'] . '",
+							"questionText" => "' . quiz_format_array($questionRow['question_text']) . '",
 							"questionTypeId" => "' . $questionRow['id_question_type'] . '",
-							"answerText" => "' . $questionRow['answer_text'] . '",
-							"image" => "' . $questionRow['image'] . '",
+							"answerText" => "' . quiz_format_array($questionRow['answer_text']) . '",
+							"image" => "' . quiz_formatImageFileName($questionRow['image']) . '",
 							"answers" => [';
 
 			$quizAnswerRows = quiz_format_array(ExportQuizAnswers($questionRow['id_question']));
@@ -259,7 +262,7 @@ class QuizImport
 			foreach ($quizAnswerRows as $key2 => $answerRow)	{
 				$quizPHP .= '
 								"answer' . $key2 . '" => [
-									"answerText" => "' . $answerRow['answer_text'] . '",
+									"answerText" => "' . quiz_format_array($answerRow['answer_text']) . '",
 									"isCorrect" => "' . $answerRow['is_correct'] . '",
 								],';
 			}

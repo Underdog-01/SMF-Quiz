@@ -223,6 +223,7 @@ button.quiz_task_button {
 	min-height: 32px;
 	margin: auto;
 	padding: 0rem 0.1rem;
+	cursor: pointer;
 }
 .admin_viewall {
 	position: relative;

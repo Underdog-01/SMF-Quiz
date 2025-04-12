@@ -427,7 +427,7 @@ function template_new_question()
 									<td class="quiz_adminHeading"><b>' , $txt['SMFQuiz_Common']['ImageUpload'] , ':</b></td>
 									<td>
 										<div class="quiz_inlineRow">
-											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
+											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input" accept="image/png, image/gif, image/jpeg, image/bmp">
 											<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Questions\');">Upload</button>
 											<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 										</div>
@@ -537,7 +537,7 @@ function template_edit_question()
 									<td class="quiz_adminHeading"><b>' , $txt['SMFQuiz_Common']['ImageUpload'] , ':</b></td>
 									<td>
 										<div class="quiz_inlineRow">
-											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
+											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input" accept="image/png, image/gif, image/jpeg, image/bmp">
 											<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Questions\');">Upload</button>
 											<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 										</div>
@@ -645,7 +645,7 @@ function template_edit_category()
 										<td class="quiz_adminHeading"><b>' , $txt['SMFQuiz_Common']['ImageUpload'] , ':</b></td>
 										<td>
 											<div class="quiz_inlineRow">
-												<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
+												<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input" accept="image/png, image/gif, image/jpeg, image/bmp">
 												<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Quizzes\');">', $txt['SMFQuiz_Upload'], '</button>
 												<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 											</div>
@@ -701,7 +701,7 @@ function template_new_category()
 									<td class="quiz_adminHeading"><b>' , $txt['SMFQuiz_Common']['ImageUpload'] , ':</b></td>
 									<td>
 										<div class="quiz_inlineRow">
-											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
+											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input" accept="image/png, image/gif, image/jpeg, image/bmp">
 											<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Quizzes\');">', $txt['SMFQuiz_Upload'], '</button>
 											<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 										</div>
@@ -1013,7 +1013,7 @@ function template_new_quiz()
 									<td class="quiz_adminHeading"><b>' , $txt['SMFQuiz_Common']['ImageUpload'] , ':</b></td>
 									<td>
 										<div class="quiz_inlineRow">
-											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
+											<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input" accept="image/png, image/gif, image/jpeg, image/bmp">
 											<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Quizzes\');">', $txt['SMFQuiz_Upload'], '</button>
 											<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 										</div>
@@ -1088,7 +1088,7 @@ function template_edit_quiz()
 										<td class="quiz_adminHeading"><b>' , $txt['SMFQuiz_Common']['ImageUpload'] , ':</b></td>
 										<td>
 											<div class="quiz_inlineRow">
-												<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input">
+												<input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input" accept="image/png, image/gif, image/jpeg, image/bmp">
 												<button class="button" id="buttonUpload" onclick="return ajaxFileUpload(\'Quizzes\');">', $txt['SMFQuiz_Upload'], '</button>
 												<img class="preview_loading" id="loading" src="' , $settings['default_images_url'] , '/quiz_images/loading.gif" style="display:none;">
 											</div>
@@ -1921,7 +1921,7 @@ function template_quiz_importer()
 		echo '
 						<tr class="windowbg">
 							<td>
-								<input type="file" size="30" name="imported_quiz[]" id="imported_quiz', $i, '" class="input_file" />
+								<input type="file" size="30" name="imported_quiz[]" id="imported_quiz', $i, '" class="input_file" accept="image/png,image/gif,image/jpeg,image/bmp,.xml,.zip">
 							</td>
 							<td>
 								(<a href="javascript:void(0);" onclick="cleanFileInput(\'imported_quiz', $i, '\');">', $txt['quiz_mod_clean_quiz'], '</a>)
