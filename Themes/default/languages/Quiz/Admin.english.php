@@ -303,6 +303,7 @@ $txt['permissionhelp_quiz_profile'] = 'Access Quiz profile settings';
 $txt['cannot_quiz_view'] = 'You are not allowed to access the Quiz.';
 $txt['cannot_quiz_play'] = 'You are not allowed to play the Quiz';
 $txt['cannot_quiz_submit'] = 'You are not allowed to create Quizzes';
+$txt['cannot_quiz_general'] = 'An unknown error occurred';
 
 // Help
 $txt['quiz_available_imports'] = 'This list contains all the quizzes you may download directly from SMF Modding. You can import by clicking the import button on the right hand side. Notice that if you do not have the image installed there will be a plus button in the image column. If your server has the correct settings you will be able to directly import the image by clicking this plus button.';

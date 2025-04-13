@@ -5,13 +5,13 @@ if (!defined('SMF'))
 
 // Include the SMF2 specific database file
 // @TODO move into the function/s
-require_once($sourcedir . '/Quiz/Db.php');
 
 function SMFQuiz()
 {
 	global $context, $txt, $sourcedir, $settings, $modSettings;
 
 	isAllowedTo('quiz_view');
+	require_once($sourcedir . '/Quiz/Db.php');
 	$context['page_title'] = $txt['SMFQuiz'];
 	addJavaScriptVar('id_user', $context['user']['id'], false);
 	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
@@ -26,11 +26,11 @@ function SMFQuiz()
 	}
 
 	if (isset($_POST['id_quiz']))
-		$context['id_quiz'] = $_POST['id_quiz'];
+		$context['id_quiz'] = (int)$_POST['id_quiz'];
 	elseif (isset($_GET['id_quiz']))
-		$context['id_quiz'] = $_GET['id_quiz'];
+		$context['id_quiz'] = (int)$_GET['id_quiz'];
 	else
-		$context['id_quiz'] = !empty($context['id_quiz']) ? $context['id_quiz'] : 0;
+		$context['id_quiz'] = !empty($context['id_quiz']) ? (int)$context['id_quiz'] : 0;
 
 	// Create an array of possible actions with the functions that will be called
 	$actions = array(
@@ -67,6 +67,7 @@ function SMFQuiz()
 		);
 
 // @TODO localization
+	$context['SMFQuiz']['quiz'] = [];
 	$context['tab_links'] = [];
 	$context['tab_links'][] = array(
 		'action' => 'home',
@@ -186,20 +187,18 @@ function QuizSearchXML()
 
 function GetQuestionsData()
 {
-	global $context;
+	global $context, $scripturl;
 
 	// They need a quiz to access here...
-	if (!isset($_GET['id_quiz']) || empty($_GET['id_quiz']))
+	if (empty($_POST['id_quiz']) && empty($_GET['id_quiz']))
 		fatal_lang_error('no_access', false);
 
-	if (isset($_GET['questionId']))
-	{
+	if (isset($_GET['questionId'])) {
 		QuestionScript();
 		GetQuestionAndAnswers($_GET['questionId']);
 		$context['current_subaction'] = 'editQuestion';
 	}
-	else
-	{
+	else {
 		// Create an array that will map the sort selection to the query value
 		$sort_methods = array(
 			'Question' => 'Q.question_text',
@@ -208,13 +207,11 @@ function GetQuestionsData()
 		);
 
 		// If sort not set, do so now
-		if (!isset($_GET['orderBy']))
-		{
+		if (!isset($_GET['orderBy'])) {
 			$context['SMFQuiz']['orderBy'] = 'Question';
 			$context['SMFQuiz']['orderDir'] = 'up';
 		}
-		else
-		{
+		else {
 			// Otherwise set the sort query string and reset context
 			// @TODO check input
 			$context['SMFQuiz']['orderBy'] = $_GET['orderBy'];
@@ -329,35 +326,35 @@ function QuestionScript()
 
 			function validateQuestion(form, action)
 			{
-				var isValid = true;
+				let isValid = true;
 
-				if (document.getElementById("question_text").value.length == 0)
+				if ($("#question_text") && $("#question_text").val() == "")
 				{
 					// @TODO localization
 					alert("The question must have a title");
-					document.getElementById("question_text").focus();
+					$("#question_text").focus();
 					isValid = false;
 				}
 
 				if (isValid == true)
 				{
-					switch (document.getElementById("id_question_type").value)
+					switch ($("#id_question_type").val())
 					{
 						case "1" : // Multiple choice
 							// No validation for the moment
 							break;
 
 						case "2" : // Free text
-							if (document.getElementById("freeTextAnswer").value.length == 0)
+							if ($("#freeTextAnswer") && $("#freeTextAnswer").val() == "")
 							{
 								// @TODO localization
 								alert("The free text answer cannot be empty");
-								document.getElementById("freeTextAnswer").focus();
+								$("#freeTextAnswer").focus();
 								isValid = false;
 							}
 							break;
 
-						case "3" : // True fase
+						case "3" : // True false
 							// No need to do anything here
 							break;
 					}
@@ -365,7 +362,7 @@ function QuestionScript()
 
 				if (isValid == true)
 				{
-					document.getElementById("formaction").value = action;
+					$("#formaction").val(action);
 					form.submit();
 				}
 			}
@@ -1738,10 +1735,6 @@ function GetUsersActiveData()
 
 	$smcFunc['db_free_result']($result);
 
-	if (isset($_REQUEST['asc'])) {
-		$mostPlayedUsers = array_reverse($mostPlayedUsers, true);
-	}
-
 	$result = $smcFunc['db_query']('', '
 		SELECT	COUNT(*) AS total_user_wins,
 				Q.top_user_id
@@ -1749,7 +1742,7 @@ function GetUsersActiveData()
 		WHERE		top_user_id IN ({array_int:id_users})
 		GROUP BY Q.top_user_id ASC',
 		[
-			'id_users' => $mostPlayedUsers,
+			'id_users' => !empty($mostPlayedUsers) ? $mostPlayedUsers : [0],
 		]
 	);
 
@@ -1760,6 +1753,10 @@ function GetUsersActiveData()
 
 	// Free the database
 	$smcFunc['db_free_result']($result);
+
+	if (isset($_REQUEST['asc'])) {
+		$context['SMFQuiz']['mostActivePlayers'] = array_reverse($context['SMFQuiz']['mostActivePlayers'], true);
+	}
 
 	$context['SMFQuiz']['Action'] = 'usersmostactive';
 }

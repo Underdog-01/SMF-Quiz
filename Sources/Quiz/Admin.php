@@ -775,14 +775,11 @@ function GetSaveQuizData()
 	}
 }
 
-// Function to replace curly quotes with normal ones - might be a better way of doing this, but this
-// will do for the moment
+// Function to replace curly quotes with normal ones
 function ReplaceCurlyQuotes($stringToReplace)
 {
-	// @TODO single replace
-	$replaceString = str_replace('�', '"', $stringToReplace);
-	$replaceString = str_replace('�', '"', $replaceString);
-	$replaceString = str_replace('�', '\'', $replaceString);
+	$replaceString = str_replace("'", "\'", stripcslashes(Quiz\Helper::format_entities($stringToReplace, false)));
+
 	return $replaceString;
 }
 
@@ -799,6 +796,16 @@ function GetUpdateQuestionData($addMore)
 	$questionTypeId = isset($_POST['id_question_type']) ? $_POST['id_question_type'] : '';
 	// @TODO check input
 	$quizId = $_POST['id_quiz'];
+
+	if (!$quizId) {
+		fatal_lang_error('cannot_quiz_general', false);
+	}
+	elseif (!$questionId  || !$questionText || !$answerText || !$questionTypeId) {
+		$context['SMFQuiz']['id_quiz'] = $quizId;		
+		GetNewQuestionData();
+		$context['SMFQuiz']['Action'] = 'NewQuestion';
+		return;
+	}
 
 	// Update the Question
 	UpdateQuestion($questionId, $questionText, $image, $answerText);
@@ -839,7 +846,7 @@ function GetUpdateQuestionData($addMore)
 	}
 }
 
-// Function that handles the saving of the specified new quiz league data
+// Function that handles the saving of the new question data
 function GetSaveQuestionData($addMore)
 {
 	global $context;
@@ -851,6 +858,16 @@ function GetSaveQuestionData($addMore)
 	$quizId = isset($_POST['id_quiz']) ? $_POST['id_quiz'] : 0;
 	$image = isset($_POST['image']) && $_POST['image'] != '-' ? Quiz\Helper::quiz_commonImageFileFilter($_POST['image']) : '';
 	$answerText = isset($_POST['question_answer_text']) ? ReplaceCurlyQuotes($_POST['question_answer_text']) : '';
+
+	if (!$quizId) {
+		fatal_lang_error('cannot_quiz_general', false);
+	}
+	elseif (!$questionText || !$answerText || !$questionTypeId) {
+		GetNewQuestionData();
+		$context['SMFQuiz']['Action'] = 'NewQuestion';
+		$context['SMFQuiz']['id_quiz'] = $quizId;
+		return;
+	}
 
 	// Save the Question
 	$questionId = SaveQuestion($questionText, $questionTypeId, $quizId, $image, $answerText);

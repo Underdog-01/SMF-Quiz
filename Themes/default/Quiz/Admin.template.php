@@ -1706,7 +1706,7 @@ function template_question_type_dropdown($onChange = null)
 {
 	global $context;
 
-	if (sizeof($context['SMFQuiz']['questionTypes']) > 0)
+	if (count($context['SMFQuiz']['questionTypes']) > 0)
 	{
 		if ($onChange == null)
 			echo '<select name="id_question_type">';
