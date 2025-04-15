@@ -212,6 +212,8 @@ $txt['quizLocalizationAlertsJS'] = [
 	'quizNoTitle' => 'The quiz must have a title!',
 	'quizQuestionNoTitle' => 'The question must have a title!',
 	'quizNoTextAnswer' => 'The free text answer cannot be empty!',
+	'quizSearchNoText' => 'Please enter something to search',
+	'quizGeneralErrorText' => 'Error',
 ];
 
 $txt['quizButtonEdit'] = 'Edit';

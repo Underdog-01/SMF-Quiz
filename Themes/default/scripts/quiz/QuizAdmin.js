@@ -35,44 +35,38 @@ function show_image(imgId, selectElement, imageFolder)
 
 function changeQuestionType(selectedForm)
 {
-	var selection = selectedForm.options[selectedForm.options.selectedIndex].value;
-
-	document.getElementById("freeTextAnswer").style.display = selection == 2 ? 'block' : 'none';
-	document.getElementById("multipleChoiceAnswer").style.display = selection == 1 ? 'block' : 'none';
-	document.getElementById("trueFalseAnswer").style.display = selection == 3 ? 'block' : 'none';
+	switch (selectedForm.options[selectedForm.options.selectedIndex].value)
+	{
+		case '1':
+			$("#freeTextAnswer").css("display", "none");
+			$("#multipleChoiceAnswer").css("display", "block");
+			$("#trueFalseAnswer").css("display", "none");
+			break;
+		case '2':
+			$("#freeTextAnswer").css("display", "block");
+			$("#multipleChoiceAnswer").css("display", "none");
+			$("#trueFalseAnswer").css("display", "none");
+			break;
+		case '3':
+			$("#freeTextAnswer").css("display", "none");
+			$("#multipleChoiceAnswer").css("display", "none");
+			$("#trueFalseAnswer").css("display", "block");
+			break;
+	}
 }
 
 function addRow()
 {
-	var rowCount = document.getElementById("answerTable").rows.length;
-	var radioElement = document.createElement("input");
-
-	radioElement.setAttribute("name", "correctAnswer");
-	radioElement.setAttribute("value", rowCount);
-	radioElement.setAttribute("type", "radio");
-
-	var answerElement = document.createElement("input");
-	answerElement.setAttribute("name", "answer" + rowCount);
-	answerElement.setAttribute("size", "50");
-	answerElement.setAttribute("type", "text");
-
-// @TODO check tags case
-	var tbody = document.getElementById("answerTable").getElementsByTagName("TBODY")[0];
-	var row = document.createElement("TR");
-	var td1 = document.createElement("TD");
-	td1.appendChild(radioElement);
-	var td2 = document.createElement("TD");
-	td2.appendChild (answerElement);
-	row.appendChild(td1);
-	row.appendChild(td2);
-	tbody.appendChild(row);
+	let rowCount = $('#answerTable tr').length-1;
+	$('#answerTable').append('<tr><td><input type="radio" name="correctAnswer" value="' + rowCount + '"></td><td><input type="text" name="answer' + rowCount + '" size="50"></td></tr>');
 }
 
 function deleteRow()
 {
-	var rowCount = document.getElementById("answerTable").rows.length-1;
-	if (rowCount > 1)
-		document.getElementById("answerTable").deleteRow(rowCount);
+	/* Restrict them to leave at least 1 row */
+	if ($('#answerTable tr') && $('#answerTable tr').length > 1) {
+		$('#answerTable tr:last').remove();
+	}
 }
 
 function verifyQuizzesChecked(selectedForm)

@@ -52,30 +52,28 @@ $(document).ready(function(){
 	});
 });
 function quizSearchLoader() {
-	if ($("#quick_name").length) {
+	if ($("#quick_name")) {
 		var quizSearchTrigger = $("#quick_name");
-		sessionStorage.setItem("quizQuickNameVal", quizSearchTrigger.val().trim());
-		if (quizSearchTrigger) {
-			quizSearchTrigger.onkeypress = function(){
-				QuizQuickSearch();
-				setTimeout(function(){
-					let quick_name = $("#quick_name").val().trim();
-					if (sessionStorage.getItem("quizQuickNameVal") != quick_name)
-						QuizQuickSearch();
-				}, 2000);
-			};
-		}
+		sessionStorage.setItem("quizQuickNameVal", $.trim(quizSearchTrigger.val()));
+		$("#quick_name").on("keypress", function(){
+			$("#"+ quiz_search_divQ).html("");
+			QuizQuickSearch();
+			setTimeout(function(){
+				let quick_name = $.trim($("#quick_name").val());
+				if (sessionStorage.getItem("quizQuickNameVal") != quick_name)
+					QuizQuickSearch();
+			}, 2000);
+		});
 		setInterval(function(){
-			let quick_name = $("#quick_name").val().trim();
+			let quick_name = $.trim($("#quick_name").val());
 			if (quick_name == "")
-				$("#quiz_search_divQ").html("");
+				$("#"+ quiz_search_divQ).html("");
 		}, 5000);
 	}
 }
 function QuizQuickSearch()
 {
-	if (quiz_search_wait) // Wait before new search.
-	{
+	if (quiz_search_wait) {
 		setTimeout(function(){QuizQuickSearch();}, 800);
 		return 1;
 	}
@@ -84,7 +82,7 @@ function QuizQuickSearch()
 	setInterval(function(){resetWait();}, 800);
 
 	var i, x = new Array();
-	var n = document.getElementById("quick_name").value.trim();
+	var n =  $.trim($("#quick_name").val());
 	x[0] = "name=" + encodeURIComponent(textToEntities(n.replace(/&#/g, "&#38;#"))).replace(/\+/g, "%2B")
 	sendXMLDocument(quiz_search_url, x.join("&"), onQuizSearch);
 	ajax_indicator(true);
@@ -103,38 +101,40 @@ function textToEntities(text)
 
 	return entities;
 }
+
 function decodeQuizHTML(html) {
 	var txt = document.createElement("textarea");
 	txt.innerHTML = html;
 	return txt.value;
 }
-function resetWait() {
 
+function resetWait() {
+	sessionStorage.setItem("quizQuickNameVal", "");
 }
+
 function onQuizSearch(XMLDoc)
 {
 	if (!XMLDoc)
-		document.getElementById(quiz_search_divQ).textContent = "Error";
+		$("#" + quiz_search_divQ).text(quizGeneralErrorText);
 	else {
 		quiz_search_wait = false;
-		var quizzes = XMLDoc.getElementsByTagName("quiz");
-		var addNewNode = [], addNewLink = [], addNewText = [],searchDiv = document.createElement("DIV"), searchMainDiv = document.getElementById(quiz_search_divQ), i=0;
+		let quizzes = XMLDoc.getElementsByTagName("quiz"), $searchMainDiv = $("#" + quiz_search_divQ), quizVal = "", i=0;
+		$searchMainDiv.html("");
 		for (i = 0; i < quizzes.length; i++) {
-			addNewNode[i] = document.createElement("div");
-			addNewLink[i] = document.createElement("a");
-			addNewLink[i].href = quizzes[i].getElementsByTagName("url")[0].firstChild.nodeValue;
-			addNewText[i] = document.createTextNode(decodeQuizHTML(quizzes[i].getElementsByTagName("name")[0].firstChild.nodeValue));
-			addNewLink[i].appendChild(addNewText[i]);
-			addNewNode[i].appendChild(addNewLink[i]);
-			searchDiv.appendChild(addNewNode[i]);
+			quizVal = $.trim(quizzes[i].getElementsByTagName("url")[0].firstChild.nodeValue);
+			$searchMainDiv.not("a[href=\'" + quizVal + "\']");
+			$searchMainDiv.append('<div><a href="' +  quizVal + '" title="' +  $.trim(decodeQuizHTML(quizzes[i].getElementsByTagName("name")[0].firstChild.nodeValue)) + '">' +  $.trim(decodeQuizHTML(quizzes[i].getElementsByTagName("name")[0].firstChild.nodeValue)) + '</div>');
 		}
-		searchMainDiv.innerHTML = searchDiv.innerHTML;
 	}
 	ajax_indicator(false);
 }
 function quizSearchSubmit() {
-	let searchVal = $("#quick_name").val();
-	window.location.href = smf_scripturl + "?action=SMFQuiz;search=" + searchVal;
+	if ($("#quick_name") && $.trim($("#quick_name").val()) != "") {
+		window.location.href = smf_scripturl + "?action=SMFQuiz;search=" + encodeURIComponent($.trim($("#quick_name").val()));
+	}
+	else if ($("#quick_name")) {
+		alert(quizSearchNoText);
+	}
 }
 
 function validateQuiz(form, action)
@@ -159,94 +159,71 @@ function checkAll(selectedForm, checked)
 		}
 	}
 }
+
 function changeQuestionType(selectedForm)
 {
 	switch (selectedForm.options[selectedForm.options.selectedIndex].value)
 	{
 		case '1':
-			document.getElementById("freeTextAnswerdiv").style.display = 'none';
-			document.getElementById("multipleChoiceAnswer").style.display = 'block';
-			document.getElementById("trueFalseAnswer").style.display = 'none';
+			$("#freeTextAnswerdiv").css("display", "none");
+			$("#multipleChoiceAnswer").css("display", "block");
+			$("#trueFalseAnswer").css("display", "none");
 			break;
 		case '2':
-			document.getElementById("freeTextAnswerdiv").style.display = 'block';
-			document.getElementById("multipleChoiceAnswer").style.display = 'none';
-			document.getElementById("trueFalseAnswer").style.display = 'none';
+			$("#freeTextAnswerdiv").css("display", "block");
+			$("#multipleChoiceAnswer").css("display", "none");
+			$("#trueFalseAnswer").css("display", "none");
 			break;
 		case '3':
-			document.getElementById("freeTextAnswerdiv").style.display = 'none';
-			document.getElementById("multipleChoiceAnswer").style.display = 'none';
-			document.getElementById("trueFalseAnswer").style.display = 'block';
+			$("#freeTextAnswerdiv").css("display", "none");
+			$("#multipleChoiceAnswer").css("display", "none");
+			$("#trueFalseAnswer").css("display", "block");
 			break;
 	}
 }
 
 function addRow()
 {
-	var rowCount = document.getElementById("answerTable").rows.length;
-	var radioElement = document.createElement("input");
-	radioElement.setAttribute("name", "correctAnswer");
-	radioElement.setAttribute("value", rowCount);
-	radioElement.setAttribute("type", "radio");
-
-	var answerElement = document.createElement("input");
-	answerElement.setAttribute("name", "answer" + rowCount);
-	answerElement.setAttribute("size", "50");
-	answerElement.setAttribute("type", "text");
-
-	var tbody = document.getElementById("answerTable").getElementsByTagName("TBODY")[0];
-	var row = document.createElement("TR");
-	var td1 = document.createElement("TD");
-	td1.appendChild(radioElement);
-	var td2 = document.createElement("TD");
-	td2.appendChild (answerElement);
-	row.appendChild(td1);
-	row.appendChild(td2);
-	tbody.appendChild(row);
+	let rowCount = $('#answerTable tr').length-1;
+	$('#answerTable').append('<tr><td><input type="radio" name="correctAnswer" value="' + rowCount + '"></td><td><input type="text" name="answer' + rowCount + '" size="50"></td></tr>');
 }
 
 function deleteRow()
 {
-	var rowCount = document.getElementById("answerTable").rows.length - 1;
-
-	if (rowCount > 1)
-		document.getElementById("answerTable").deleteRow(rowCount);
+	/* Restrict them to leave at least 1 row */
+	if ($('#answerTable tr') && $('#answerTable tr').length > 1) {
+		$('#answerTable tr:last').remove();
+	}
 }
 
 function validateQuestion(form, action)
 {
-	let isValid = true;
+	let validated = false;
 
-	if ($("#question_text") && $("#question_text").val() == "")
-	{
+	if ($("#question_text") && $("#question_text").val() == "") {
 		alert(quizQuestionNoTitle);
 		$("#question_text").focus();
-		isValid = false;
 	}
-
-	if (isValid == true)
-	{
+	else if ($("#id_question_type")) {
 		switch ($("#id_question_type").val())
 		{
 			case "1":
+			case "3":
+				validated = true;
 				break;
-
 			case "2":
-				if ($("#freeTextAnswer") && $("#freeTextAnswer").val() == "")
-				{
+				if ($("#freeTextAnswer") && $("#freeTextAnswer").val() == "") {
 					alert(quizNoTextAnswer);
 					$("#freeTextAnswer").focus();
-					isValid = false;
 				}
-				break;
-
-			case "3":
+				else {
+					validated = true;
+				}
 				break;
 		}
 	}
 
-	if (isValid == true)
-	{
+	if (validated) {
 		$("#formaction").val(action);
 		form.submit();
 	}

@@ -857,7 +857,7 @@ echo '
 													<a href="' , $scripturl , '?action=SMFQuiz;sa=categories;id_quiz=' , $latestQuizRow['id_quiz'] , '">' , Quiz\Helper::format_string($latestQuizRow['title'], '', true) , '</a>
 												</span>' . ($latestQuizRow['updated'] > $newDate ? '
 												<span style="margin: auto;display: inline-block;text-align: right;min-width: 9%;">
-													<img style="height: 24px;width: 24px;min-height: 24px;min-width: 24px;max-height: 24px;max-width: 24px;vertical-align: bottom;" src="' . $settings['default_images_url'] . '/quiz_images/new.gif"/>
+													<img style="height: 20px;width: 20px;min-height: 20px;min-width: 20px;max-height: 20px;max-width: 20px;vertical-align: bottom;" src="' . $settings['default_images_url'] . '/quiz_images/new.gif"/>
 												</span>' : '') . '
 											</td>';
 			echo '

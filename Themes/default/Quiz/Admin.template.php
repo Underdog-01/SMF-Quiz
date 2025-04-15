@@ -565,7 +565,7 @@ function template_edit_question()
 			echo '									</tbody>
 												</table>
 											<input class="quizAdminButtonGap" type="button" value="Add Row" onclick="addRow()"/>
-											<input type="button quizAdminButtonGap" value="Delete Row" onclick="deleteRow()"/>
+											<input class="quizAdminButtonGap" type="button" value="Delete Row" onclick="deleteRow()"/>
 											</div>
 			';
 		}
