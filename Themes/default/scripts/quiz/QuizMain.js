@@ -31,6 +31,25 @@ $(document).ready(function(){
 			quizSearchSubmit();
 		}
 	});
+	$(".quizDelUserQuiz").on("click", function() {
+		let exportData = [{ name: smf_session_var, value: smf_session_id}], quizAction = $(this).attr("data-new_action");
+		$.post(quizAction, exportData)
+		.done(function( resultData ) {
+			if (resultData) {
+				location.href = location.href;
+				console.log("Quiz was deleted ~ " + resultData);
+			}
+			else {
+				alert("Error ~ Quiz not deleted");
+			}
+
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			alert("Error ~ Quiz not deleted ~ " + errorThrown);
+		})
+		.always(function() {
+			console.log( "Quiz deletion finished" );
+		});
+	});
 });
 function quizSearchLoader() {
 	if ($("#quick_name").length) {
@@ -116,4 +135,130 @@ function onQuizSearch(XMLDoc)
 function quizSearchSubmit() {
 	let searchVal = $("#quick_name").val();
 	window.location.href = smf_scripturl + "?action=SMFQuiz;search=" + searchVal;
+}
+
+function validateQuiz(form, action)
+{
+	if ($("#title") && $("#title").val() != "") {
+		$("#formaction").val(action);
+		form.submit();
+	}
+	else {
+		alert(quizNoTitle);
+		$("#title").focus();
+	}
+}
+
+function checkAll(selectedForm, checked)
+{
+	for (var i = 0; i < selectedForm.elements.length; i++)
+	{
+		var e = selectedForm.elements[i];
+		if (e.type == 'checkbox') {
+			e.checked = checked;
+		}
+	}
+}
+function changeQuestionType(selectedForm)
+{
+	switch (selectedForm.options[selectedForm.options.selectedIndex].value)
+	{
+		case '1':
+			document.getElementById("freeTextAnswerdiv").style.display = 'none';
+			document.getElementById("multipleChoiceAnswer").style.display = 'block';
+			document.getElementById("trueFalseAnswer").style.display = 'none';
+			break;
+		case '2':
+			document.getElementById("freeTextAnswerdiv").style.display = 'block';
+			document.getElementById("multipleChoiceAnswer").style.display = 'none';
+			document.getElementById("trueFalseAnswer").style.display = 'none';
+			break;
+		case '3':
+			document.getElementById("freeTextAnswerdiv").style.display = 'none';
+			document.getElementById("multipleChoiceAnswer").style.display = 'none';
+			document.getElementById("trueFalseAnswer").style.display = 'block';
+			break;
+	}
+}
+
+function addRow()
+{
+	var rowCount = document.getElementById("answerTable").rows.length;
+	var radioElement = document.createElement("input");
+	radioElement.setAttribute("name", "correctAnswer");
+	radioElement.setAttribute("value", rowCount);
+	radioElement.setAttribute("type", "radio");
+
+	var answerElement = document.createElement("input");
+	answerElement.setAttribute("name", "answer" + rowCount);
+	answerElement.setAttribute("size", "50");
+	answerElement.setAttribute("type", "text");
+
+	var tbody = document.getElementById("answerTable").getElementsByTagName("TBODY")[0];
+	var row = document.createElement("TR");
+	var td1 = document.createElement("TD");
+	td1.appendChild(radioElement);
+	var td2 = document.createElement("TD");
+	td2.appendChild (answerElement);
+	row.appendChild(td1);
+	row.appendChild(td2);
+	tbody.appendChild(row);
+}
+
+function deleteRow()
+{
+	var rowCount = document.getElementById("answerTable").rows.length - 1;
+
+	if (rowCount > 1)
+		document.getElementById("answerTable").deleteRow(rowCount);
+}
+
+function validateQuestion(form, action)
+{
+	let isValid = true;
+
+	if ($("#question_text") && $("#question_text").val() == "")
+	{
+		alert(quizQuestionNoTitle);
+		$("#question_text").focus();
+		isValid = false;
+	}
+
+	if (isValid == true)
+	{
+		switch ($("#id_question_type").val())
+		{
+			case "1":
+				break;
+
+			case "2":
+				if ($("#freeTextAnswer") && $("#freeTextAnswer").val() == "")
+				{
+					alert(quizNoTextAnswer);
+					$("#freeTextAnswer").focus();
+					isValid = false;
+				}
+				break;
+
+			case "3":
+				break;
+		}
+	}
+
+	if (isValid == true)
+	{
+		$("#formaction").val(action);
+		form.submit();
+	}
+}
+
+function show_image(imgId, selectElement, imageFolder)
+{
+	var imgElement = document.getElementById(imgId);
+	var selectedValue = selectElement[selectElement.selectedIndex].text;
+	var imageUrl = smf_default_theme_url + "/images/quiz_images/blank.gif";
+	if (selectedValue != "-")
+		imageUrl = smf_default_theme_url + "/images/quiz_images/" + imageFolder + "/" + selectedValue;
+
+	imgElement.src = imageUrl;
 }

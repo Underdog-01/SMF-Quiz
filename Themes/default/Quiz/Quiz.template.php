@@ -9,7 +9,7 @@ function template_main()
 		echo '
 			<form action="' . $scripturl . '?action=' . $context['current_action'] . ';sa=' . $context['current_subaction'] . '" method="post">
 			<input type="hidden" name="formaction" id="formaction"/>
-		';
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">';
 		template_topTabs();
 
 		switch ($context['current_subaction'])
@@ -89,14 +89,12 @@ function template_main()
 						<tr class="titlebg">
 							<td style="text-align: left;padding-right: 1ex;">' , $txt['SMFQuiz_Home_Page']['QuizDisabled'] , '</td>
 						</tr>
-					</table>
-		';
+					</table>';
 	}
 
 	echo '
-		<div style="display: flex;width: 100%;justify-content: center;align-items: center;font-size: smaller;"><a href="http://custom.simplemachines.org/mods/index.php?mod=1650" title="Free SMF Mods" target="_blank" class="smalltext">SMFQuiz ' , isset($modSettings["smf_quiz_version"]) ? $modSettings["smf_quiz_version"] : '' , ' &copy; 2009, SMFModding</a></div>
-		</form>'
-	;
+			<div style="display: flex;width: 100%;justify-content: center;align-items: center;font-size: smaller;"><a href="http://custom.simplemachines.org/mods/index.php?mod=1650" title="Free SMF Mods" target="_blank" class="smalltext">SMFQuiz ' , isset($modSettings["smf_quiz_version"]) ? $modSettings["smf_quiz_version"] : '' , ' &copy; 2009, SMFModding</a></div>
+		</form>';
 }
 
 function template_quiz_play()
@@ -594,7 +592,7 @@ function template_user_quizzes()
 					<a href="' , $scripturl . '?action=' , $context['current_action'] , ';sa=editQuiz;id_quiz=' , $userQuizzesRow['id_quiz'] , '"><img src="' . $settings['default_images_url'] . '/quiz_images/edit.png" alt="Edit" title="Edit Quiz" style="border: 0px;margin: 0 auto;"></a>
 					<a href="' , $scripturl . '?action=' , $context['current_action'] , ';sa=quizQuestions;id_quiz=' , $userQuizzesRow['id_quiz'] , '"><img src="' . $settings['default_images_url'] . '/quiz_images/comments.png" alt="Questions" title="Quiz Questions" style="border: 0px;margin: 0 auto;"></a>
 					<a href="' , $scripturl . '?action=' , $context['current_action'] , ';sa=preview;id_quiz=' , $userQuizzesRow['id_quiz'] , '"><img src="' . $settings['default_images_url'] . '/quiz_images/preview.png" alt="Preview" title="Preview Quiz" style="border: 0px;margin: 0 auto;"></a>
-					<a href="' , $scripturl . '?action=' , $context['current_action'] , ';sa=deleteQuiz;id_quiz=' , $userQuizzesRow['id_quiz'] , '"><img src="' . $settings['default_images_url'] . '/quiz_images/delete.png" alt="Delete" title="Delete Quiz" style="border: 0px;margin: 0 auto;"></a>
+					<span class="quizDelUserQuiz" data-new_action="' . $scripturl . '?action=' . $context['current_action'] . ';sa=deleteQuiz;id_quiz=' . $userQuizzesRow['id_quiz'] . '"><img src="' . $settings['default_images_url'] . '/quiz_images/delete.png" alt="Delete" title="Delete Quiz" style="border: 0px;margin: 0 auto;"></span>
 				</td>';
 
 			else

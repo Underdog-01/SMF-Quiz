@@ -194,7 +194,6 @@ function GetQuestionsData()
 		fatal_lang_error('no_access', false);
 
 	if (isset($_GET['questionId'])) {
-		QuestionScript();
 		GetQuestionAndAnswers($_GET['questionId']);
 		$context['current_subaction'] = 'editQuestion';
 	}
@@ -227,154 +226,13 @@ function GetQuestionsData()
 	}
 }
 
-function QuizScript()
-{
-	global $context;
-
-	// Add javascript for multiple checkbox selection
-	// TODO: Make this dependant on what we are showing
-	$context['html_headers'] .= '<script type="text/javascript"><!-- // --><![CDATA[
-			function validateQuiz(form, action)
-			{
-				if (document.getElementById("title").value.length > 0)
-				{
-					document.getElementById("formaction").value = action;
-					form.submit();
-				}
-				else
-				{
-					// @TODO localization
-					alert("The quiz must have a title");
-					document.getElementById("title").focus();
-				}
-			}
-			// ]]></script>
-	';
-}
-
-function QuestionScript()
-{
-	global $context;
-
-	// Add javascript for multiple checkbox selection
-	// TODO: Make this dependant on what we are showing
-	$context['html_headers'] .= '<script>
-			function checkAll(selectedForm, checked)
-			{
-				for (var i = 0; i < selectedForm.elements.length; i++)
-				{
-					var e = selectedForm.elements[i];
-					if (e.type==\'checkbox\') {
-						e.checked = checked;
-					}
-				}
-			}
-			function changeQuestionType(selectedForm)
-			{
-				switch (selectedForm.options[selectedForm.options.selectedIndex].value)
-				{
-					case \'1\' : // Multiple Choice
-						document.getElementById("freeTextAnswerdiv").style.display = \'none\';
-						document.getElementById("multipleChoiceAnswer").style.display = \'block\';
-						document.getElementById("trueFalseAnswer").style.display = \'none\';
-						break;
-					case \'2\' : // Free Text
-						document.getElementById("freeTextAnswerdiv").style.display = \'block\';
-						document.getElementById("multipleChoiceAnswer").style.display = \'none\';
-						document.getElementById("trueFalseAnswer").style.display = \'none\';
-						break;
-					case \'3\' : // True/False
-						document.getElementById("freeTextAnswerdiv").style.display = \'none\';
-						document.getElementById("multipleChoiceAnswer").style.display = \'none\';
-						document.getElementById("trueFalseAnswer").style.display = \'block\';
-						break;
-				}
-			}
-
-			function addRow()
-			{
-				var rowCount = document.getElementById("answerTable").rows.length;
-
-				var radioElement = document.createElement("input");
-				radioElement.setAttribute("name", "correctAnswer");
-				radioElement.setAttribute("value", rowCount);
-				radioElement.setAttribute("type", "radio");
-
-				var answerElement = document.createElement("input");
-				answerElement.setAttribute("name", "answer" + rowCount);
-				answerElement.setAttribute("size", "50");
-				answerElement.setAttribute("type", "text");
-
-				var tbody = document.getElementById("answerTable").getElementsByTagName("TBODY")[0];
-				var row = document.createElement("TR");
-				var td1 = document.createElement("TD");
-				td1.appendChild(radioElement);
-				var td2 = document.createElement("TD");
-				td2.appendChild (answerElement);
-				row.appendChild(td1);
-				row.appendChild(td2);
-				tbody.appendChild(row);
-			}
-
-			function deleteRow()
-			{
-				var rowCount = document.getElementById("answerTable").rows.length - 1;
-
-				if (rowCount > 1)
-					document.getElementById("answerTable").deleteRow(rowCount);
-			}
-
-			function validateQuestion(form, action)
-			{
-				let isValid = true;
-
-				if ($("#question_text") && $("#question_text").val() == "")
-				{
-					// @TODO localization
-					alert("The question must have a title");
-					$("#question_text").focus();
-					isValid = false;
-				}
-
-				if (isValid == true)
-				{
-					switch ($("#id_question_type").val())
-					{
-						case "1" : // Multiple choice
-							// No validation for the moment
-							break;
-
-						case "2" : // Free text
-							if ($("#freeTextAnswer") && $("#freeTextAnswer").val() == "")
-							{
-								// @TODO localization
-								alert("The free text answer cannot be empty");
-								$("#freeTextAnswer").focus();
-								isValid = false;
-							}
-							break;
-
-						case "3" : // True false
-							// No need to do anything here
-							break;
-					}
-				}
-
-				if (isValid == true)
-				{
-					$("#formaction").val(action);
-					form.submit();
-				}
-			}
-			</script>';
-}
-
 function SaveQuestionData()
 {
 	global $context;
 
 	// Retrieve the form values
 	// TODO - Need some validation on front end
+	checkSession();
 	$questionText = isset($_POST['question_text']) ? ReplaceCurlyQuotes($_POST['question_text']) : '';
 	$questionTypeId = isset($_POST['id_question_type']) ? $_POST['id_question_type'] : '';
 	$imageUrl = isset($_POST['image']) ? $_POST['image'] : '';
@@ -386,20 +244,19 @@ function SaveQuestionData()
 	// Save the answer
 	switch ($questionTypeId)
 	{
-		case '1' : // Multiple Choice
+		case '1':
 			AddMultipleChoiceAnswer($questionId);
 			break;
 
-		case '2' : // Free Text
+		case '2':
 			AddFreeTextAnswer($questionId);
 			break;
 
-		case '3' : // True/False
+		case '3':
 			AddTrueFalseAnswer($questionId);
 			break;
 	}
 
-	// @TODO check input
 	if ($_POST['formaction'] == 'saveQuestion')
 		GetQuestionsData();
 	else
@@ -412,6 +269,7 @@ function SaveQuizData()
 
 	// Retrieve the form values
 	// TODO - Need some validation on front end
+	checkSession();
 	$title = isset($_POST['title']) ? $_POST['title'] : '';
 	$description = isset($_POST['description']) ? $_POST['description'] : '';
 	$limit = isset($_POST['limit']) ? $_POST['limit'] : '';
@@ -443,31 +301,8 @@ function SaveQuizData()
 
 function GetAddQuizData()
 {
-	QuizScript();
-
-	AddShowImageScript();
-
 	// The new quiz page also shows a list of categories, so we must get this data
 	GetAllCategoryDetails();
-}
-
-function AddShowImageScript()
-{
-	global $context, $boardurl;
-
-	$context['html_headers'] .= '
-	<script type="text/javascript"><!-- // --><![CDATA[
-		function show_image(imgId, selectElement, imageFolder)
-		{
-			var imgElement = document.getElementById(imgId);
-			var selectedValue = selectElement[selectElement.selectedIndex].text;
-			var imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/blank.gif";
-			if (selectedValue != "-")
-				imageUrl = "' . $boardurl . '/Themes/default/images/quiz_images/" + imageFolder + "/" + selectedValue;
-
-			imgElement.src = imageUrl;
-		}
-	// ]]></script>';
 }
 
 function GetUserQuizzesData()
@@ -475,8 +310,6 @@ function GetUserQuizzesData()
 	global $context, $sourcedir, $txt, $user_info;
 
 	isAllowedTo('quiz_submit');
-
-	QuizScript();
 
 	if (isset($_GET['id_user']))
 		$userId = $_GET['id_user'];
@@ -701,8 +534,6 @@ function GetNewQuestionData()
 {
 	global $context;
 
-	QuestionScript();
-
 	// The new question page provides a list of quizzes to select. Therefore we need to obtain a list of category data
 	GetUserQuizzes($context['user']['id']);
 
@@ -719,10 +550,6 @@ function GetEditQuizData()
 {
 	global $context, $user_info;
 
-	QuizScript();
-
-	AddShowImageScript();
-
 	GetQuiz($context['id_quiz']);
 
 	// Only the quiz creator can edit the quiz
@@ -737,6 +564,7 @@ function GetEditQuizData()
 
 function UpdateFreeTextAnswer()
 {
+	checkSession();
 	// Free text answer simply has the text entered as the answer, so we only need to insert this into the database marking it as correct
 	$answerText = isset($_POST["freeTextAnswer"]) ? ReplaceCurlyQuotes($_POST["freeTextAnswer"]) : '';
 
@@ -748,6 +576,7 @@ function UpdateFreeTextAnswer()
 
 function AddFreeTextAnswer($questionId)
 {
+	checkSession();
 	// Free text answer simply has the text entered as the answer, so we only need to insert this into the database marking it as correct
 	$answerText = isset($_POST["freeTextAnswer"]) ? ReplaceCurlyQuotes($_POST["freeTextAnswer"]) : '';
 
@@ -757,6 +586,7 @@ function AddFreeTextAnswer($questionId)
 
 function UpdateTrueFalseAnswer()
 {
+	checkSession();
 	$correctAnswerId = isset($_POST["trueFalseAnswer"]) ? $_POST["trueFalseAnswer"] : 0;
 
 	foreach($_POST as $key => $value)
@@ -780,6 +610,7 @@ function UpdateTrueFalseAnswer()
 
 function AddTrueFalseAnswer($questionId)
 {
+	checkSession();
 	// True false answer is simply saved as one asnwer that is correct
 	$answerText = isset($_POST["trueFalseAnswer"]) ? ReplaceCurlyQuotes($_POST["trueFalseAnswer"]) : 'false';
 
@@ -795,6 +626,7 @@ function AddTrueFalseAnswer($questionId)
 
 function UpdateMultipleChoiceAnswer()
 {
+	checkSession();
 	// For mutiple choice answers we need to loop through each choice adding the answer and setting the correct one
 	$correctAnswerId = isset($_POST["correctAnswer"]) ? $_POST["correctAnswer"] : 0;
 
@@ -819,6 +651,7 @@ function UpdateMultipleChoiceAnswer()
 
 function AddMultipleChoiceAnswer($questionId)
 {
+	checkSession();
 	// For mutiple choice answers we need to loop through each choice adding the answer and setting the correct one
 	$correctAnswerId = isset($_POST["correctAnswer"]) ? $_POST["correctAnswer"] : 0;
 
@@ -841,14 +674,10 @@ function AddMultipleChoiceAnswer($questionId)
 	}
 }
 
-// @TODO
-// Function to replace curly quotes with normal ones - might be a better way of doing this, but this
-// will do for the moment
 function ReplaceCurlyQuotes($stringToReplace)
 {
-	$replaceString = str_replace('�', '"', $stringToReplace);
-	$replaceString = str_replace('�', '"', $replaceString);
-	$replaceString = str_replace('�', '\'', $replaceString);
+	$replaceString = str_replace("'", "\'", stripcslashes(Quiz\Helper::format_entities($stringToReplace, false)));
+
 	return $replaceString;
 }
 
@@ -856,6 +685,7 @@ function GetUpdateQuizData()
 {
 	global $context;
 
+	checkSession();
 	// Retrieve the form values
 	// TODO - Need some validation on front end
 	$title = isset($_POST["title"]) ? $_POST["title"] : '';
@@ -891,6 +721,7 @@ function GetDeleteQuestionData()
 {
 	global $context;
 
+	checkSession();
 	// Get the key ids for the questions to delete. This function returns a string containing a comma separated list of id's
 	$deleteKeys = GetKeysFromPost('question');
 
@@ -922,6 +753,7 @@ function GetDeleteQuizData()
 {
 	global $context, $user_info;
 
+	checkSession();
 	// Get the key ids for the questions to delete. This function returns a string containing a comma separated list of id's
 
 	// Get the key ids for the quiz leagues to delete. This function returns a string containing a comma separated list of id's
@@ -947,6 +779,7 @@ function GetUpdateQuestionData()
 
 	// Retrieve the form values
 	// TODO - Need some validation on front end
+	checkSession();
 	$questionId = isset($_POST["questionId"]) ? $_POST["questionId"] : '';
 	$questionText = isset($_POST['question_text']) ? ReplaceCurlyQuotes($_POST['question_text']) : '';
 	$imageUrl = isset($_POST["image"]) ? $_POST["image"] : '';

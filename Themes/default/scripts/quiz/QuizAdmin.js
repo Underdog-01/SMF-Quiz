@@ -117,10 +117,10 @@ function verifyQuizzesChecked(selectedForm)
 				$("#quizCheckboxes").prop("checked", false);
 			}
 			else {
-				alert("Error ~ Quizzes not exported ~ Missing package name ~ " + errorThrown);
+				alert("Error ~ Quizzes not exported ~ Missing package name");
 			}
 
-		}).fail(function() {
+		}).fail(function(jqXHR, textStatus, errorThrown) {
 			alert("Error ~ Quizzes not exported ~ " + errorThrown);
 		})
 		.always(function() {

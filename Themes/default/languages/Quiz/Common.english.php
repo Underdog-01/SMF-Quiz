@@ -209,6 +209,9 @@ $txt['quizLocalizationAlertsJS'] = [
 	'quizAjaxErrorDataLoad' => 'Data Load Error',
 	'quizAjaxErrorGeneral' => 'An unexpected error has occurred while retrieving data from the server. Please contact the server administrator and inform them of this error.',
 	'quizCreatorReminder' => 'Reminder:\n\nYour results will not be saved because your user ID has been detected as the creator of this quiz.',
+	'quizNoTitle' => 'The quiz must have a title!',
+	'quizQuestionNoTitle' => 'The question must have a title!',
+	'quizNoTextAnswer' => 'The free text answer cannot be empty!',
 ];
 
 $txt['quizButtonEdit'] = 'Edit';

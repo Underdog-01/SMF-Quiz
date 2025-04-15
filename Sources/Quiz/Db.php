@@ -1211,7 +1211,6 @@ function SaveQuestion($question_text, $id_question_type, $id_quiz, $image, $answ
 			'updated' => 'int'
 		),
 		array(
-// @TODO utf8
 			Quiz\Helper::quiz_commonStringFilter($question_text),
 			$id_question_type,
 			$id_quiz,
