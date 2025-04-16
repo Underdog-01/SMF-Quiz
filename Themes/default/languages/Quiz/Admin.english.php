@@ -256,10 +256,14 @@ $txt['SMFQuizAdmim_Settings_Page'] = [
 	'ShowUserRating' => 'Show User Ratings',
 	'PreviewPMSent' => 'The Preview PM has been sent to your message box, please go there to review it',
 	'QuizZipExport' => 'Select Export File Type',
+	'UserImageFileSize' => 'Image File Size Limit [MB]',
 ];
 
 $txt['quiz_mod_pm_placeolders'] = '<div>These {placeholders} can be used in Quiz PMs:</div>
 <div style="padding-top: 1rem;overflow-wrap: break-word;word-wrap: break-word;hyphens: auto;">{quiz_name}, {new_score_seconds}, {new_score}, {old_score_seconds}, {old_score}, {member_name}, {old_member_name}, {quiz_image}, {quiz_link}, {quiz_iurl}, {boardurl}, {scripturl}</div>';
+
+$txt['quiz_mod_image_size'] = '<div>Choose the maximum image file size for user created quizzes.</div>
+<div style="padding-top: 1rem;overflow-wrap: break-word;word-wrap: break-word;hyphens: auto;">This setting is in Megabytes [MB] and allows an integer range: 1 - 10</div>';
 
 $txt['quiz_mod_summary'] = 'Quiz Mod Summary';
 $txt['quiz_mod_statistics'] = 'Quiz Mod Statistics';

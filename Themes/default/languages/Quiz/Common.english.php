@@ -1,5 +1,6 @@
 <?php
-global $txt;
+global $txt, $modSettings;
+
 // Common language phrases
 $txt['SMFQuiz_Common'] = array(
 	'AddNewQuiz' => 'Add New Quiz',
@@ -216,6 +217,7 @@ $txt['quizLocalizationAlertsJS'] = [
 	'quizSearchNoText' => 'Please enter something to search',
 	'quizGeneralErrorText' => 'Error',
 	'quizImageFileError' => 'Incorrect file type or file is too large',
+	'quizImageSize' => (!empty($modSettings['SMFQuiz_UserImageFileSize']) ? (int)$modSettings['SMFQuiz_UserImageFileSize'] * 1048576 : 1048576),
 ];
 
 $txt['quizButtonEdit'] = 'Edit';

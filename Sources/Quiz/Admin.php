@@ -222,6 +222,7 @@ function GetSettingsData($return_config = false)
 		array('check', 'SMFQuiz_enabled', 'text_label' => $txt['SMFQuiz_Common']['QuizEnabled']),
 		array('large_text', 'SMFQuiz_Welcome', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['WelcomeMessage']),
 		array('check', 'SMFQuiz_showUserRating', 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ShowUserRating']),
+		array('float', 'SMFQuiz_UserImageFileSize', 6, 'min' => 1, 'max' => 10, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['UserImageFileSize'], 'help' => 'quiz_mod_image_size'),
 		array('float', 'SMFQuiz_InfoBoardItemsToDisplay', 6, 'min' => 1, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['InfoBoardItemsToDisplay']),
 		array('float', 'SMFQuiz_ListPageSizes', 6, 'min' => 1, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['ListPageSizes']),
 		array('float', 'SMFQuiz_SessionTimeLimit', 6, 'min' => 0, 'step' => 1, 'text_label' => $txt['SMFQuizAdmim_Settings_Page']['SessionTimeLimit']),
@@ -249,6 +250,17 @@ function GetSettingsData($return_config = false)
 			'help' => 'quiz_mod_pm_placeolders'),
 	);
 
+	$context['html_headers'] .= '
+	<script>
+		$(document).ready(function(){
+			if ($("#SMFQuiz_UserImageFileSize") && parseInt($("#SMFQuiz_UserImageFileSize").val()) < 1) {
+				$("#SMFQuiz_UserImageFileSize").val(1);
+			}
+			else if ($("#SMFQuiz_UserImageFileSize") && parseInt($("#SMFQuiz_UserImageFileSize").val()) > 10) {
+				$("#SMFQuiz_UserImageFileSize").val(1);
+			}
+		});
+	</script>';
 	if ($return_config)
 		return $config_vars;
 
@@ -2264,9 +2276,9 @@ function GetQuizImportData()
 	$validImageTypes = array(
 		1 => 'gif',
 		2 => 'jpeg',
-		3 => 'png',		
-		6 => 'bmp',		
-		9 => 'jpeg',		
+		3 => 'png',
+		6 => 'bmp',
+		9 => 'jpeg',
 	);
 
 	if (!empty($_FILES))

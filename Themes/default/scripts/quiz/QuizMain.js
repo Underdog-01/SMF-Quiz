@@ -55,7 +55,7 @@ $(document).ready(function(){
 	});
 	$("input#quizUserImageFile:file").change(function (){
 		let fileName = $(this).val(), fileData = $("input#quizUserImageFile")[0].files[0];
-		if (fileData && fileData.size < 2097152) {
+		if (fileData && fileData.size <= parseInt(quizImageSize)) {
 			$("input[name='formaction']").val("userQuizImage");
 			let exportData = new FormData(), quizAction = $(this).attr("data-new_action"), quizRegex = /\.(jpg|jpeg|gif|png|bmp)$/i;
 			let searchParams = new URLSearchParams(quizAction.replace(';', '&'));
