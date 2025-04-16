@@ -215,6 +215,7 @@ $txt['quizLocalizationAlertsJS'] = [
 	'quizNoTextAnswer' => 'The free text answer cannot be empty!',
 	'quizSearchNoText' => 'Please enter something to search',
 	'quizGeneralErrorText' => 'Error',
+	'quizImageFileError' => 'Incorrect file type or file is too large',
 ];
 
 $txt['quizButtonEdit'] = 'Edit';

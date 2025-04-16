@@ -592,7 +592,7 @@ function template_user_quizzes()
 					<a href="' , $scripturl . '?action=' , $context['current_action'] , ';sa=editQuiz;id_quiz=' , $userQuizzesRow['id_quiz'] , '"><img src="' . $settings['default_images_url'] . '/quiz_images/edit.png" alt="Edit" title="Edit Quiz" style="border: 0px;margin: 0 auto;"></a>
 					<a href="' , $scripturl . '?action=' , $context['current_action'] , ';sa=quizQuestions;id_quiz=' , $userQuizzesRow['id_quiz'] , '"><img src="' . $settings['default_images_url'] . '/quiz_images/comments.png" alt="Questions" title="Quiz Questions" style="border: 0px;margin: 0 auto;"></a>
 					<a href="' , $scripturl . '?action=' , $context['current_action'] , ';sa=preview;id_quiz=' , $userQuizzesRow['id_quiz'] , '"><img src="' . $settings['default_images_url'] . '/quiz_images/preview.png" alt="Preview" title="Preview Quiz" style="border: 0px;margin: 0 auto;"></a>
-					<span class="quizDelUserQuiz" data-new_action="' . $scripturl . '?action=' . $context['current_action'] . ';sa=deleteQuiz;id_quiz=' . $userQuizzesRow['id_quiz'] . '"><img src="' . $settings['default_images_url'] . '/quiz_images/delete.png" alt="Delete" title="Delete Quiz" style="border: 0px;margin: 0 auto;"></span>
+					<span class="quizNewUserAction" data-new_action="' . $scripturl . '?action=' . $context['current_action'] . ';sa=deleteQuiz;id_quiz=' . $userQuizzesRow['id_quiz'] . '"><img src="' . $settings['default_images_url'] . '/quiz_images/delete.png" alt="Delete" title="Delete Quiz" style="border: 0px;margin: 0 auto;"></span>
 				</td>';
 
 			else
@@ -3211,12 +3211,9 @@ function template_preview_quiz()
 // @TODO source-side?
 function template_quiz_image_dropdown($index = "", $selectedValue = "", $imageFolder = "Quizzes")
 {
-	global $boarddir, $boardurl;
+	global $boarddir, $boardurl, $scripturl, $context;
 
-	//define the path as relative
-	$path = $boarddir . '/Themes/default/images/quiz_images/' . $imageFolder . '/';
-	$files = [];
-
+	list($files, $selectedValue, $path) = [[], trim($selectedValue), $boarddir . '/Themes/default/images/quiz_images/' . $imageFolder . '/'];
 
 	if (!is_dir($path)) {
 		log_error("Unable to open $path");
@@ -3225,24 +3222,16 @@ function template_quiz_image_dropdown($index = "", $selectedValue = "", $imageFo
 	$files = glob($path . '/*.{jpg,png,gif,jpeg,bmp}', GLOB_BRACE);
 	sort($files);
 
-	echo '<select id="imageList' , $index , '" name="image' , $index , '" onchange="show_image(\'icon' , $index , '\', this, \'' , $imageFolder , '\')">';
-
-	if (in_array($selectedValue, ['', '-']))
-		echo '<option selected>-</option>';
-	else
-		echo '<option>-</option>';
+	echo '<div style="display: inline-flex;align-items: center;justify-content: center;"><select id="imageList' , $index , '" name="image' , $index , '" onchange="show_image(\'icon' , $index , '\', this, \'' , $imageFolder , '\')">';
+	echo in_array($selectedValue, ['', '-']) ? '<option selected>quiz.png</option>' : '<option>-</option>';
 
 	foreach($files as $file) {
 		echo '<option' . ($selectedValue == basename($file) ? ' selected' : '') . '>' . basename($file) . '</option>';
 	}
 
-	echo '</select>&nbsp;';
-
-	if (trim($selectedValue) == '-' || trim($selectedValue) == '')
-		echo '<img id="icon' , $index , '" name="icon' , $index , '" src="', $boardurl, '/Themes/default/images/quiz_images/blank.gif" width="24" height="24" border="0"/>';
-	else
-		echo '<img id="icon' , $index , '" name="icon' , $index , '" src="', $boardurl, '/Themes/default/images/quiz_images/' , $imageFolder , '/' , $selectedValue , '" width="24" height="24" border="0"/>';
-
+	echo '</select><span style="padding-left: 1rem;display: inline-flex;align-self: center;">';
+	echo in_array($selectedValue, ['', '-']) ? '<img id="icon' . $index . '" name="icon' . $index . '" src="' . $boardurl . '/Themes/default/images/quiz_images/quiz.png" style="width: 24px;height: 24px;min-width: 24px;min-height: 24px;border: 0px;">' : '<img id="icon' . $index . '" name="icon' . $index . '" src="' . $boardurl . '/Themes/default/images/quiz_images/' . $imageFolder . '/' . $selectedValue . '" style="width: 24px;height: 24px;min-width: 24px;min-height: 24px;border: 0px;">';
+	echo '</span></div><div style="padding-top: 0.5rem;display: flex;align-self: center;"><input data-new_action="' . $scripturl . '?action=SMFQuiz;sa=userQuizImage;" type="file" id="quizUserImageFile" name="quizUserImageFile" accept=".jpg,.jpeg,.gif,.png"></div>';
 }
 
 ?>

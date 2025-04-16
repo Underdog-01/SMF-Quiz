@@ -31,24 +31,68 @@ $(document).ready(function(){
 			quizSearchSubmit();
 		}
 	});
-	$(".quizDelUserQuiz").on("click", function() {
+	$(".quizNewUserAction").on("click", function() {
 		let exportData = [{ name: smf_session_var, value: smf_session_id}], quizAction = $(this).attr("data-new_action");
+		let searchParams = new URLSearchParams(quizAction);
+		let searchAction = searchParams.has('action') ? searchParams.get('action') : quizAction;
+
 		$.post(quizAction, exportData)
 		.done(function( resultData ) {
 			if (resultData) {
 				location.href = location.href;
-				console.log("Quiz was deleted ~ " + resultData);
+				console.log("Quiz action: " + searchAction + " was completed ~ " + resultData);
 			}
 			else {
-				alert("Error ~ Quiz not deleted");
+				alert("Error ~ Quiz action: " + searchAction + " not completed");
 			}
 
 		}).fail(function(jqXHR, textStatus, errorThrown) {
-			alert("Error ~ Quiz not deleted ~ " + errorThrown);
+			alert("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
 		})
 		.always(function() {
-			console.log( "Quiz deletion finished" );
+			console.log( "Quiz action: " + searchAction + " finished" );
 		});
+	});
+	$("input#quizUserImageFile:file").change(function (){
+		let fileName = $(this).val(), fileData = $("input#quizUserImageFile")[0].files[0];
+		if (fileData && fileData.size < 2097152) {
+			$("input[name='formaction']").val("userQuizImage");
+			let exportData = new FormData(), quizAction = $(this).attr("data-new_action"), quizRegex = /\.(jpg|jpeg|gif|png|bmp)$/i;
+			let searchParams = new URLSearchParams(quizAction.replace(';', '&'));
+			let searchAction = searchParams.has('sa') ? searchParams.get('sa') : quizAction;
+			exportData.append("quizUserImageFile", $(this).prop("files")[0]);
+			exportData.append(smf_session_var, smf_session_id);
+			exportData.append("formaction", "userQuizImage");
+			$.ajax({
+				type: "POST",
+				url: quizAction,
+				data: exportData,
+				processData: false,
+				contentType: false,
+				success: function(resultData) {
+					if (quizRegex.test(resultData.toLowerCase())) {
+						$("#imageList").append('<option value="' + resultData + '" selected="selected">' + resultData + '</option>');
+						$("#imageList").val(resultData).change();
+						console.log("Quiz action: " + searchAction + " was completed ~ " + resultData);
+						$("input#quizUserImageFile").val("");
+					}
+					else {
+						console.log(quizImageFileError + " ~ " + resultData);
+						alert(quizImageFileError + " ~ " + resultData);
+						location.href = location.href;
+					}
+				},
+				error: function(errorThrown) {
+					console.log("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
+					alert("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
+					location.href = location.href;
+				}
+			});
+		}
+		else {
+			alert(quizImageFileError);
+			location.href = location.href;
+		}
 	});
 });
 function quizSearchLoader() {

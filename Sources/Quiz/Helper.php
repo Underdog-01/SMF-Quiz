@@ -250,4 +250,156 @@ class Helper
 
 		return $output;
 	}
+
+	public static function resize_image_max(object $image, int $max_width, int $max_height, array &$errors=array())
+	{
+		$w = imagesx($image);
+		$h = imagesy($image);
+		if (!$w || !$h) {
+			$errors[] = 'Image could not be resized because it was not a valid image.';
+			return false;
+		}
+
+		if (($w <= $max_width) && ($h <= $max_height)) {
+			return $image;
+		}
+
+		$ratio = $max_width / $w;
+		$new_w = $max_width;
+		$new_h = $h * $ratio;
+
+
+		if ($new_h > $max_height) {
+			$ratio = $max_height / $h;
+			$new_h = $max_height;
+			$new_w = $w * $ratio;
+		}
+
+		$new_w = round($new_w);
+		$new_h = round($new_h);
+		$new_image = imagecreatetruecolor($new_w, $new_h);
+		imagecopyresampled($new_image, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
+
+		return $new_image;
+	}
+
+	public static function resize_image($image_filename, $new_image_filename, $width, $height)
+	{
+		$errors = [];
+
+		if (!$image_filename) {
+			$errors[] = 'No source image location specified.';
+		}
+		else {
+			if (!file_exists($image_filename)) {
+				$errors[] = 'Image source file does not exist.';
+			}
+			$extension = strtolower(pathinfo(basename($image_filename), PATHINFO_EXTENSION));
+			if (!in_array($extension, array('jpg','jpeg','png','gif','bmp'))) {
+				$errors[] = 'Invalid source file extension!';
+			}
+		}
+
+		if (!$new_image_filename) {
+			$errors[] = 'No destination image location specified.';
+		}
+		else {
+			$new_extension = strtolower(pathinfo(basename($new_image_filename), PATHINFO_EXTENSION));
+			if (!in_array($new_extension,array('jpg','jpeg','png','gif','bmp'))) {
+				$errors[] = 'Invalid destination file extension!';
+			}
+		}
+
+		$width = abs(intval($width));
+		if (!$width) {
+			$errors[] = 'No width specified!';
+		}
+
+		$height = abs(intval($height));
+		if (!$height) {
+			$errors[] = 'No height specified!';
+		}
+
+		if (count($errors) > 0) {
+			return $errors;
+		}
+
+		$mimeType = @getimagesize($image_filename);
+
+		if (!empty($mimeType)) {
+			switch ($mimeType[2]) {
+				case IMAGETYPE_GIF:
+					$image = @imagecreatefromgif($image_filename);
+					break;
+				case IMAGETYPE_BMP:
+					$image = @imagecreatefromwbmp($image_filename);
+					break;
+				case IMAGETYPE_PNG:
+					$image = @imagecreatefrompng($image_filename);
+					break;
+				default:
+					$image = @imagecreatefromjpeg($image_filename);
+			}
+		}
+
+		if (empty($image)) {
+			$errors[] = 'Image could not be generated!';
+		}
+		else {
+			$current_width = imagesx($image);
+			$current_height = imagesy($image);
+			if ((!$current_width) || (!$current_height)) {
+				$errors[] = 'Generated image has invalid dimensions!';
+			}
+		}
+		if (count($errors) > 0) {
+			error_log(json_encode($errors));
+			@imagedestroy($image);
+			return $errors;
+		}
+
+		$new_image = self::resize_image_max($image, $width, $height, $errors);
+
+		if (!$new_image && !count($errors)) {
+			$errors[] = 'New image could not be generated!';
+		}
+		if (count($errors)) {
+			@imagedestroy($image);
+			return $errors;
+		}
+
+		$save_error = false;
+
+		switch ($extension) {
+			case 'gif':
+				@imagegif($new_image, $new_image_filename) or ($save_error = true);
+				break;
+			case 'bmp':
+				@imagewbmp($new_image, $new_image_filename) or ($save_error = true);
+				break;
+			case 'png':
+				@imagepng($new_image, $new_image_filename) or ($save_error = true);
+				break;
+			default:
+				@imagejpeg($new_image, $new_image_filename) or ($save_error = true);
+		}
+
+		if ($save_error) {
+			$errors[] = 'New image could not be saved!';
+		}
+		if (count($errors) > 0) {
+			if (!empty($image)) {
+				unset($image);
+			}
+			@imagedestroy($new_image);
+			return $errors;
+		}
+
+		if (!empty($image)) {
+			unset($image);
+		}
+		@imagedestroy($new_image);
+
+		return [];
+	}
 }

@@ -2264,13 +2264,9 @@ function GetQuizImportData()
 	$validImageTypes = array(
 		1 => 'gif',
 		2 => 'jpeg',
-		3 => 'png',
-		5 => 'psd',
-		6 => 'bmp',
-		7 => 'tiff',
-		8 => 'tiff',
-		9 => 'jpeg',
-		14 => 'iff'
+		3 => 'png',		
+		6 => 'bmp',		
+		9 => 'jpeg',		
 	);
 
 	if (!empty($_FILES))

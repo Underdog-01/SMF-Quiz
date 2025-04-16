@@ -15,9 +15,17 @@ function SMFQuiz()
 	$context['page_title'] = $txt['SMFQuiz'];
 	addJavaScriptVar('id_user', $context['user']['id'], false);
 	$qv = !empty($modSettings['smf_quiz_version']) && (stripos($modSettings['smf_quiz_version'], '-beta') !== FALSE || stripos($modSettings['smf_quiz_version'], '-rc') !== FALSE) ? bin2hex(random_bytes(12/2)) : 'stable';
+	$quizVarsJS = 'let smfQuizVersion = "' . $modSettings['smf_quiz_version'] . '";';
+	foreach ((array_merge($txt['quizLocalizationTextJS'], $txt['quizLocalizationAlertsJS'])) as $key => $val) {
+		$quizVarsJS .= '
+		let ' . $key . ' = "' . $val . '";';
+	}
 	$context['html_headers'] .= '
-		<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/QuizMain.css?v=' . $qv . '"/>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizMain.js?v=' . $qv . '"></script>';
+	<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/quiz/QuizMain.css?v=' . $qv . '"/>
+	<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/quiz/QuizMain.js?v=' . $qv . '"></script>
+	<script>
+		' . ($quizVarsJS) . '
+	</script>';
 
 	if ($context['current_subaction'] == 'play')
 	{
@@ -64,6 +72,7 @@ function SMFQuiz()
 		'unplayedQuizzes' => 'GetUnplayedQuizzesData',
 		'playedQuizzes' => 'GetPlayedQuizzesData',
 		'preview' => 'GetPreviewQuizData',
+		'userQuizImage' => 'GetUserQuizImage',
 		);
 
 // @TODO localization
@@ -679,6 +688,66 @@ function ReplaceCurlyQuotes($stringToReplace)
 	$replaceString = str_replace("'", "\'", stripcslashes(Quiz\Helper::format_entities($stringToReplace, false)));
 
 	return $replaceString;
+}
+
+function GetUserQuizImage()
+{
+	global $settings, $user_info;
+	checkSession();
+
+	list($exit, $imgTypes) = ['error', ['png', 'jpg', 'gif', 'bmp']];
+	@ini_set("gd.jpeg_ignore_warning", 1);
+
+	if (!empty($_FILES['quizUserImageFile']['tmp_name'][0]))
+	{
+		$defaultImagesDir = str_replace('\\', '/', $settings['default_theme_dir']);
+		$fileData = Quiz\Helper::quiz_commonImageFileFilter(basename($_FILES['quizUserImageFile']['name']));
+		$fileData = substr($fileData, -5) == '.jpeg' ? substr($fileData, 0, -5) . '.jpg' : $fileData;
+		$file = $defaultImagesDir . '/images/quiz_images/Quizzes/' . $fileData;
+		$newfile = $defaultImagesDir . '/images/quiz_images/Quizzes/user_' . strval($user_info['id']) . '_' . $fileData;
+		$tempFile = str_replace(['\\\\', '//'], ['\\', '/'], $_FILES['quizUserImageFile']['tmp_name']);
+		$type = strtolower(pathinfo($fileData, PATHINFO_EXTENSION));
+		move_uploaded_file($tempFile, $file);
+		clearstatcache($defaultImagesDir . '/images/quiz_images/Quizzes');
+		if (file_exists($file)) {
+			chmod($file, 0644);
+		}
+		if ($size = @getimagesize($file) && in_array($type, $imgTypes)) {
+			list ($width, $height) = $size;
+
+			if ($width < 64 || $height < 64) {
+				$checkResize = Quiz\Helper::resize_image($file, $newfile, 64, 64);
+			}
+			else {
+				@rename($file, $newfile);
+			}
+
+			if (!empty($checkResize)) {
+				if (file_exists($file)) {
+					@unlink($file);
+				}
+				if (file_exists($newfile)) {
+					@unlink($newfile);
+				}
+			}
+			else {
+				clearstatcache($defaultImagesDir . '/images/quiz_images/Quizzes');
+				$exit = basename($newfile);
+			}
+		}
+		elseif (file_exists($file)) {
+			@unlink($file);
+		}
+
+	}
+
+	clearstatcache($defaultImagesDir . '/images/quiz_images/Quizzes');
+	if (!empty($checkResize)) {
+		exit($exit . ' ~ ' . json_encode($checkResize));
+	}
+
+	exit($exit);
+
 }
 
 function GetUpdateQuizData()
