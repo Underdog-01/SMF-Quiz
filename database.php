@@ -15,7 +15,7 @@ elseif (!defined('SMF'))
 
 global $smcFunc;
 
-$quizVersion = '2.0.3-BETA23';
+$quizVersion = '2.0.3-BETA24';
 
 
 if (!isset($smcFunc['db_create_table']))

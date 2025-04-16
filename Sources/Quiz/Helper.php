@@ -200,8 +200,8 @@ class Helper
 		$stringToFormat = str_replace(array("\\", "quizes", "Quizes"), array("", "quizzes", "Quizzes"), stripcslashes($stringToFormat));
 
 		// Ensure double|single quotes are explicitly HTML5 entities
-		$returnString = self::format_entities($returnString, true);
-		$returnString = str_replace(["'", '"'], ['&apos;', '&quot;'],  htmlspecialchars_decode($stringToFormat, ENT_QUOTES));
+		$stringToFormat = self::format_entities($stringToFormat, true);
+		$stringToFormat = str_replace(["'", '"'], ['&apos;', '&quot;'],  htmlspecialchars_decode($stringToFormat, ENT_QUOTES));
 		$returnString = str_replace(["'", '"'], ['&apos;', '&quot;'], html_entity_decode(self::format_entities($stringToFormat, true), ENT_QUOTES|ENT_HTML5, 'UTF-8'));
 
 		return $returnString;

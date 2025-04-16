@@ -200,6 +200,7 @@ $txt['quizLocalizationTextJS'] = [
 $txt['quizLocalizationAdminAlertsJS'] = [
 	'quiz_mod_preview_disabled' => 'Sorry at the moment the preview is disabled, it will be back at a later stage of development',
 	'quizAlertOnePackage' => 'You must select at least one Quiz to package',
+	'quizResetAllQuizData' => 'Are you sure you wish to reset ALL quiz data?',
 ];
 
 $txt['quizLocalizationAlertsJS'] = [

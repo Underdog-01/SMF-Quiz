@@ -132,20 +132,11 @@ function GetMaintenanceData()
 	loadLanguage('ManageMaintenance');
 
 	$context['quiz_mtasks'] = ['FindOrphanQuestions', 'FindOrphanAnswers', 'FindOrphanQuizResults', 'FindOrphanCategories'];
-	$context['html_headers'] .= '<script type="text/javascript"><!-- // --><![CDATA[
-			function clearResults(thisform)
-			{
-				thisform.formaction.value = "resetQuizzes";
-				if(confirm(\'' . $txt['SMFQuizAdmin_Maintenance_Page']['ResetAllQuizData'] . '\'))
-					thisform.submit();
-				else
-					return false;
-			}
-	// ]]></script>';
 
 	// User has selected to reset the quiz scores
 	if (isset($_POST['formaction']) && $_POST['formaction'] == 'resetQuizzes')
 	{
+		checkSession();
 		ResetQuizResults();
 		ResetQuizTopScores();
 		$context['MaintenanceResult'] = $txt['quiz_maint_results_removed'];
@@ -154,6 +145,7 @@ function GetMaintenanceData()
 	// User has selected to complete the quiz sessions
 	if (isset($_POST['btnCompleteSessions']))
 	{
+		checkSession();
 		if ($_POST['txtSessionDays'] != 0)
 			$date  = mktime(0, 0, 0, date("m")  , date("d") - $_POST['txtSessionDays'], date("Y"));
 		else
@@ -167,6 +159,7 @@ function GetMaintenanceData()
 	// User has selected to clean the infoboard
 	if (isset($_POST['btnCleanInfoBoard']))
 	{
+		checkSession();
 		if ($_POST['txtInfoBoardDays'] != 0)
 			$date  = mktime(0, 0, 0, date("m")  , date("d") - $_POST['txtInfoBoardDays'], date("Y"));
 		else
@@ -176,38 +169,15 @@ function GetMaintenanceData()
 		$context['MaintenanceResult'] = $txt['quiz_maint_infoboard_entries_removed'];
 	}
 
-		// @TODO can be replaced by a for?
-	// User has selected to find orphaned question data
-	if (isset($_POST['btnFindOrphanQuestions']))
-		FindOrphanedQuestionsData();
+	$tasks = ['btnFindOrphanQuestions', 'btnFindOrphanAnswers', 'btnFindOrphanCategories', 'btnDeleteOrphanedQuestions', 'btnDeleteOrphanedAnswers', 'btnDeleteOrphanedQuizResults', 'btnDeleteOrphanedCategories'];
 
-	// User has selected to find orphaned answer data
-	if (isset($_POST['btnFindOrphanAnswers']))
-		FindOrphanedAnswersData();
-
-	// User has selected to find orphaned quiz result data
-	if (isset($_POST['btnFindOrphanQuizResults']))
-		FindOrphanedQuizResultsData();
-
-	// User has selected to find orphaned categories data
-	if (isset($_POST['btnFindOrphanCategories']))
-		FindOrphanedCategoriesData();
-
-	// User has selected to delete orphaned questions
-	if (isset($_POST['btnDeleteOrphanedQuestions']))
-		DeleteOrphanedQuestionsData();
-
-	// User has selected to delete orphaned answers
-	if (isset($_POST['btnDeleteOrphanedAnswers']))
-		DeleteOrphanedAnswersData();
-
-	// User has selected to delete orphaned quiz results
-	if (isset($_POST['btnDeleteOrphanedQuizResults']))
-		DeleteOrphanedQuizResultsData();
-
-	// User has selected to delete orphaned categories
-	if (isset($_POST['btnDeleteOrphanedCategories']))
-		DeleteOrphanedCategoriesData();
+	foreach ($tasks as $task) {
+		$func = str_replace('btn', '', $task) . 'Data';
+		if (isset($_POST[$task])) {
+			checkSession();
+			$func();
+		}
+	}
 }
 
 function ParseMessage($message, $quiztitle, $total_seconds, $total_points, $top_time, $top_points, $quizImage, $scripturl, $id_quiz, $old_member_name)
@@ -598,6 +568,8 @@ function GetDeleteQuestionData()
 {
 	global $context;
 
+	checkSession();
+
 	// Get the key ids for the questions to delete. This function returns a string containing a comma separated list of id's
 	$deleteKeys = GetKeysFromPost('question');
 
@@ -615,6 +587,8 @@ function GetDeleteQuestionData()
 function GetDeleteCategoryData()
 {
 	global $context;
+
+	checkSession();
 
 	// Get the key ids for the categories to delete. This function returns a string containing a comma separated list of id's
 	$deleteKeys = GetKeysFromPost('cat');
@@ -634,6 +608,8 @@ function GetDeleteQuizData()
 {
 	global $context;
 
+	checkSession();
+
 	// Get the key ids for the quiz leagues to delete. This function returns a string containing a comma separated list of id's
 	$deleteKeys = GetKeysFromPost('quiz');
 
@@ -652,6 +628,8 @@ function GetDeleteQuizResultData()
 {
 	global $context;
 
+	checkSession();
+
 	// Get the key ids for the quiz results to delete. This function returns a string containing a comma separated list of id's
 	$deleteKeys = GetKeysFromPost('quiz_result');
 
@@ -666,6 +644,8 @@ function GetDeleteQuizDisputeData()
 {
 	global $context;
 
+	checkSession();
+
 	// Get the key ids for the quiz disputes to delete. This function returns a string containing a comma separated list of id's
 	$deleteKeys = GetKeysFromPost('quiz_dispute');
 
@@ -679,6 +659,8 @@ function GetDeleteQuizDisputeData()
 function GetDeleteQuizLeagueData()
 {
 	global $context;
+
+	checkSession();
 
 	// Get the key ids for the quiz leagues to delete. This function returns a string containing a comma separated list of id's
 	$deleteKeys = GetKeysFromPost('quiz');
@@ -698,6 +680,8 @@ function GetDeleteQuizLeagueData()
 function GetUpdateQuizData()
 {
 	global $context;
+
+	checkSession();
 
 	// Retrieve the form values
 	// TODO - Need some validation on front end
@@ -743,6 +727,8 @@ function GetSaveQuizData()
 {
 	global $context;
 
+	checkSession();
+
 	// Retrieve the form values
 	// TODO - Need some validation on front end
 	$title = isset($_POST['title']) ? $_POST['title'] : '';
@@ -787,6 +773,8 @@ function GetUpdateQuestionData($addMore)
 {
 	global $context, $smcFunc, $db_prefix;
 
+	checkSession();
+
 	// Retrieve the form values
 	// TODO - Need some validation on front end
 	$questionId = isset($_POST["questionId"]) ? $_POST["questionId"] : '';
@@ -801,7 +789,7 @@ function GetUpdateQuestionData($addMore)
 		fatal_lang_error('cannot_quiz_general', false);
 	}
 	elseif (!$questionId  || !$questionText || !$answerText || !$questionTypeId) {
-		$context['SMFQuiz']['id_quiz'] = $quizId;		
+		$context['SMFQuiz']['id_quiz'] = $quizId;
 		GetNewQuestionData();
 		$context['SMFQuiz']['Action'] = 'NewQuestion';
 		return;
@@ -850,6 +838,8 @@ function GetUpdateQuestionData($addMore)
 function GetSaveQuestionData($addMore)
 {
 	global $context;
+
+	checkSession();
 
 	// Retrieve the form values
 	// TODO - Need some validation on front end
@@ -905,6 +895,8 @@ function GetSaveQuestionData($addMore)
 
 function UpdateFreeTextAnswer()
 {
+	checkSession();
+
 	// Free text answer simply has the text entered as the answer, so we only need to insert this into the database marking it as correct
 	$answerText = isset($_POST["freeTextAnswer"]) ? ReplaceCurlyQuotes($_POST["freeTextAnswer"]) : '';
 	$answerId = isset($_POST["answerId"]) ? $_POST["answerId"] : '';
@@ -915,6 +907,8 @@ function UpdateFreeTextAnswer()
 
 function AddFreeTextAnswer($questionId)
 {
+	checkSession();
+
 	// Free text answer simply has the text entered as the answer, so we only need to insert this into the database marking it as correct
 	$answerText = isset($_POST["freeTextAnswer"]) ? ReplaceCurlyQuotes($_POST["freeTextAnswer"]) : '';
 
@@ -924,6 +918,7 @@ function AddFreeTextAnswer($questionId)
 
 function UpdateTrueFalseAnswer()
 {
+	checkSession();
 	$correctAnswerId = isset($_POST["trueFalseAnswer"]) ? $_POST["trueFalseAnswer"] : 0;
 
 	foreach($_POST as $key => $value)
@@ -946,6 +941,8 @@ function UpdateTrueFalseAnswer()
 
 function AddTrueFalseAnswer($questionId)
 {
+	checkSession();
+
 	// True false answer is simply saved as one asnwer that is correct
 	$answerText = isset($_POST["trueFalseAnswer"]) ? ReplaceCurlyQuotes($_POST["trueFalseAnswer"]) : 'false';
 
@@ -960,6 +957,8 @@ function AddTrueFalseAnswer($questionId)
 
 function UpdateMultipleChoiceAnswer()
 {
+	checkSession();
+
 	// For mutiple choice answers we need to loop through each choice adding the answer and setting the correct one
 	$correctAnswerId = isset($_POST["correctAnswer"]) ? $_POST["correctAnswer"] : 0;
 
@@ -983,6 +982,8 @@ function UpdateMultipleChoiceAnswer()
 
 function AddMultipleChoiceAnswer($questionId)
 {
+	checkSession();
+
 	// For mutiple choice answers we need to loop through each choice adding the answer and setting the correct one
 	$correctAnswerId = isset($_POST["correctAnswer"]) ? $_POST["correctAnswer"] : 0;
 
@@ -1009,6 +1010,8 @@ function AddMultipleChoiceAnswer($questionId)
 function GetSaveQuizLeagueData()
 {
 	global $context;
+
+	checkSession();
 
 	// Retrieve the form values
 	// TODO - Need some validation on front end
@@ -1051,6 +1054,8 @@ function GetUpdateQuizLeagueData()
 {
 	global $context;
 
+	checkSession();
+
 	// Retrieve the form values
 	// TODO - Need some validation on front end
 	$title = isset($_POST['title']) ? $_POST['title'] : '';
@@ -1081,6 +1086,8 @@ function GetUpdateQuizLeagueData()
 function GetUpdateCategoryData()
 {
 	global $context;
+
+	checkSession();
 
 	// Retrieve the form values
 	// TODO - Need some validation on front end
@@ -1205,6 +1212,8 @@ function UpdateQuizStatus($id_quiz, $enabled)
 {
 	global $smcFunc;
 
+	checkSession();
+
 	// Execute the query
 	// @TODO query
 	$smcFunc['db_query']('', '
@@ -1223,6 +1232,8 @@ function UpdateQuizStatus($id_quiz, $enabled)
 function UpdateQuizLeagueStatus($id_quiz_league, $enabled)
 {
 	global $smcFunc;
+
+	checkSession();
 
 	// Execute the query
 	// @TODO query
@@ -1288,7 +1299,7 @@ function GetQuizzesData()
 		),
 		'category' => array(
 			'label' => $txt['SMFQuiz_Common']['Category'],
-			'width' => '32',
+			'width' => '100',
 			'link_with' => 'website',
 			'image' => $settings['default_images_url'] . '/quiz_images/Admin/categories.png',
 		),
@@ -1776,6 +1787,8 @@ function GetSaveCategoryData()
 {
 	global $context;
 
+	checkSession();
+
 	// Retrieve the form values
 	// TODO - Need some validation on front end
 	$name = isset($_POST["name"]) ? $_POST["name"] : '';
@@ -1950,6 +1963,8 @@ function DeleteQuizImport()
 {
 	global $boarddir;
 
+	checkSession();
+
 	$path = $boarddir . '/tempQuizzes/';
 	$count = 1;
 	if ($handle = opendir($path))
@@ -1998,7 +2013,6 @@ function GetAdminCenterData()
 	GetTotalReviewCount();
 }
 
-	// @TODO to recode with an access to multiple remote servers
 function import_quiz($quizXmlString, $image = 'Default-64.png', $catOverride = 0)
 {
 	global $modSettings, $user_settings, $settings, $context, $txt, $sourcedir;
@@ -2102,229 +2116,16 @@ function import_quiz($quizXmlString, $image = 'Default-64.png', $catOverride = 0
 	return array('successful' => $successful, 'unsuccessful' => $unsuccessful);
 }
 
-function import_quiz_images($id_quiz)
-{
-	global $smcFunc, $context;
-
-	$result = $smcFunc['db_query']('', '
-		SELECT image
-		FROM {db_prefix}quiz_question
-		WHERE id_quiz = {int:id_quiz}
-			AND !ISNULL(image)',
-		array (
-			'id_quiz' => $id_quiz
-		)
-	);
-
-	$id_questions = '';
-	$status = '';
-	while ($row = $smcFunc['db_fetch_assoc']($result))
-		$status .= '<br/>' . import_image($row['image']);
-
-	$smcFunc['db_free_result']($result);
-	$context['SMFQuiz']['importResponse'] .= $status;
-}
-
-	// @TODO to replace
-function import_image($imageFileName)
-{
-	global $boarddir, $settings;
-
-	// Where to save the file
-	$outFilePath = $boarddir . '/Themes/default/images/quiz_images/Questions/' . $imageFileName;
-
-	$server  = 'www.smfmodding.com';
-	$port    = '80';
-	$uri     = '/Themes/default/images/quiz_images/Questions/' . urlencode($imageFileName);
-	$content = 'test';
-
-	$post_results = httpFunc('GET',$server,$port,$uri,$content);
-	if (!is_string($post_results))
-		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> An unexpected error occurred while importing ' . $imageFileName;
-	elseif (file_exists($outFilePath))
-		return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> The file ' . $imageFileName . ' already exists locally, skipping';
-	else
-	{
-		$fileWrite = fopen($outFilePath, 'x');
-	// @TODO check if is_writable
-		if (fwrite( $fileWrite, $post_results ) == false)
-			return '<img src="' . $settings['default_images_url'] . '/quiz_images/warning.png" alt="yes" title="Warning" align="top" /> An unexpected error occurred while importing ' . $imageFileName;
-
-		fclose($fileWrite);
-	}
-	return '<img src="' . $settings['default_images_url'] . '/quiz_images/information.png" alt="yes" title="Information" align="top" /> ' . $imageFileName . ' imported successfully';
-}
-
-	// @TODO to replace
 function save_image($image)
 {
 	global $boarddir;
 
 	// Where to save the file
 	$outFilePath = $boarddir . '/Themes/default/images/quiz_images/Quizzes/' . $image;
+	$fileWrite = fopen($outFilePath, 'w');
+	fwrite( $fileWrite, $post_results );
+	fclose($fileWrite);
 
-	$server  = 'www.smfmodding.com';
-	$port    = '443';
-	$uri     = '/Themes/default/images/quiz_images/Quizzes/' . urlencode($image);
-	$content = 'test';
-
-	$post_results = httpFunc('GET',$server,$port,$uri,$content);
-	if (!is_string($post_results))
-		die('uh oh, something went wrong');
-	else
-	{
-	// @TODO check if is_writable
-		$fileWrite = fopen($outFilePath, 'w');
-		fwrite( $fileWrite, $post_results );
-		fclose($fileWrite);
-	}
-}
-
-//
-// Post provided content to an http server and optionally
-// convert chunk encoded results.  Returns false on errors,
-// result of post on success.  This example only handles http,
-// not https.
-//
-	// @TODO still needed?
-function httpFunc($action='GET',$ip=null,$port=80,$uri=null,$content=null,$doHack=false)
-{
-	if (empty($ip))
-		return false;
-	if (!is_numeric($port))
-		return false;
-	if (empty($uri))
-		return false;
-	if (empty($content))
-		return false;
-	// generate headers in array.
-	$t   = array();
-	$t[] = $action . ' ' . $uri . ' HTTP/1.1';
-	$t[] = 'Content-Type: text/html';
-	$t[] = 'Host: ' . $ip . ':' . $port;
-	$t[] = 'Content-Length: ' . strlen($content);
-	$t[] = 'Connection: close';
-	$t   = implode("\r\n",$t) . "\r\n\r\n" . $content;
-	//
-	// Open socket, provide error report vars and timeout of 10
-	// seconds.
-	//
-	$fp  = @fsockopen($ip,$port,$errno,$errstr,10);
-	// If we don't have a stream resource, abort.
-	if (!(get_resource_type($fp) == 'stream')) { return false; }
-	//
-	// Send headers and content.
-	//
-	if (!fwrite($fp,$t))
-	{
-		fclose($fp);
-		return false;
-	}
-	//
-	// Read all of response into $rsp and close the socket.
-	//
-	$rsp = '';
-	while(!feof($fp)) { $rsp .= fgets($fp,8192); }
-	fclose($fp);
-	//
-	// Call parseHttpResponse() to return the results.
-	//
-	return parseHttpResponse($rsp, $doHack);
-}
-
-//
-// Accepts provided http content, checks for a valid http response,
-// unchunks if needed, returns http content without headers on
-// success, false on any errors.
-//
-	// @TODO still needed?
-function parseHttpResponse($content=null,$doHack=false)
-{
-	if (empty($content))
-		return false;
-
-	// Nasty hack for when we are retrieving Quizzes to import. For some reason we
-	// get some garbage at the end of the XML
-	if ($doHack==true)
-	{
-		$startPos = strpos($content, "<quiz>");
-		$endPos = strpos($content, "</quiz>");
-		$length = $endPos - $startPos + 8;
-		$newBody = substr($content, $startPos, $length);
-		return trim($newBody);
-	}
-
-	// split into array, headers and content.
-	$hunks = explode("\r\n\r\n",trim($content));
-	if (!is_array($hunks) or count($hunks) < 2)
-		return false;
-
-	$header  = $hunks[count($hunks) - 2];
-	$body    = $hunks[count($hunks) - 1];
-
-	$headers = explode("\n",$header);
-	unset($hunks);
-	unset($header);
-	if (!validateHttpResponse($headers))
-		return false;
-	if (in_array('Transfer-Coding: chunked',$headers))
-		return trim(unchunkHttpResponse($body));
-	else
-		return trim($body);
-}
-
-//
-// Validate http responses by checking header.  Expects array of
-// headers as argument.  Returns boolean.
-//
-	// @TODO still needed?
-function validateHttpResponse($headers=null)
-{
-	if (!is_array($headers) or count($headers) < 1)
-		return false;
-
-	switch (trim(strtolower($headers[0])))
-	{
-		case 'http/1.0 100 ok':
-		case 'http/1.0 200 ok':
-		case 'http/1.1 100 ok':
-		case 'http/1.1 200 ok':
-				return true;
-		break;
-	}
-	return false;
-}
-
-//
-// Unchunk http content.  Returns unchunked content on success,
-// false on any errors...  Borrows from code posted above by
-// jbr at ya-right dot com.
-//
-	// @TODO still needed?
-function unchunkHttpResponse($str=null)
-{
-	if (!is_string($str) or strlen($str) < 1)
-		return false;
-
-	$eol = "\r\n";
-	$add = strlen($eol);
-	$tmp = $str;
-	$str = '';
-	do
-	{
-		$tmp = ltrim($tmp);
-		$pos = strpos($tmp, $eol);
-		if ($pos === false)
-			return false;
-		$len = hexdec(substr($tmp,0,$pos));
-		if (!is_numeric($len) || $len < 0)
-			return false;
-		$str .= substr($tmp, ($pos + $add), $len);
-		$tmp  = substr($tmp, ($len + $pos + $add));
-		$check = trim($tmp);
-	} while(!empty($check));
-	unset($tmp);
-	return $str;
 }
 
 function quizCreateDirs($path)
@@ -2474,6 +2275,7 @@ function GetQuizImportData()
 
 	if (!empty($_FILES))
 	{
+		checkSession();
 		$catOverride = isset($_POST['quizCategoryOverride']) ? (int)$_POST['quizCategoryOverride'] : 0;
 		$numFiles = count($_FILES['imported_quiz']['tmp_name']);
 		for ($i = 0; $i < $numFiles; $i++)

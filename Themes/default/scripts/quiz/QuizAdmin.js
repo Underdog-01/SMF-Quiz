@@ -254,7 +254,35 @@ function refreshImageList(subFolder, sel_file) {
 	});
 }
 
+function clearResults(thisform)
+{
+	thisform.formaction.value = "resetQuizzes";
+	if(confirm(quizResetAllQuizData))
+		thisform.submit();
+	else
+		return false;
+}
+
 $(document).ready(function(){
+	$(".quizAdminFormButton").on("click", function() {
+		let exportData = [{ name: smf_session_var, value: smf_session_id}], quizAction = $(this).attr("data-new_action");
+		$.post(quizAction, exportData)
+		.done(function( resultData ) {
+			if (resultData) {
+				location.href = location.href;
+				console.log("Quiz admin option: " + quizAction + " selected ~ " + resultData);
+			}
+			else {
+				alert("Error ~ Quiz admin option: " + quizAction);
+			}
+
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			alert("Error ~ Quiz admin option: " + quizAction + " ~ " + errorThrown);
+		})
+		.always(function() {
+			console.log("Quiz admin option: " + quizAction + " finished");
+		});
+	});
 	$(".disputeDialog").click(function() {
 		id_dispute = this.id;
 		showDisputeDialog();
