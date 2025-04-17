@@ -21,6 +21,7 @@
 - ![Bug Fix] Fixed admin reported question deletion.
 - ![Bug Fix] Fixed backslash issue for import/export.
 - ![Bug Fix] Fixed auto category setting from Quiz package imports.
+- ![Removed] Dropped SMF 2.0 branch support
 
 #### 2.0.2 - 10 November 2022
 - ![Bug Fix] Prevent non creators from managing other user quizzes.
@@ -115,4 +116,5 @@
 - ![Translation] Translation
 - ![New Feature] New Feature
 - ![Bug Fix] Bug Fix
+- ![Removed] Feature Removal
 - ![Improvement] Improvement
