@@ -58,8 +58,8 @@ function GetUserQuestionCount($id_quiz, $id_user)
 			WHERE Q.id_quiz = {int:id_quiz}
 				AND Q.creator_id = {int:id_user}',
 			array(
-				'id_quiz' => $id_quiz,
-				'id_user' => $id_user
+				'id_quiz' => (int)$id_quiz,
+				'id_user' => (int)$id_user
 			)
 		);
 	}
@@ -72,7 +72,7 @@ function GetUserQuestionCount($id_quiz, $id_user)
 				ON QQ.id_quiz = Q.id_quiz
 			WHERE Q.creator_id = {int:id_user}',
 			array(
-				'id_user' => $id_user
+				'id_user' => (int)$id_user
 			)
 		);
 	}
@@ -96,7 +96,7 @@ function GetQuizQuestionCount($id_quiz)
 			FROM {db_prefix}quiz_question
 			WHERE id_quiz = {int:id_quiz}',
 			array(
-				'id_quiz' => $id_quiz
+				'id_quiz' => (int)$id_quiz
 			)
 		);
 	}
@@ -150,7 +150,7 @@ function GetAllQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = '
 			ORDER BY {$orderBy} {$orderDir}
 			LIMIT {$startPage}, {$modSettings['SMFQuiz_ListPageSizes']}",
 			[
-				'id_quiz' => $id_quiz,
+				'id_quiz' => (int)$id_quiz,
 				'none' => $txt['SMFQuiz_Common']['NoneAssigned'],
 			]
 		);
@@ -189,7 +189,7 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 	global $context, $txt, $smcFunc;
 
 	// Work out paging
-	$startPage = ($page - 1) * 20;
+	$startPage = ((int)$page - 1) * 20;
 
 	// Work out orderng
 	if ($orderDir == 'up')
@@ -214,11 +214,11 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 			ORDER BY 	{string:orderBy} {string:orderDir}
 			LIMIT		{int:startPage}, 20',
 			array(
-				'id_quiz' => $id_quiz,
-				'id_user' => $id_user,
+				'id_quiz' => (int)$id_quiz,
+				'id_user' => (int)$id_user,
 				'orderBy' => $orderBy,
 				'orderDir' => $orderDir,
-				'startPage' => $startPage,
+				'startPage' => (int)$startPage,
 				'none' => $txt['SMFQuiz_Common']['NoneAssigned'],
 			)
 		);
@@ -241,10 +241,10 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 			ORDER BY 	{string:orderBy} {string:orderDir}
 			LIMIT		{int:startPage}, 20',
 			array(
-				'id_user' => $id_user,
+				'id_user' => (int)$id_user,
 				'orderBy' => $orderBy,
 				'orderDir' => $orderDir,
-				'startPage' => $startPage,
+				'startPage' => (int)$startPage,
 				'none' => $txt['SMFQuiz_Common']['NoneAssigned'],
 			)
 		);
@@ -262,7 +262,7 @@ function GetAllQuizDetails($page = 0, $orderBy = 'Q.Title', $orderDir = 'up')
 {
 	global $context, $txt, $smcFunc;
 
-	$startPage = ($page - 1) * 20;
+	$startPage = ((int)$page - 1) * 20;
 
 	// Work out orderng
 	if ($orderDir == 'up')
@@ -342,7 +342,7 @@ function GetCategory($categoryId)
 		ON 			QC.id_parent = QC2.id_category
 		WHERE		QC.id_category = {int:id_category}',
 		array(
-			'id_category' => $categoryId,
+			'id_category' => (int)$categoryId,
 		)
 	);
 
@@ -379,7 +379,7 @@ function GetQuestionAndAnswers($id_question = 0)
 		WHERE		Q.id_question = {int:id_question}
 		LIMIT		0, 1',
 		array(
-			'id_question' => $id_question,
+			'id_question' => (int)$id_question,
 		)
 	);
 
@@ -400,7 +400,7 @@ function GetQuestionAndAnswers($id_question = 0)
 		WHERE		A.id_question = {int:id_question}
 		ORDER BY	A.answer_text',
 		array(
-			'id_question' => $id_question,
+			'id_question' => (int)$id_question,
 		)
 	);
 
@@ -430,8 +430,8 @@ function GetRandomQuizzes($limit, $id_user)
 		ORDER BY		RAND()
 		LIMIT			0, {int:limit}',
 		array(
-			'limit' => $limit,
-			'id_user' => $id_user
+			'limit' => (int)$limit,
+			'id_user' => (int)$id_user
 		)
 	);
 
@@ -456,7 +456,7 @@ function GetQuizCorrect($id_quiz)
 		WHERE			id_quiz = {int:id_quiz}
 		GROUP BY 		correct',
 		array(
-			'id_quiz' => $id_quiz,
+			'id_quiz' => (int)$id_quiz,
 		)
 	);
 
@@ -492,7 +492,7 @@ function GetQuizResults($id_quiz)
 						QR.total_seconds ASC
 		LIMIT			0, 10',
 		array(
-			'id_quiz' => $id_quiz,
+			'id_quiz' => (int)$id_quiz,
 		)
 	);
 
@@ -559,7 +559,7 @@ function GetQuiz($quizId)
 					U.id_quiz,
 					percentage',
 		array(
-			'id_quiz' => $quizId,
+			'id_quiz' => (int)$quizId,
 		)
 	);
 
@@ -644,7 +644,7 @@ function GetQuizLeagueDetails($id_quiz_league)
 		WHERE		QL.id_quiz_league = {int:id_quiz_league}
 		LIMIT		0, 1',
 		array(
-			'id_quiz_league' => $id_quiz_league,
+			'id_quiz_league' => (int)$id_quiz_league,
 		)
 	);
 
@@ -680,7 +680,7 @@ function GetQuizLeagueResults($id_quiz_league)
 		ORDER BY	QLR.result_date DESC
 		LIMIT		0, 10',
 		array(
-			'id_quiz_league' => $id_quiz_league,
+			'id_quiz_league' => (int)$id_quiz_league,
 		)
 	);
 
@@ -721,8 +721,8 @@ function GetQuizLeagueTable($id_quiz_league, $round)
 		LIMIT		0, 10
 		',
 		array(
-			'current_round' => $round,
-			'id_quiz_league' => $id_quiz_league,
+			'current_round' => (int)$round,
+			'id_quiz_league' => (int)$id_quiz_league,
 		)
 	);
 
@@ -763,7 +763,7 @@ function GetUserQuizLeagueDetails($id_user)
 		ORDER BY 	QL.state ASC,
 					QL.title ASC',
 		array(
-			'id_user' => $id_user,
+			'id_user' => (int)$id_user,
 			'none' => $txt['SMFQuiz_Common']['None'],
 		)
 	);
@@ -785,7 +785,7 @@ function GetAllQuestionTypes()
 		SELECT id_question_type, description
 		FROM {db_prefix}quiz_question_type
 		ORDER BY description',
-		array()
+		[]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -868,9 +868,9 @@ function GetCategoryChildren($page = 1, $orderBy = 'C.name', $orderDir = 'up', $
 		ORDER BY 	{raw:orderBy} {raw:orderDir}
 		LIMIT		{int:startPage}, {int:pageSize}',
 		array(
-			'id_category' => $id_category,
-			'startPage' => $startPage,
-			'pageSize' => $pageSize,
+			'id_category' => (int)$id_category,
+			'startPage' => (int)$startPage,
+			'pageSize' => (int)$pageSize,
 			'orderBy' => $orderBy,
 			'orderDir' => $orderDir,
 			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
@@ -926,7 +926,7 @@ function GetCategoryParent($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pa
 	global $context, $txt, $smcFunc;
 
 	// Work out paging
-	$startPage = ($page - 1) * $pageSize;
+	$startPage = ((int)$page - 1) * $pageSize;
 
 	// Work out orderng
 	if ($orderDir == 'up')
@@ -954,7 +954,7 @@ function GetCategoryParent($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pa
 		ORDER BY 	{$orderBy} {$orderDir}
 		LIMIT		{$startPage}, {$pageSize}",
 		array(
-			'id_category' => $id_category,
+			'id_category' => (int)$id_category,
 			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
 		)
 	);
@@ -988,7 +988,7 @@ function GetParentCategoryDetails($parentId = 0)
 		WHERE		C.id_parent = {int:id_parent}
 		ORDER BY	C.name',
 		[
-			'id_parent' => $parentId,
+			'id_parent' => (int)$parentId,
 			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
 		]
 	);
@@ -1020,12 +1020,13 @@ function UpdateAnswer($id_answer, $answer_text, $is_correct)
 					is_correct = {int:is_correct},
 					updated = {int:updated}
 		WHERE		id_answer = {int:id_answer}',
-		array(
-			'id_answer' => $id_answer,
+		[
+			'id_answer' => (int)$id_answer,
 			'answer_text' => Quiz\Helper::quiz_commonStringFilter($answer_text),
-			'is_correct' => $is_correct,
-			'updated' => $updated
-	));
+			'is_correct' => (int)$is_correct,
+			'updated' => (int)$updated,
+		]
+	);
 }
 
 function SaveAnswer($id_question, $answer_text, $is_correct)
@@ -1038,19 +1039,19 @@ function SaveAnswer($id_question, $answer_text, $is_correct)
 	// Execute the query
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_answer',
-		array(
+		[
 			'id_question' => 'int',
 			'answer_text' => 'string',
 			'is_correct' => 'int',
 			'updated' => 'int'
-		),
-		array(
-			$id_question,
+		],
+		[
+			(int)$id_question,
 			Quiz\Helper::quiz_commonStringFilter($answer_text),
-			$is_correct,
-			$updated
-		),
-		array('id_answer')
+			(int)$is_correct,
+			(int)$updated
+		],
+		['id_answer']
 	);
 }
 
@@ -1076,7 +1077,7 @@ function UpdateQuiz($id_quiz, $title, $description, $play_limit, $seconds, $show
 					enabled = {int:enabled},
 					for_review = {int:for_review}
 		WHERE		id_quiz = {int:id_quiz}',
-		array(
+		[
 			'title' =>  Quiz\Helper::quiz_commonStringFilter($title),
 			'description' =>  Quiz\Helper::quiz_commonStringFilter($description),
 			'play_limit' => (int)$play_limit,
@@ -1087,7 +1088,7 @@ function UpdateQuiz($id_quiz, $title, $description, $play_limit, $seconds, $show
 			'enabled' => (int)$enabled,
 			'id_quiz' => (int)$id_quiz,
 			'for_review' => (int)$for_review
-		)
+		]
 	);
 
 	// If the category has changed we need to update the quiz counts on the associated trees
@@ -1127,20 +1128,20 @@ function SaveQuiz($title, $description, $play_limit, $seconds_per_question, $sho
 				'for_review' => 'int',
 				'updated' => 'int'
 			),
-			array(
+			[
 				Quiz\Helper::quiz_commonStringFilter($title),
 				Quiz\Helper::quiz_commonStringFilter($description),
-				$play_limit,
-				$seconds_per_question,
-				$show_answers,
+				(int)$play_limit,
+				(int)$seconds_per_question,
+				(int)$show_answers,
 				Quiz\Helper::quiz_commonImageFileFilter($image),
-				$id_category,
-				$enabled,
-				$creator_id,
-				$for_review,
-				$updated
-			),
-			array('id_question')
+				(int)$id_category,
+				(int)$enabled,
+				(int)$creator_id,
+				(int)$for_review,
+				(int)$updated
+			],
+			['id_question']
 		);
 
 		IncrementCategoryTree($id_category);
@@ -1183,13 +1184,14 @@ function UpdateQuestion($id_question, $question_text, $image, $answer_text)
 					answer_text = {text:answer_text},
 					updated = {int:updated}
 		WHERE		id_question = {int:id_question}',
-		array(
+		[
 			'question_text' => Quiz\Helper::quiz_commonStringFilter($question_text),
 			'image' => Quiz\Helper::quiz_commonImageFileFilter($image),
 			'answer_text' => Quiz\Helper::quiz_commonStringFilter($answer_text),
-			'updated' => $updated,
-			'id_question' => $id_question
-	));
+			'updated' => (int)$updated,
+			'id_question' => (int)$id_question,
+		]
+	);
 }
 
 // Saves a new question to the database and returns the ID of this inserted record
@@ -1202,23 +1204,23 @@ function SaveQuestion($question_text, $id_question_type, $id_quiz, $image, $answ
 	// Execute the query
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_question',
-		array(
+		[
 			'question_text' => 'string',
 			'id_question_type' => 'int',
 			'id_quiz' => 'int',
 			'image' => 'string',
 			'answer_text' => 'string',
 			'updated' => 'int'
-		),
-		array(
+		],
+		[
 			Quiz\Helper::quiz_commonStringFilter($question_text),
-			$id_question_type,
-			$id_quiz,
+			(int)$id_question_type,
+			(int)$id_quiz,
 			Quiz\Helper::quiz_commonImageFileFilter($image),
 			Quiz\Helper::quiz_commonStringFilter($answer_text),
-			$updated
-		),
-		array('id_question')
+			(int)$updated
+		],
+		['id_question']
 	);
 
 	// Get the ID of this insert
@@ -1246,7 +1248,7 @@ function UpdateQuizLeague($id_quiz_league, $title, $description, $day_interval, 
 					state = {int:state},
 					categories = {string:categories}
 		WHERE		id_quiz_league = {int:id_quiz_league}',
-		array(
+		[
 			'title' =>  Quiz\Helper::quiz_commonStringFilter($title),
 			'description' =>  Quiz\Helper::quiz_commonStringFilter($description),
 			'questions_per_session' => (int)$questions_per_session,
@@ -1257,8 +1259,8 @@ function UpdateQuizLeague($id_quiz_league, $title, $description, $day_interval, 
 			'total_rounds' => (int)$total_rounds,
 			'state' => (int)$state,
 			'categories' => $categories,
-			'id_quiz_league' => (int)$id_quiz_league
-		)
+			'id_quiz_league' => (int)$id_quiz_league,
+		]
 	);
 }
 
@@ -1278,7 +1280,7 @@ function SaveQuizLeague($title, $description, $day_interval, $questions_per_sess
 	// Execute the query
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_league',
-		array(
+		[
 			'title' => 'string',
 			'description' => 'string',
 			'day_interval' => 'int',
@@ -1290,8 +1292,8 @@ function SaveQuizLeague($title, $description, $day_interval, $questions_per_sess
 			'state' => 'int',
 			'updated' => 'int',
 			'categories' => 'string'
-		),
-		array(
+		],
+		[
 			Quiz\Helper::quiz_commonStringFilter($title),
 			Quiz\Helper::quiz_commonStringFilter($description),
 			(int)$day_interval,
@@ -1303,7 +1305,7 @@ function SaveQuizLeague($title, $description, $day_interval, $questions_per_sess
 			(int)$state,
 			intval(time()),
 			$categories
-		),
+		],
 		array('id_quiz_league')
 	);
 }
@@ -1324,14 +1326,14 @@ function UpdateCategory($id_category, $name, $description, $parent, $image)
 					image = {string:image},
 					updated = {int:updated}
 		WHERE		id_category = {int:id_category}',
-		array(
-			'parent' => $parent,
+		[
+			'parent' => (int)$parent,
 			'name' => Quiz\Helper::quiz_commonStringFilter($name),
 			'description' => Quiz\Helper::quiz_commonStringFilter($description),
 			'image' => Quiz\Helper::quiz_commonImageFileFilter($image),
-			'updated' => $updated,
-			'id_category' => $id_category,
-		)
+			'updated' => (int)$updated,
+			'id_category' => (int)$id_category,
+		]
 	);
 }
 
@@ -1343,19 +1345,19 @@ function SaveCategory($name, $description, $id_parent, $image)
 	// Execute the query
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_category',
-		array(
+		[
 			'name' => 'string',
 			'description' => 'string',
 			'id_parent' => 'int',
 			'image' => 'string'
-		),
-		array(
+		],
+		[
 			Quiz\Helper::quiz_commonStringFilter($name),
 			Quiz\Helper::quiz_commonStringFilter($description),
 			(int)$id_parent,
 			Quiz\Helper::quiz_commonImageFileFilter($image)
-		),
-		array('id_category')
+		],
+		['id_category']
 	);
 }
 
@@ -1406,9 +1408,9 @@ function DeleteQuizzes($quizInIds)
 			SELECT 		id_category
 			FROM 		{db_prefix}quiz Q
 			WHERE		Q.id_quiz = {int:id_quiz}',
-			array(
+			[
 				'id_quiz' => (int)$quizId
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($result)) {
@@ -1424,7 +1426,7 @@ function DeleteQuizzes($quizInIds)
 			FROM		{db_prefix}quiz_question
 			WHERE		id_quiz = {int:id_quiz}',
 			[
-				'id_quiz' => $quizId,
+				'id_quiz' => (int)$quizId,
 			]
 		);
 	}
@@ -1532,9 +1534,9 @@ function GetPopularQuizzes($limit)
 		WHERE		Q.enabled = 1
 		ORDER BY	Q.quiz_plays DESC
 		LIMIT		0, {int:limit}',
-		array(
-			'limit' => $limit
-		)
+		[
+			'limit' => (int)$limit
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -1562,9 +1564,9 @@ function GetQuizLeagueLeaders($limit)
 		ON 			QL.id_leader = M.id_member
 		ORDER BY 	QL.updated DESC
 		LIMIT		0, {int:limit}',
-		array(
-			'limit' => $limit,
-		)
+		[
+			'limit' => (int)$limit,
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -1592,9 +1594,9 @@ function GetQuizMasters($limit)
 		GROUP BY 	Q.top_user_id, M.real_name
 		ORDER BY 	total_wins DESC
 		LIMIT		0, {int:limit}',
-		array(
-			'limit' => $limit,
-		)
+		[
+			'limit' => (int)$limit,
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -1652,9 +1654,9 @@ function IncrementCategoryTree($id_category)
 		UPDATE		{db_prefix}quiz_category
 		SET			quiz_count = quiz_count + 1
 		WHERE		id_category = {int:id_category}',
-		array(
-			'id_category' => $id_category
-		)
+		[
+			'id_category' => (int)$id_category
+		]
 	);
 
 	// Now walk up the tree and increment any parent category quiz counts
@@ -1666,9 +1668,9 @@ function IncrementCategoryTree($id_category)
 			SELECT		id_parent
 			FROM		{db_prefix}quiz_category
 			WHERE		id_category = {int:id_category}',
-			array(
-				'id_category' => $id_category,
-			)
+			[
+				'id_category' => (int)$id_category,
+			]
 		);
 		$rows = $smcFunc['db_num_rows']($parentIdResult);
 		if ($rows > 0)
@@ -1682,16 +1684,15 @@ function IncrementCategoryTree($id_category)
 		else
 			$parentId = 0;
 
-		if ($parentId != 0)
-		{
+		if ($parentId != 0) {
 // @TODO query
 			$smcFunc['db_query']('', '
 				UPDATE		{db_prefix}quiz_category
 				SET			quiz_count = quiz_count + 1
 				WHERE		id_category = {int:id_category}',
-				array(
-					'id_category' => $parentId,
-				)
+				[
+					'id_category' => (int)$parentId,
+				]
 			);
 			$id_category = $parentId;
 		}
@@ -1709,9 +1710,9 @@ function DecrementCategoryTree($id_category)
 		SET 		QC.quiz_count = QC.quiz_count - 1
 		WHERE 		QC.id_category = {int:id_category}
 		AND			QC.quiz_count > 0',
-		array(
-			'id_category' => $id_category,
-		)
+		[
+			'id_category' => (int)$id_category,
+		]
 	);
 
 	// Now walk up the tree and decrement any parent category quiz counts
@@ -1723,9 +1724,9 @@ function DecrementCategoryTree($id_category)
 			SELECT 		C.id_parent
 			FROM 		{db_prefix}quiz_category C
 			WHERE		C.id_category = {int:id_category}',
-			array(
-                    'id_category' => $id_category,
-            )
+			[
+				'id_category' => (int)$id_category,
+            ]
 		);
 		$rows = $smcFunc['db_num_rows']($parentIdResult);
 		if ($rows > 0)
@@ -1747,9 +1748,9 @@ function DecrementCategoryTree($id_category)
 				SET 		QC.quiz_count = QC.quiz_count - 1
 				WHERE 		QC.id_category = {int:id_category}
 				AND			QC.quiz_count > 0',
-				array(
-	                    'id_category' => $parentId,
-	            )
+				[
+					'id_category' => (int)$parentId,
+	            ]
 			);
 			$id_category = $parentId;
 		}
@@ -2119,9 +2120,9 @@ function GetMemberStatistics($id_user)
 					round((SUM(QR.correct) / SUM(QR.questions)) * 100) AS percentage_correct
 		FROM 		{db_prefix}quiz_result QR
 		WHERE 		QR.id_user = {int:id_user}',
-		array(
-			'id_user' => $id_user
-		)
+		[
+			'id_user' => (int)$id_user
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2156,9 +2157,9 @@ function GetUserQuizScores($id_user)
 		WHERE 		QR.id_user = {int:id_user}
 		ORDER BY	QR.result_date DESC
 		LIMIT		0, 10',
-		array(
-			'id_user' => $id_user
-		)
+		[
+			'id_user' => (int)$id_user
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2181,9 +2182,9 @@ function GetUserCorrectScores($id_user)
 		FROM 		{db_prefix}quiz_result QR
 		WHERE 		QR.id_user = {int:id_user}
 		GROUP BY 	QR.correct',
-		array(
-			'id_user' => $id_user
-		)
+		[
+			'id_user' => (int)$id_user
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2213,9 +2214,9 @@ function GetUserCategoryPlays($id_user)
 		GROUP 		BY QC.id_category,
 					QC.name
 		ORDER BY 	category_plays DESC',
-		array(
-			'id_user' => $id_user
-		)
+		[
+			'id_user' => (int)$id_user
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2241,9 +2242,9 @@ function GetQuizSessions($id_user)
 		INNER JOIN 	{db_prefix}quiz Q
 		ON 			QS.id_quiz = Q.id_quiz
 		WHERE 		id_user = {int:id_user}',
-		array(
-			'id_user' => $id_user
-		)
+		[
+			'id_user' => (int)$id_user
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2286,9 +2287,9 @@ function GetUserQuizzes($id_user)
 					QQ.id_quiz,
 					category_name
 		ORDER BY	Q.title',
-		array(
-			'id_user' => $id_user
-		)
+		[
+			'id_user' => (int)$id_user
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2309,9 +2310,9 @@ function SetQuizForReview($id_quiz)
 		UPDATE		{db_prefix}quiz Q
 		SET			Q.for_review = 1
 		WHERE 		Q.id_quiz = {int:id_quiz}',
-		array(
-			'id_quiz' => $id_quiz
-		)
+		[
+			'id_quiz' => (int)$id_quiz
+		]
 	);
 }
 
@@ -2325,9 +2326,9 @@ function GetTotalUserWins($id_user)
 		SELECT		COUNT(*) AS total_user_wins
 		FROM		{db_prefix}quiz Q
 		WHERE		top_user_id = {int:id_user}',
-		array(
-			'id_user' => $id_user
-		)
+		[
+			'id_user' => (int)$id_user
+		]
 	);
 
 	// This should only be one value
@@ -2403,9 +2404,9 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 		FROM {db_prefix}quiz
 		WHERE title = {string:quiz_title}
 		LIMIT 1',
-		array(
+		[
 			'quiz_title' => $title,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 		return 'quiz_alredy_exists';
@@ -2413,7 +2414,7 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 	// Add the quiz to the quiz table
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz',
-		array(
+		[
 			'title' => 'string',
 			'description' => 'string',
 			'play_limit' => 'int',
@@ -2424,8 +2425,8 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 			'enabled' => 'int',
 			'updated' => 'int',
 			'creator_id' => 'int',
-		),
-		array(
+		],
+		[
 			Quiz\Helper::quiz_commonStringFilter($title),
 			Quiz\Helper::quiz_commonStringFilter($description),
 			intval($play_limit),
@@ -2436,7 +2437,7 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 			intval($enabled),
 			time(),
 			intval($creator_id),
-		),
+		],
 		array('id_quiz')
 	);
 
@@ -2488,22 +2489,22 @@ function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer
 
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_question',
-		array(
+		[
 			'question_text' => 'string',
 			'id_question_type' => 'int',
 			'id_quiz' => 'int',
 			'answer_text' => 'string',
 			'image' => 'string',
 			'updated' => 'int'
-		),
-		array(
+		],
+		[
 			Quiz\Helper::quiz_commonStringFilter($question_text),
 			intval($id_question_type),
 			intval($id_quiz),
 			Quiz\Helper::quiz_commonStringFilter($answer_text),
 			Quiz\Helper::quiz_commonImageFileFilter($image),
 			time()
-		),
+		],
 		array('id_question')
 	);
 
@@ -2520,18 +2521,18 @@ function ImportQuizAnswer($id_question, $answer_text, $is_correct)
 
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}quiz_answer',
-		array(
+		[
 			'id_question' => 'int',
 			'answer_text' => 'string',
 			'is_correct' => 'int',
 			'updated' => 'int'
-		),
-		array(
+		],
+		[
 			intval($id_question),
 			Quiz\Helper::quiz_commonStringFilter($answer_text),
 			intval($is_correct),
-			$updated
-		),
+			(int)$updated
+		],
 		array('id_answer')
 	);
 
@@ -2551,9 +2552,9 @@ function ExportQuizzes($quizIds)
 		LEFT JOIN {db_prefix}quiz_category QC
 			ON Q.id_category = QC.id_category
 		WHERE id_quiz IN ({array_int:quizzes_id})',
-		array(
+		[
 			'quizzes_id' => $quizIds,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2584,9 +2585,9 @@ function ExportQuizQuestions($id_quiz)
 			answer_text, image
 		FROM {db_prefix}quiz_question
 		WHERE id_quiz = {int:id_quiz}',
-		array(
-			'id_quiz' => $id_quiz
-		)
+		[
+			'id_quiz' => (int)$id_quiz
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2617,9 +2618,9 @@ function ExportQuizAnswers($id_question)
 					is_correct
 		FROM		{db_prefix}quiz_answer
 		WHERE		id_question = {int:id_question}',
-		array(
-			'id_question' => $id_question
-		)
+		[
+			'id_question' => (int)$id_question
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -2674,9 +2675,9 @@ function DeleteInfoBoardEntries($date)
 			DELETE
 			FROM 		{db_prefix}quiz_infoboard
 			WHERE		entry_date < {int:date}',
-			array(
-				'date' => $date
-			)
+			[
+				'date' => (int)$date
+			]
 		);
 	}
 }
@@ -2697,9 +2698,9 @@ function CompleteQuizSessions($date)
 					total_seconds
 		FROM		{db_prefix}quiz_session
 		WHERE		last_question_start < {int:date}',
-		array(
-			'date' => $date
-		)
+		[
+			'date' => (int)$date
+		]
 
 	);
 
@@ -2711,7 +2712,7 @@ function CompleteQuizSessions($date)
 			FROM 		{db_prefix}quiz_result
 			WHERE 		id_quiz = {int:id_quiz} AND id_user = {int:id_user}',
 			[
-				'id_quiz' => $row['id_quiz'], 'id_user' => $row['id_user']
+				'id_quiz' => (int)$row['id_quiz'], 'id_user' => (int)$row['id_user']
 			]
 		);
 
@@ -2729,15 +2730,15 @@ function CompleteQuizSessions($date)
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}quiz_result
 				WHERE id_quiz_result = {int:id_result}',
-				array(
-					'id_result' => $quizResultData['id_quiz_result'],
-				)
+				[
+					'id_result' => (int)$quizResultData['id_quiz_result'],
+				]
 			);
 		}
 		// @TODO query+performance?
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}quiz_result',
-			array(
+			[
 				'id_quiz' => 'int',
 				'id_user' => 'int',
 				'result_date' => 'int',
@@ -2748,20 +2749,20 @@ function CompleteQuizSessions($date)
 				'total_seconds' => 'int',
 				'auto_completed' => 'int',
 				'player_limit' => 'int'
-			),
-			array(
-				$row['id_quiz'],
-				$row['id_user'],
+			],
+			[
+				(int)$row['id_quiz'],
+				(int)$row['id_user'],
 				time(),
-				$row['question_count'],
-				$row['correct'],
-				$row['incorrect'],
-				$row['timeouts'],
-				$row['total_seconds'],
+				(int)$row['question_count'],
+				(int)$row['correct'],
+				(int)$row['incorrect'],
+				(int)$row['timeouts'],
+				(int)$row['total_seconds'],
 				1,
-				$quizResultData['player_limit']
-			),
-			array('id_quiz_result')
+				(int)$quizResultData['player_limit']
+			],
+			['id_quiz_result']
 		);
 
 // @TODO query
@@ -2769,9 +2770,9 @@ function CompleteQuizSessions($date)
 			DELETE
 			FROM		{db_prefix}quiz_session
 			WHERE		id_quiz_session = {string:id_quiz_session}',
-			array(
+			[
 				'id_quiz_session' => $row['id_quiz_session']
-			)
+			]
 		);
 	}
 
@@ -2969,9 +2970,9 @@ function DeleteOrphanedCategoriesData()
 			DELETE
 			FROM 		{db_prefix}quiz_category
 			WHERE 		id_category = {int:id_category}',
-			array(
-				'id_category' => $row['id_category']
-			)
+			[
+				'id_category' => (int)$row['id_category']
+			]
 		);
 
 	// Free the database
@@ -2994,10 +2995,10 @@ function CanUserPlayQuizLeagueData($id_quiz_league, $id_user)
 		AND 		QLR.id_user = {int:id_user}
 		AND 		QLR.round = QL.current_round
 		LIMIT		0, 1',
-		array(
-			'id_quiz_league' => $id_quiz_league,
-			'id_user' => $id_user,
-		)
+		[
+			'id_quiz_league' => (int)$id_quiz_league,
+			'id_user' => (int)$id_user,
+		]
 	);
 
 	// Loop through leagues that are enabled
@@ -3111,16 +3112,16 @@ function CleanQuizMembers()
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}quiz_members
 			WHERE id_member IN({array_int:memIDs})',
-			array(
+			[
 				'memIDs' => $nonMembers,
-			)
+			]
 		);
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}quiz_session
 			WHERE id_user IN({array_int:memIDs})',
-			array(
+			[
 				'memIDs' => $nonMembers,
-			)
+			]
 		);
 	}
 }
