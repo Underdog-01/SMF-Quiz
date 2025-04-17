@@ -14,11 +14,11 @@
 - ![Improvement] Added session checks for user quizzes.
 - ![Improvement] Added images for some admin headers.
 - ![Improvement] Obsolete ajax upload script removed.
-- ![Bug Fix] Fixed image uploading and select options.
+- ![Bug Fix] Fixed admin image uploading and select options.
 - ![Bug Fix] Fixed player quiz limit adheres to quiz setting.
 - ![Bug Fix] Fixed scheduled task include class file.
 - ![Bug Fix] Fixed report question UI widget.
-- ![Bug Fix] Fixed admin reported question delete.
+- ![Bug Fix] Fixed admin reported question deletion.
 - ![Bug Fix] Fixed backslash issue for import/export.
 - ![Bug Fix] Fixed auto category setting from Quiz package imports.
 
