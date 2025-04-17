@@ -1091,7 +1091,7 @@ function template_statistics()
 					<div class="title_bar">
 						<h4 class="titlebg quizH4Title">
 							<img class="icon quizH4TitleIcon" src="' , $settings['default_images_url'] , '/quiz_images/stats_info.png" alt="">
-							<span class="quizH4StatsTitle">' , $txt['SMFQuiz_Statistics_Page']['GeneralStatistics'] , '</span>
+							<span class="quizH4StatsTitle">' , $txt['SMFQuiz_Statistics_Page']['GrandTotals'] , '</span>
 						</h4>
 					</div>
 					<div class="blockcontent windowbg quizdetailwindow" style="height: 100%;">

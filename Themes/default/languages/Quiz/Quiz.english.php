@@ -106,6 +106,7 @@ $txt['SMFQuiz_QuizDetails_Page'] = array(
 // Language text located in the statistics page
 $txt['SMFQuiz_Statistics_Page'] = array(
 	'Title' => 'SMFQuiz - Statistics Center',
+	'GrandTotals' => 'Grand Totals',
 	'GeneralStatistics' => 'General Statistics',
 	'TotalQuizzes' => 'Total Quizzes',
 	'TotalQuestions' => 'Total Questions',
