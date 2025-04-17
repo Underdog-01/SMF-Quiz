@@ -30,7 +30,8 @@
 [img]https://www.simplemachines.org/site_images/lang/english.gif[/img] English
 [hr]
 
-[size=3][url="https://github.com/SMFTricks/SMF-Quiz/blob/main/CHANGELOG.md"][color=#cc5d31]Changelog[/color][/url][/size]
-[size=3][url="https://github.com/SMFTricks/SMF-Quiz"][color=#5e2b82]GitHub[/color][/url][/size]
+[size=3][url="https://github.com/Underdog-01/SMF-Quiz/blob/main/CHANGELOG.md"][color=#cc5d31]Changelog[/color][/url][/size]
+[size=3][url="https://github.com/Underdog-01/SMF-Quiz"][color=#5e2b88]WebDev ~ GitHub Version[/color][/url][/size]
+[size=3][url="https://github.com/SMFTricks/SMF-Quiz"][color=#5e2b82]SMFTricks ~ GitHub Version[/color][/url][/size]
 [hr]
 [size=3][url="https://www.quizland.co.uk/"][color=#2d587a]Quiz Land[/color][/url][/size]
