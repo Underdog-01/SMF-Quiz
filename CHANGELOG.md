@@ -2,8 +2,8 @@
 
 #### 2.0.3 - 17 April 2025
 - ![New Feature] Custom hooks for use by other modifications.
+- ![New Feature] Image upload option for user quizzes.
 - ![Improvement] Updated JQuery and its plug-ins.
-- ![Improvement] Added image upload option for user quizzes.
 - ![Improvement] Added PHP import/export support.
 - ![Improvement] Added Quiz DB members table for member settings.
 - ![Improvement] Added Quiz member profile settings for PM alerts.
