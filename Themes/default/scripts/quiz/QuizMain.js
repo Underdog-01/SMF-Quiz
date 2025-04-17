@@ -63,31 +63,36 @@ $(document).ready(function(){
 			exportData.append("quizUserImageFile", $(this).prop("files")[0]);
 			exportData.append(smf_session_var, smf_session_id);
 			exportData.append("formaction", "userQuizImage");
-			$.ajax({
-				type: "POST",
-				url: quizAction,
-				data: exportData,
-				processData: false,
-				contentType: false,
-				success: function(resultData) {
-					if (quizRegex.test(resultData.toLowerCase())) {
-						$("#imageList").append('<option value="' + resultData + '" selected="selected">' + resultData + '</option>');
-						$("#imageList").val(resultData).change();
-						console.log("Quiz action: " + searchAction + " was completed ~ " + resultData);
-						$("input#quizUserImageFile").val("");
-					}
-					else {
-						console.log(quizImageFileError + " ~ " + resultData);
-						alert(quizImageFileError + " ~ " + resultData);
+			if (confirm(quizImageConfirm.replace('[--image--]', $(this).val().replace(/.*(\/|\\)/, '')))) {
+				$.ajax({
+					type: "POST",
+					url: quizAction,
+					data: exportData,
+					processData: false,
+					contentType: false,
+					success: function(resultData) {
+						if (quizRegex.test(resultData.toLowerCase())) {
+							$("#imageList").append('<option value="' + resultData + '" selected="selected">' + resultData + '</option>');
+							$("#imageList").val(resultData).change();
+							console.log("Quiz action: " + searchAction + " was completed ~ " + resultData);
+							$("input#quizUserImageFile").val("");
+						}
+						else {
+							console.log(quizImageFileError + " ~ " + resultData);
+							alert(quizImageFileError + " ~ " + resultData);
+							location.href = location.href;
+						}
+					},
+					error: function(errorThrown) {
+						console.log("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
+						alert("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
 						location.href = location.href;
 					}
-				},
-				error: function(errorThrown) {
-					console.log("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
-					alert("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
-					location.href = location.href;
-				}
-			});
+				});
+			}
+			else {
+				location.href = location.href;
+			}
 		}
 		else {
 			alert(quizImageFileError);

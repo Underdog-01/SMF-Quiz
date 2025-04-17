@@ -218,6 +218,7 @@ $txt['quizLocalizationAlertsJS'] = [
 	'quizGeneralErrorText' => 'Error',
 	'quizImageFileError' => 'Incorrect file type or file is too large',
 	'quizImageSize' => (!empty($modSettings['SMFQuiz_UserImageFileSize']) ? (int)$modSettings['SMFQuiz_UserImageFileSize'] * 1048576 : 1048576),
+	'quizImageConfirm' => 'Are you sure you want to upload this image file? : [--image--]',
 ];
 
 $txt['quizButtonEdit'] = 'Edit';
