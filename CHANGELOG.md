@@ -1,6 +1,6 @@
 # Changelog
 
-#### 2.0.3 - 27 March 2025
+#### 2.0.3 - 17 April 2025
 - ![New Feature] Custom hooks for use by other modifications.
 - ![Improvement] Updated JQuery and its plug-ins.
 - ![Improvement] Added image upload option for user quizzes.
