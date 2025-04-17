@@ -219,6 +219,11 @@ $txt['quizLocalizationAlertsJS'] = [
 	'quizImageFileError' => 'Incorrect file type or file is too large',
 	'quizImageSize' => (!empty($modSettings['SMFQuiz_UserImageFileSize']) ? (int)$modSettings['SMFQuiz_UserImageFileSize'] * 1048576 : 1048576),
 	'quizImageConfirm' => 'Are you sure you want to upload this image file? : [--image--]',
+	'quizImageSmall' => 'Image width|height must be greater or equal to 32px',
+	'quizFormAction' => 'Quiz action: [--action--] was completed ~ [--msg--]',
+	'quizFormActionDone' => 'Quiz action: [--action--] finished',
+	'quizFormActionError' => 'Error ~ Quiz action: [--action--] not completed ~ [--msg--]',
+	
 ];
 
 $txt['quizButtonEdit'] = 'Edit';

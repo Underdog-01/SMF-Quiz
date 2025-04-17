@@ -692,7 +692,7 @@ function ReplaceCurlyQuotes($stringToReplace)
 
 function GetUserQuizImage()
 {
-	global $settings, $user_info;
+	global $settings, $user_info, $txt;
 	checkSession();
 
 	list($exit, $imgTypes) = ['error', ['png', 'jpg', 'gif', 'bmp']];
@@ -712,11 +712,17 @@ function GetUserQuizImage()
 		if (file_exists($file)) {
 			chmod($file, 0644);
 		}
-		if ($size = @getimagesize($file) && in_array($type, $imgTypes)) {
-			list ($width, $height) = $size;
+		if (($size = @getimagesize($file)) && in_array($type, $imgTypes)) {
+			list($width, $height) = $size;
+			$checkWidth = $width > 32 && $width != 64 ? true : false;
+			$checkHeight = $height > 32 && $height != 64 ? true : false;
 
-			if ($width < 64 || $height < 64) {
+			// Resize image if GD Library is available
+			if (($checkWidth || $checkHeight) && extension_loaded('gd')) {
 				$checkResize = Quiz\Helper::resize_image($file, $newfile, 64, 64);
+			}
+			elseif ($width < 32 || $height < 32) {
+				$checkResize = [$txt['quizLocalizationAlertsJS']['quizImageSmall']];
 			}
 			else {
 				@rename($file, $newfile);

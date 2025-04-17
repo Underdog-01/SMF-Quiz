@@ -32,29 +32,33 @@ $(document).ready(function(){
 		}
 	});
 	$(".quizNewUserAction").on("click", function() {
-		let exportData = [{ name: smf_session_var, value: smf_session_id}], quizAction = $(this).attr("data-new_action");
+		let exportData = [{ name: smf_session_var, value: smf_session_id}], quizAction = $(this).attr("data-new_action"), quizMsg = '';
 		let searchParams = new URLSearchParams(quizAction);
 		let searchAction = searchParams.has('action') ? searchParams.get('action') : quizAction;
 
 		$.post(quizAction, exportData)
 		.done(function( resultData ) {
 			if (resultData) {
+				quizMsg = quizFormAction.replace('[--action--]', searchAction).replace('[--msg--]', resultData);
+				console.log(quizMsg);
 				location.href = location.href;
-				console.log("Quiz action: " + searchAction + " was completed ~ " + resultData);
 			}
 			else {
-				alert("Error ~ Quiz action: " + searchAction + " not completed");
+				quizMsg = quizFormActionError.replace('[--action--]', searchAction).replace('[--msg--]', exportData);
+				alert(quizMsg);
 			}
 
 		}).fail(function(jqXHR, textStatus, errorThrown) {
-			alert("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
+			quizMsg = quizFormActionError.replace('[--action--]', searchAction).replace('[--msg--]', errorThrown);
+			alert(quizMsg);
 		})
 		.always(function() {
-			console.log( "Quiz action: " + searchAction + " finished" );
+			quizMsg = quizFormActionDone.replace('[--action--]', searchAction);
+			console.log(quizMsg);
 		});
 	});
 	$("input#quizUserImageFile:file").change(function (){
-		let fileName = $(this).val(), fileData = $("input#quizUserImageFile")[0].files[0];
+		let fileName = $(this).val(), fileData = $("input#quizUserImageFile")[0].files[0], quizMsg = '';
 		if (fileData && fileData.size <= parseInt(quizImageSize)) {
 			$("input[name='formaction']").val("userQuizImage");
 			let exportData = new FormData(), quizAction = $(this).attr("data-new_action"), quizRegex = /\.(jpg|jpeg|gif|png|bmp)$/i;
@@ -74,7 +78,8 @@ $(document).ready(function(){
 						if (quizRegex.test(resultData.toLowerCase())) {
 							$("#imageList").append('<option value="' + resultData + '" selected="selected">' + resultData + '</option>');
 							$("#imageList").val(resultData).change();
-							console.log("Quiz action: " + searchAction + " was completed ~ " + resultData);
+							quizMsg = quizFormAction.replace('[--action--]', searchAction).replace('[--msg--]', resultData);
+							console.log(quizMsg);
 							$("input#quizUserImageFile").val("");
 						}
 						else {
@@ -84,8 +89,9 @@ $(document).ready(function(){
 						}
 					},
 					error: function(errorThrown) {
-						console.log("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
-						alert("Error ~ Quiz action: " + searchAction + " not completed ~ " + errorThrown);
+						quizMsg = quizFormActionError.replace('[--action--]', searchAction).replace('[--msg--]', errorThrown);
+						console.log(quizMsg);
+						alert(quizMsg);
 						location.href = location.href;
 					}
 				});
