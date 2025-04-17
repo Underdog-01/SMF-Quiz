@@ -1006,7 +1006,7 @@ function template_new_quiz()
 								<tr class="windowbg" valign="top">
 									<td class="quiz_adminHeading"><b>' , $txt['SMFQuiz_Common']['ImageURL'] , ':</b></td>
 									<td style="text-align: left;">
-										<div class="quiz_inlineRow">' , template_quiz_image_dropdown('quiz.png') , '</div>
+										<div class="quiz_inlineRow">' , template_quiz_image_dropdown('', 'quiz.png') , '</div>
 									</td>
 								</tr>
 								<tr class="windowbg" valign="top">
