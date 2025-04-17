@@ -24,7 +24,8 @@ SMF Quiz will add a quiz system to your forum.
 ### Localization
 - ![English](https://www.simplemachines.org/site_images/lang/english.gif) English
 ---
-### [Changelog](https://github.com/SMFTricks/SMF-Quiz/blob/main/CHANGELOG.md)
-### [GitHub](https://github.com/SMFTricks/SMF-Quiz)
+### [Changelog](https://github.com/Underdog-01/SMF-Quiz/blob/main/CHANGELOG.md)
+### [WebDev GitHub Version](https://github.com/Underdog-01/SMF-Quiz)
+### [SMFTricks GitHub Version](https://github.com/SMFTricks/SMF-Quiz)
 ---
 ### [Quiz Land](https://www.quizland.co.uk/)
