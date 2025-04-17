@@ -13,7 +13,7 @@ function GetQuizCount()
 		FROM {db_prefix}quiz'
 	);
 
-	$context['SMFQuiz']['quizCount'] = Array();
+	$context['SMFQuiz']['quizCount'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizCount'][] = $row;
 
@@ -36,7 +36,7 @@ function GetCategoryCount($id_category = 0)
 		FROM {db_prefix}quiz_category' . $categoryWhereClause
 	);
 
-	$context['SMFQuiz']['categoryCount'] = Array();
+	$context['SMFQuiz']['categoryCount'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['categoryCount'][] = $row;
 
@@ -57,10 +57,10 @@ function GetUserQuestionCount($id_quiz, $id_user)
 				ON QQ.id_quiz = Q.id_quiz
 			WHERE Q.id_quiz = {int:id_quiz}
 				AND Q.creator_id = {int:id_user}',
-			array(
+			[
 				'id_quiz' => (int)$id_quiz,
 				'id_user' => (int)$id_user
-			)
+			]
 		);
 	}
 	else
@@ -71,13 +71,13 @@ function GetUserQuestionCount($id_quiz, $id_user)
 			INNER JOIN {db_prefix}quiz Q
 				ON QQ.id_quiz = Q.id_quiz
 			WHERE Q.creator_id = {int:id_user}',
-			array(
+			[
 				'id_user' => (int)$id_user
-			)
+			]
 		);
 	}
 
-	$context['SMFQuiz']['questionCount'] = Array();
+	$context['SMFQuiz']['questionCount'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['questionCount'][] = $row;
 
@@ -95,9 +95,9 @@ function GetQuizQuestionCount($id_quiz)
 			SELECT COUNT(*) question_count
 			FROM {db_prefix}quiz_question
 			WHERE id_quiz = {int:id_quiz}',
-			array(
+			[
 				'id_quiz' => (int)$id_quiz
-			)
+			]
 		);
 	}
 	else
@@ -108,7 +108,7 @@ function GetQuizQuestionCount($id_quiz)
 		);
 	}
 
-	$context['SMFQuiz']['questionCount'] = Array();
+	$context['SMFQuiz']['questionCount'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['questionCount'][] = $row;
 
@@ -177,7 +177,7 @@ function GetAllQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = '
 		);
 	}
 
-	$context['SMFQuiz']['questions'] = Array();
+	$context['SMFQuiz']['questions'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['questions'][] = $row;
 
@@ -213,14 +213,14 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 			WHERE 		Q.id_quiz = {int:id_quiz} AND QI.creator_id = {int:id_user}
 			ORDER BY 	{string:orderBy} {string:orderDir}
 			LIMIT		{int:startPage}, 20',
-			array(
+			[
 				'id_quiz' => (int)$id_quiz,
 				'id_user' => (int)$id_user,
 				'orderBy' => $orderBy,
 				'orderDir' => $orderDir,
 				'startPage' => (int)$startPage,
 				'none' => $txt['SMFQuiz_Common']['NoneAssigned'],
-			)
+			]
 		);
 	}
 	else
@@ -240,17 +240,17 @@ function GetUserQuestionDetails($page = 1, $orderBy = 'quiz_title', $orderDir = 
 			WHERE 		QI.creator_id = WHERE QI.creator_id = {int:id_user}
 			ORDER BY 	{string:orderBy} {string:orderDir}
 			LIMIT		{int:startPage}, 20',
-			array(
+			[
 				'id_user' => (int)$id_user,
 				'orderBy' => $orderBy,
 				'orderDir' => $orderDir,
 				'startPage' => (int)$startPage,
 				'none' => $txt['SMFQuiz_Common']['NoneAssigned'],
-			)
+			]
 		);
 	}
 
-	$context['SMFQuiz']['questions'] = Array();
+	$context['SMFQuiz']['questions'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['questions'][] = $row;
 
@@ -318,7 +318,7 @@ function GetAllQuizDetails($page = 0, $orderBy = 'Q.Title', $orderDir = 'up')
 		]
 	);
 
-	$context['SMFQuiz']['quizzes'] = Array();
+	$context['SMFQuiz']['quizzes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizzes'][] = $row;
 
@@ -341,13 +341,13 @@ function GetCategory($categoryId)
 		LEFT JOIN	{db_prefix}quiz_category QC2
 		ON 			QC.id_parent = QC2.id_category
 		WHERE		QC.id_category = {int:id_category}',
-		array(
+		[
 			'id_category' => (int)$categoryId,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['category'] = Array();
+	$context['SMFQuiz']['category'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['category'][] = $row;
 
@@ -378,13 +378,13 @@ function GetQuestionAndAnswers($id_question = 0)
 		ON 			Q.id_quiz = QI.id_quiz
 		WHERE		Q.id_question = {int:id_question}
 		LIMIT		0, 1',
-		array(
+		[
 			'id_question' => (int)$id_question,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['questions'] = Array();
+	$context['SMFQuiz']['questions'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['questions'][] = $row;
 
@@ -399,13 +399,13 @@ function GetQuestionAndAnswers($id_question = 0)
 		FROM 		{db_prefix}quiz_answer A
 		WHERE		A.id_question = {int:id_question}
 		ORDER BY	A.answer_text',
-		array(
+		[
 			'id_question' => (int)$id_question,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['answers'] = Array();
+	$context['SMFQuiz']['answers'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['answers'][] = $row;
 
@@ -429,14 +429,14 @@ function GetRandomQuizzes($limit, $id_user)
 		WHERE 			id_quiz_result IS NULL
 		ORDER BY		RAND()
 		LIMIT			0, {int:limit}',
-		array(
+		[
 			'limit' => (int)$limit,
 			'id_user' => (int)$id_user
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['randomQuizzes'] = Array();
+	$context['SMFQuiz']['randomQuizzes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['randomQuizzes'][] = $row;
 
@@ -455,13 +455,13 @@ function GetQuizCorrect($id_quiz)
 		FROM 			{db_prefix}quiz_result
 		WHERE			id_quiz = {int:id_quiz}
 		GROUP BY 		correct',
-		array(
+		[
 			'id_quiz' => (int)$id_quiz,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizCorrect'] = Array();
+	$context['SMFQuiz']['quizCorrect'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizCorrect'][] = $row;
 
@@ -491,13 +491,13 @@ function GetQuizResults($id_quiz)
 		ORDER BY		QR.correct DESC,
 						QR.total_seconds ASC
 		LIMIT			0, 10',
-		array(
+		[
 			'id_quiz' => (int)$id_quiz,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizResults'] = Array();
+	$context['SMFQuiz']['quizResults'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizResults'][] = $row;
 
@@ -558,13 +558,13 @@ function GetQuiz($quizId)
 					M.real_name,
 					U.id_quiz,
 					percentage',
-		array(
+		[
 			'id_quiz' => (int)$quizId,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quiz'] = array();
+	$context['SMFQuiz']['quiz'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quiz'][] = $row;
 
@@ -603,7 +603,7 @@ function GetAllQuizLeagueDetails()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizLeagues'] = array();
+	$context['SMFQuiz']['quizLeagues'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizLeagues'][] = $row;
 
@@ -643,13 +643,13 @@ function GetQuizLeagueDetails($id_quiz_league)
 		ON			QL.id_leader = M.id_member
 		WHERE		QL.id_quiz_league = {int:id_quiz_league}
 		LIMIT		0, 1',
-		array(
+		[
 			'id_quiz_league' => (int)$id_quiz_league,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizLeague'] = array();
+	$context['SMFQuiz']['quizLeague'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizLeague'][] = $row;
 
@@ -679,13 +679,13 @@ function GetQuizLeagueResults($id_quiz_league)
 		WHERE		QLR.id_quiz_league = {int:id_quiz_league}
 		ORDER BY	QLR.result_date DESC
 		LIMIT		0, 10',
-		array(
+		[
 			'id_quiz_league' => (int)$id_quiz_league,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizLeagueResults'] = array();
+	$context['SMFQuiz']['quizLeagueResults'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizLeagueResults'][] = $row;
 
@@ -720,14 +720,14 @@ function GetQuizLeagueTable($id_quiz_league, $round)
 					QLT.seconds
 		LIMIT		0, 10
 		',
-		array(
+		[
 			'current_round' => (int)$round,
 			'id_quiz_league' => (int)$id_quiz_league,
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizTable'] = Array();
+	$context['SMFQuiz']['quizTable'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizTable'][] = $row;
 
@@ -762,14 +762,14 @@ function GetUserQuizLeagueDetails($id_user)
 		WHERE		QL.state = 1 OR QL.state = 2
 		ORDER BY 	QL.state ASC,
 					QL.title ASC',
-		array(
+		[
 			'id_user' => (int)$id_user,
 			'none' => $txt['SMFQuiz_Common']['None'],
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizLeagues'] = Array();
+	$context['SMFQuiz']['quizLeagues'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizLeagues'][] = $row;
 
@@ -789,7 +789,7 @@ function GetAllQuestionTypes()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['questionTypes'] = Array();
+	$context['SMFQuiz']['questionTypes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['questionTypes'][] = $row;
 
@@ -831,7 +831,7 @@ function GetAllCategoryDetails($page = 1, $orderBy = 'C.name', $orderDir = 'up',
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['categories'] = Array();
+	$context['SMFQuiz']['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['categories'][] = $row;
 
@@ -867,14 +867,14 @@ function GetCategoryChildren($page = 1, $orderBy = 'C.name', $orderDir = 'up', $
 		WHERE		C.id_parent = {int:id_category}
 		ORDER BY 	{raw:orderBy} {raw:orderDir}
 		LIMIT		{int:startPage}, {int:pageSize}',
-		array(
+		[
 			'id_category' => (int)$id_category,
 			'startPage' => (int)$startPage,
 			'pageSize' => (int)$pageSize,
 			'orderBy' => $orderBy,
 			'orderDir' => $orderDir,
 			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -953,10 +953,10 @@ function GetCategoryParent($page = 1, $orderBy = 'C.name', $orderDir = 'up', $pa
 					)
 		ORDER BY 	{$orderBy} {$orderDir}
 		LIMIT		{$startPage}, {$pageSize}",
-		array(
+		[
 			'id_category' => (int)$id_category,
 			'toplvl' => $txt['SMFQuiz_Common']['TopLevel'],
-		)
+		]
 	);
 
 	// Loop through the results and populate the context accordingly
@@ -994,7 +994,7 @@ function GetParentCategoryDetails($parentId = 0)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['categories'] = Array();
+	$context['SMFQuiz']['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['categories'][] = $row;
 
@@ -1115,7 +1115,7 @@ function SaveQuiz($title, $description, $play_limit, $seconds_per_question, $sho
 		// @TODO utf8
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}quiz',
-			array(
+			[
 				'title' => 'string',
 				'description' => 'string',
 				'play_limit' => 'int',
@@ -1127,7 +1127,7 @@ function SaveQuiz($title, $description, $play_limit, $seconds_per_question, $sho
 				'creator_id' => 'int',
 				'for_review' => 'int',
 				'updated' => 'int'
-			),
+			],
 			[
 				Quiz\Helper::quiz_commonStringFilter($title),
 				Quiz\Helper::quiz_commonStringFilter($description),
@@ -1306,7 +1306,7 @@ function SaveQuizLeague($title, $description, $day_interval, $questions_per_sess
 			intval(time()),
 			$categories
 		],
-		array('id_quiz_league')
+		['id_quiz_league']
 	);
 }
 
@@ -1510,7 +1510,7 @@ function GetLatestQuizzes()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['latestQuizzes'] = Array();
+	$context['SMFQuiz']['latestQuizzes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result)) {
 		$context['SMFQuiz']['latestQuizzes'][] = $row;
 	}
@@ -1540,7 +1540,7 @@ function GetPopularQuizzes($limit)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['popularQuizzes'] = Array();
+	$context['SMFQuiz']['popularQuizzes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['popularQuizzes'][] = $row;
 
@@ -1570,7 +1570,7 @@ function GetQuizLeagueLeaders($limit)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizLeagueLeaders'] = Array();
+	$context['SMFQuiz']['quizLeagueLeaders'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizLeagueLeaders'][] = $row;
 
@@ -1600,7 +1600,7 @@ function GetQuizMasters($limit)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizMasters'] = Array();
+	$context['SMFQuiz']['quizMasters'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizMasters'][] = $row;
 
@@ -1622,7 +1622,7 @@ function GetLatestInfoBoard($limit = 20)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['infoBoard'] = Array();
+	$context['SMFQuiz']['infoBoard'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['infoBoard'][] = $row;
 
@@ -1850,7 +1850,7 @@ function GetTotalQuizStats()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['totalQuizStats'] = Array();
+	$context['SMFQuiz']['totalQuizStats'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['totalQuizStats'][] = $row;
 
@@ -1881,7 +1881,7 @@ function GetBestQuizResult()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['bestQuizResult'] = Array();
+	$context['SMFQuiz']['bestQuizResult'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['bestQuizResult'][] = $row;
 
@@ -1912,7 +1912,7 @@ function GetWorstQuizResult()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['worstQuizResult'] = Array();
+	$context['SMFQuiz']['worstQuizResult'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['worstQuizResult'][] = $row;
 
@@ -1937,7 +1937,7 @@ function GetHardestQuizzes()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['hardestQuizzes'] = Array();
+	$context['SMFQuiz']['hardestQuizzes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['hardestQuizzes'][] = $row;
 
@@ -1962,7 +1962,7 @@ function GetEasiestQuizzes()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['easiestQuizzes'] = Array();
+	$context['SMFQuiz']['easiestQuizzes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['easiestQuizzes'][] = $row;
 
@@ -1986,7 +1986,7 @@ function GetNewestQuiz()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['oldestQuiz'] = Array();
+	$context['SMFQuiz']['oldestQuiz'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['oldestQuiz'][] = $row;
 
@@ -2010,7 +2010,7 @@ function GetOldestQuiz()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['newestQuiz'] = Array();
+	$context['SMFQuiz']['newestQuiz'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['newestQuiz'][] = $row;
 
@@ -2038,7 +2038,7 @@ function MostQuizWins()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['mostQuizWins'] = Array();
+	$context['SMFQuiz']['mostQuizWins'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['mostQuizWins'][] = $row;
 
@@ -2058,7 +2058,7 @@ function GetTotalQuestions()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['totalQuestions'] = Array();
+	$context['SMFQuiz']['totalQuestions'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['totalQuestions'] = $row['total_question_count'];
 
@@ -2078,7 +2078,7 @@ function GetTotalAnswers()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['totalAnswers'] = Array();
+	$context['SMFQuiz']['totalAnswers'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['totalAnswers'] = $row['total_answers'];
 
@@ -2126,7 +2126,7 @@ function GetMemberStatistics($id_user)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['memberStatistics'] = Array();
+	$context['SMFQuiz']['memberStatistics'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['memberStatistics'][] = $row;
 
@@ -2163,7 +2163,7 @@ function GetUserQuizScores($id_user)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['userQuizScores'] = Array();
+	$context['SMFQuiz']['userQuizScores'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['userQuizScores'][] = $row;
 
@@ -2188,7 +2188,7 @@ function GetUserCorrectScores($id_user)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['userCorrectScores'] = Array();
+	$context['SMFQuiz']['userCorrectScores'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['userCorrectScores'][] = $row;
 
@@ -2220,7 +2220,7 @@ function GetUserCategoryPlays($id_user)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['userCategoryPlays'] = Array();
+	$context['SMFQuiz']['userCategoryPlays'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['userCategoryPlays'][] = $row;
 
@@ -2248,7 +2248,7 @@ function GetQuizSessions($id_user)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['quizSessions'] = Array();
+	$context['SMFQuiz']['quizSessions'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizSessions'][] = $row;
 
@@ -2293,7 +2293,7 @@ function GetUserQuizzes($id_user)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['userQuizzes'] = Array();
+	$context['SMFQuiz']['userQuizzes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['userQuizzes'][] = $row;
 
@@ -2332,7 +2332,7 @@ function GetTotalUserWins($id_user)
 	);
 
 	// This should only be one value
-	$context['SMFQuiz']['total_user_wins'] = Array();
+	$context['SMFQuiz']['total_user_wins'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['total_user_wins'] = $row['total_user_wins'];
 
@@ -2362,7 +2362,7 @@ function GetMostActivePlayers($limit = 10)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['mostActivePlayers'] = Array();
+	$context['SMFQuiz']['mostActivePlayers'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['mostActivePlayers'][] = $row;
 
@@ -2387,7 +2387,7 @@ function GetMostQuizCreators()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['mostQuizCreators'] = Array();
+	$context['SMFQuiz']['mostQuizCreators'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['mostQuizCreators'][] = $row;
 
@@ -2438,7 +2438,7 @@ function ImportQuiz($title, $description, $play_limit, $seconds_per_question, $s
 			time(),
 			intval($creator_id),
 		],
-		array('id_quiz')
+		['id_quiz']
 	);
 
 	// Retrieve the ID for the inserted quiz
@@ -2456,7 +2456,7 @@ function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer
 
 	$image = trim($image);
 	// These are the only valid image types for SMF.
-	$validImageTypes = array(
+	$validImageTypes = [
 		1 => 'gif',
 		2 => 'jpeg',
 		3 => 'png',
@@ -2466,7 +2466,7 @@ function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer
 		8 => 'tiff',
 		9 => 'jpeg',
 		14 => 'iff'
-	);
+	];
 
 	if (!empty($image))
 	{
@@ -2505,7 +2505,7 @@ function ImportQuizQuestion($id_quiz, $question_text, $id_question_type, $answer
 			Quiz\Helper::quiz_commonImageFileFilter($image),
 			time()
 		],
-		array('id_question')
+		['id_question']
 	);
 
 	$import_question['id_question'] = $smcFunc['db_insert_id']('{db_prefix}quiz_question', 'id_question');
@@ -2533,7 +2533,7 @@ function ImportQuizAnswer($id_question, $answer_text, $is_correct)
 			intval($is_correct),
 			(int)$updated
 		],
-		array('id_answer')
+		['id_answer']
 	);
 
 	$import_answer['id_answer'] = $smcFunc['db_insert_id']('{db_prefix}quiz_answer', 'id_answer');
@@ -2558,7 +2558,7 @@ function ExportQuizzes($quizIds)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$exportQuizzesReturn = array();
+	$exportQuizzesReturn = [];
 	while ($row = $smcFunc['db_fetch_assoc']($exportQuizzesResult))
 	{
 		$imgDir = $settings['default_theme_dir'] . '/images/quiz_images/Quizzes/' . $row['image'];
@@ -2591,7 +2591,7 @@ function ExportQuizQuestions($id_quiz)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$exportQuizQuestionsReturn = array();
+	$exportQuizQuestionsReturn = [];
 	while ($row = $smcFunc['db_fetch_assoc']($exportQuizQuestionResult))
 	{
 		$imgDir = $settings['default_theme_dir'] . '/images/quiz_images/Questions/' . $row['image'];
@@ -2624,7 +2624,7 @@ function ExportQuizAnswers($id_question)
 	);
 
 	// Loop through the results and populate the context accordingly
-	$exportQuestionAnswersReturn = array();
+	$exportQuestionAnswersReturn = [];
 	while ($row = $smcFunc['db_fetch_assoc']($exportQuestionAnswersResult))
 		$exportQuestionAnswersReturn[] = $row;
 
@@ -2706,7 +2706,7 @@ function CompleteQuizSessions($date)
 
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
-		list($result_date, $quizResultData) = array(time(), array('id_quiz_result' => 0, 'player_limit' => 0));
+		list($result_date, $quizResultData) = [time(),['id_quiz_result' => 0, 'player_limit' => 0]];
 		$dataResult = $smcFunc['db_query']('', '
 			SELECT 		id_quiz_result,	id_quiz, id_user, player_limit
 			FROM 		{db_prefix}quiz_result
@@ -2803,7 +2803,7 @@ function FindOrphanedAnswersData()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['findOrphanedAnswers'] = Array();
+	$context['SMFQuiz']['findOrphanedAnswers'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['findOrphanedAnswers'][] = $row;
 
@@ -2829,7 +2829,7 @@ function FindOrphanedQuestionsData()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['findOrphanedQuestions'] = Array();
+	$context['SMFQuiz']['findOrphanedQuestions'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['findOrphanedQuestions'][] = $row;
 
@@ -2860,7 +2860,7 @@ function FindOrphanedQuizResultsData()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['findOrphanedQuizResults'] = Array();
+	$context['SMFQuiz']['findOrphanedQuizResults'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['findOrphanedQuizResults'][] = $row;
 
@@ -2887,7 +2887,7 @@ function FindOrphanedCategoriesData()
 	);
 
 	// Loop through the results and populate the context accordingly
-	$context['SMFQuiz']['findOrphanedCategories'] = Array();
+	$context['SMFQuiz']['findOrphanedCategories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['findOrphanedCategories'][] = $row;
 
