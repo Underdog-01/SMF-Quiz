@@ -90,7 +90,7 @@ function template_maintenance()
 												<td colspan="4"><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['OrphanedQuestions'] , '</b></td>
 											</tr>
 		';
-		$orphanCount = isset($context['SMFQuiz']['findOrphanedQuestions']) ? sizeof($context['SMFQuiz']['findOrphanedQuestions']) : 0;
+		$orphanCount = isset($context['SMFQuiz']['findOrphanedQuestions']) ? count($context['SMFQuiz']['findOrphanedQuestions']) : 0;
 
 		if ($orphanCount > 0)
 		{
@@ -133,7 +133,7 @@ function template_maintenance()
 												<td colspan="4"><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['OrphanedAnswers'] , '</b></td>
 											</tr>
 		';
-		$orphanCount = isset($context['SMFQuiz']['findOrphanedAnswers']) ? sizeof($context['SMFQuiz']['findOrphanedAnswers']) : 0;
+		$orphanCount = isset($context['SMFQuiz']['findOrphanedAnswers']) ? count($context['SMFQuiz']['findOrphanedAnswers']) : 0;
 
 		if ($orphanCount > 0)
 		{
@@ -176,7 +176,7 @@ function template_maintenance()
 												<td colspan="4"><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['OrphanedQuizResults'] , '</b></td>
 											</tr>
 		';
-		$orphanCount = isset($context['SMFQuiz']['findOrphanedQuizResults']) ? sizeof($context['SMFQuiz']['findOrphanedQuizResults']) : 0;
+		$orphanCount = isset($context['SMFQuiz']['findOrphanedQuizResults']) ? count($context['SMFQuiz']['findOrphanedQuizResults']) : 0;
 
 		if ($orphanCount > 0)
 		{
@@ -219,7 +219,7 @@ function template_maintenance()
 												<td colspan="4"><b>' , $txt['SMFQuizAdmin_Maintenance_Page']['OrphanedCategories'] , '</b></td>
 											</tr>
 		';
-		$orphanCount = isset($context['SMFQuiz']['findOrphanedCategories']) ? sizeof($context['SMFQuiz']['findOrphanedCategories']) : 0;
+		$orphanCount = isset($context['SMFQuiz']['findOrphanedCategories']) ? count($context['SMFQuiz']['findOrphanedCategories']) : 0;
 
 		if ($orphanCount > 0)
 		{

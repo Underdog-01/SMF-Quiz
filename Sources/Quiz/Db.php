@@ -2908,6 +2908,15 @@ function DeleteOrphanedQuestionsData()
 			FROM 		{db_prefix}quiz
 		)'
 	);
+
+	$smcFunc['db_query']('', '
+		DELETE
+		FROM 		{db_prefix}quiz_dispute
+		WHERE 		id_quiz_question NOT IN (
+			SELECT 		id_question
+			FROM 		{db_prefix}quiz_question
+		)'
+	);
 }
 
 function DeleteOrphanedAnswersData()

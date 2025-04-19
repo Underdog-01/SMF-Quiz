@@ -218,6 +218,10 @@ $txt['SMFQuizAdmin_Maintenance_Page'] = array(
 	'FindOrphanAnswers' => 'Find Orphaned Answers',
 	'FindOrphanQuizResults' => 'Find Orphaned Quiz Results',
 	'FindOrphanCategories' => 'Find Orphaned Categories',
+	'DeleteOrphanQuestions' => 'Delete Orphaned Questions',
+	'DeleteOrphanAnswers' => 'Delete Orphaned Answers',
+	'DeleteOrphanQuizResults' => 'Delete Orphaned Quiz Results',
+	'DeleteOrphanCategories' => 'Delete Orphaned Categories',
 	'CompleteQuizSessions' => 'Complete Quiz Sessions',
 	'CleanInformationBoard' => 'Clean Information Board',
 );

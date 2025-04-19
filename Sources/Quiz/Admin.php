@@ -131,7 +131,7 @@ function GetMaintenanceData()
 
 	loadLanguage('ManageMaintenance');
 
-	$context['quiz_mtasks'] = ['FindOrphanQuestions', 'FindOrphanAnswers', 'FindOrphanQuizResults', 'FindOrphanCategories'];
+	$context['quiz_mtasks'] = ['FindOrphanQuestions', 'FindOrphanAnswers', 'FindOrphanQuizResults', 'FindOrphanCategories', 'DeleteOrphanQuestions', 'DeleteOrphanAnswers', 'DeleteOrphanQuizResults', 'DeleteOrphanCategories'];
 
 	// User has selected to reset the quiz scores
 	if (isset($_POST['formaction']) && $_POST['formaction'] == 'resetQuizzes')
@@ -169,11 +169,12 @@ function GetMaintenanceData()
 		$context['MaintenanceResult'] = $txt['quiz_maint_infoboard_entries_removed'];
 	}
 
-	$tasks = ['btnFindOrphanQuestions', 'btnFindOrphanAnswers', 'btnFindOrphanCategories', 'btnDeleteOrphanedQuestions', 'btnDeleteOrphanedAnswers', 'btnDeleteOrphanedQuizResults', 'btnDeleteOrphanedCategories'];
-
-	foreach ($tasks as $task) {
-		$func = str_replace(['btn', 'Orphan'], ['', 'Orphaned'], $task) . 'Data';
-		if (isset($_POST[$task])) {
+	foreach ($context['quiz_mtasks'] as $task) {
+		$func = (str_replace('Orphan', 'Orphaned', $task)) . 'Data';
+		if (isset($_POST['btn' . $task])) {
+			if (stripos($task, $delete) !== FALSE) {
+				$context['MaintenanceResult'] = $txt['SMFQuizAdmin_Maintenance_Page'][$task];
+			}
 			checkSession();
 			$func();
 		}
