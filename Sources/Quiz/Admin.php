@@ -172,7 +172,7 @@ function GetMaintenanceData()
 	$tasks = ['btnFindOrphanQuestions', 'btnFindOrphanAnswers', 'btnFindOrphanCategories', 'btnDeleteOrphanedQuestions', 'btnDeleteOrphanedAnswers', 'btnDeleteOrphanedQuizResults', 'btnDeleteOrphanedCategories'];
 
 	foreach ($tasks as $task) {
-		$func = str_replace('btn', '', $task) . 'Data';
+		$func = str_replace(['btn', 'Orphan'], ['', 'Orphaned'], $task) . 'Data';
 		if (isset($_POST[$task])) {
 			checkSession();
 			$func();
