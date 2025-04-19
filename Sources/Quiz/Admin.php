@@ -172,7 +172,7 @@ function GetMaintenanceData()
 	foreach ($context['quiz_mtasks'] as $task) {
 		$func = (str_replace('Orphan', 'Orphaned', $task)) . 'Data';
 		if (isset($_POST['btn' . $task])) {
-			if (stripos($task, $delete) !== FALSE) {
+			if (stripos($task, 'delete') !== FALSE) {
 				$context['MaintenanceResult'] = $txt['SMFQuizAdmin_Maintenance_Page'][$task];
 			}
 			checkSession();
