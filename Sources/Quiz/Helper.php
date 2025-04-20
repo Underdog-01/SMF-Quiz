@@ -23,7 +23,7 @@ class Helper
 				SELECT p.id_group, p.permission, p.add_deny, m.id_member
 				FROM {db_prefix}permissions p
 				LEFT JOIN {db_prefix}members m ON m.id_group = {int:adminGroup} OR (m.id_group = p.id_group OR FIND_IN_SET(p.id_group, m.additional_groups))
-				WHERE permission = {string:perm}',
+				WHERE permission = {string:perm} OR m.id_group = {int:adminGroup} OR FIND_IN_SET({int:adminGroup}, m.additional_groups)',
 				[
 					'perm' => $permission, 'adminGroup' => 1,
 				]
@@ -36,7 +36,7 @@ class Helper
 			$smcFunc['db_free_result']($request);
 		}
 
-		return array_filter($members);
+		return array_values(array_unique(array_filter($members)));
 	}
 
 	public static function quiz_usersAcknowledge($profileField, $default = false)
@@ -80,7 +80,40 @@ class Helper
 			$smcFunc['db_free_result']($request);
 		}
 
-		return array_filter($members);
+		return array_values(array_unique(array_filter($members)));
+	}
+
+	public static function quiz_userPrefs($memID = 0)
+	{
+		global $smcFunc;
+
+		$member = [
+			'quiz_pm_report' => 0,
+			'quiz_count' => 0,
+			'quiz_pm_alert' => 1,
+		];
+
+		$request = $smcFunc['db_query']('', '
+			SELECT qm.id_member, qm.quiz_pm_report, qm.quiz_pm_alert, qm.quiz_count
+			FROM {db_prefix}quiz_members qm
+			WHERE qm.id_member = {int:memberid}',
+			[
+				'memberid' => (int)$memID,
+			]
+		);
+
+		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+			$member = [
+				'quiz_pm_report' => !empty($row['quiz_pm_report']) ? 1 : 0,
+				'quiz_count' => !empty($row['quiz_count']) ? (int)$row['quiz_count'] : 0,
+				'quiz_pm_alert' => !empty($row['quiz_pm_alert']) ? 1 : 0,
+			];
+		}
+
+		$smcFunc['db_free_result']($request);
+
+
+		return $member;
 	}
 
 	public static function quiz_userInfoName($id = 0)

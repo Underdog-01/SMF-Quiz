@@ -76,10 +76,16 @@ class Profile
 		global $context, $txt, $modSettings, $user_info, $scripturl, $smcFunc;
 
 		$context['profile_fields'] = !empty($context['profile_fields']) ? $context['profile_fields'] : [];
+		$member_info = [];
 
 		// Current user settings which are not adjusted in profile ~ (int)'' = 0
-		foreach (array('quiz_pm_report', 'quiz_pm_alert', 'quiz_count') as $key => $userSet) {
-			$user_info[$userSet] = !empty($user_info[$userSet]) ? $user_info[$userSet] : '';
+		if ($user_info['id'] == $memID || empty($memID)) {
+			foreach (['quiz_pm_report', 'quiz_pm_alert', 'quiz_count'] as $key => $userSet) {
+				$member_info[$userSet] = !empty($user_info[$userSet]) ? $user_info[$userSet] : '';
+			}
+		}
+		else {
+			$member_info = Helper::quiz_userPrefs($memID);
 		}
 
 		if (!empty($modSettings['SMFQuiz_enabled']) && allowedTo('quiz_admin')) {
@@ -91,7 +97,7 @@ class Profile
 					'enabled' => true,
 					'input_attr' => '',
 					'name' => 'quiz_pm_report',
-					'value' => !empty($user_info['quiz_pm_report']) ? (int)$user_info['quiz_pm_report'] : 0,
+					'value' => !empty($member_info) ? (int)$member_info['quiz_pm_report'] : 0,
 				],
 			];
 		}
@@ -104,7 +110,7 @@ class Profile
 					'enabled' => true,
 					'input_attr' => '',
 					'name' => 'quiz_pm_alert',
-					'value' => !empty($user_info['quiz_pm_alert']) ? (int)$user_info['quiz_pm_alert'] : 0,
+					'value' => !empty($member_info) ? (int)$member_info['quiz_pm_alert'] : 0,
 				],
 			];
 		}

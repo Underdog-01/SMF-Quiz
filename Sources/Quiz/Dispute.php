@@ -20,7 +20,7 @@ function quizDispute()
 	$id_dispute = isset($_POST["id_dispute"]) ? (int) $_POST["id_dispute"] : 0;
 	$auxID = !empty($modSettings['SMFQuiz_ImportQuizzesAsUserId']) ? (int)$modSettings['SMFQuiz_ImportQuizzesAsUserId'] : 0;
 
-	// If the id_dispute is set then the admin is reponding
+	// If the id_dispute is set then the admin is responding
 	if ($id_dispute != 0 && allowedTo('quiz_admin'))
 	{
 		require_once($sourcedir . '/Subs-Post.php');
@@ -38,18 +38,18 @@ function quizDispute()
 			INNER JOIN {db_prefix}quiz_question QQ
 				ON QD.id_quiz_question = QQ.id_question
 			WHERE id_quiz_dispute = {int:id_quiz_dispute}',
-			array(
+			[
 				'id_quiz_dispute' => $id_dispute
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
 			if (in_array($row['id_user'], $usersPrefs)) {
-				$pmto = array(
+				$pmto = [
 					'to' => array(),
 					'bcc' => array($row['id_user'])
-				);
+				];
 
 	// @TODO localization
 				$subject = sprintf($txt['quiz_dispute_userpm_subject'], (int)$id_dispute);
@@ -60,20 +60,20 @@ function quizDispute()
 					$message .= Quiz\Helper::quiz_pmFilter($txt['quiz_dipute_userpm_msg_del']);
 
 				$user_name = !empty($user_settings['real_name']) ? $user_settings['real_name'] : (!empty($user_settings['member_name']) ? $user_settings['member_name'] : '');
-				$pmfrom = array(
+				$pmfrom = [
 					'id' => $user_settings['id_member'],
 					'name' => $user_name,
 					'username' => $user_name
-				);
+				];
 
 				if (!empty($modSettings['SMFQuiz_DisputeAux']) && !empty($auxID)) {
 					$quiz_name = Quiz\Helper::quiz_userInfoName($auxID);
 					if (!empty($quiz_name)) {
-						$pmfrom = array(
+						$pmfrom = [
 							'id' => $auxID,
 							'name' => $quiz_name,
 							'username' => $quiz_name
-						);
+						];
 					}
 				}
 
@@ -92,9 +92,9 @@ function quizDispute()
 				DELETE
 				FROM {db_prefix}quiz_dispute
 				WHERE id_quiz_dispute = {int:id_quiz_dispute}',
-				array(
+				[
 					'id_quiz_dispute' => $id_dispute
-				)
+				]
 			);
 		}
 	}
@@ -102,7 +102,7 @@ function quizDispute()
 	{
 		// Gather the user ids of Quiz admins that want dispute PM's
 		$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_report');
-		$quizAdmins = array_filter(array_merge(Quiz\Helper::quiz_usersAllowedTo('quiz_admin'), $usersPrefs));
+		$quizAdmins = array_values(array_filter(array_intersect(Quiz\Helper::quiz_usersAllowedTo('quiz_admin'), $usersPrefs)));
 
 		if (!empty($quizAdmins)) {
 			// Otherwise someone is submitting a dispute
@@ -122,29 +122,12 @@ function quizDispute()
 					$reason,
 					time()
 				),
-				array('id_quiz_dispute')
+				['id_quiz_dispute']
 			);
-
-			// Get the admins
-			$adminQuery = $smcFunc['db_query']('', '
-				SELECT id_member
-				FROM {db_prefix}members
-				WHERE id_member IN ({array_int:quiz_admins})',
-				array(
-					'quiz_admins' => $quizAdmins,
-				)
-			);
-			$sentTo = array_filter($sentTo);
-			while($row = $smcFunc['db_fetch_assoc']($adminQuery)) {
-				if (!in_array($row['id_member'], $sentTo)) {
-					$admins[] = $row['id_member'];
-				}
-			}
-			$smcFunc['db_free_result']($adminQuery);
 
 			require_once($sourcedir . '/Subs-Post.php');
 			sendpm(
-				array('to' => $admins, 'bcc' => array()),
+				['to' => [], 'bcc' => $quizAdmins],
 				Quiz\Helper::quiz_pmFilter($txt['quiz_dispute_pmtitle']),
 				Quiz\Helper::quiz_pmFilter(sprintf($txt['quiz_dispute_report'], $scripturl . '?action=admin;area=quiz;sa=disputes') . sprintf($txt['quizDisputeReason'], $reason)),
 			);
