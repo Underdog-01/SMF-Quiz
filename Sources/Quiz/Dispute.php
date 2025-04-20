@@ -125,11 +125,31 @@ function quizDispute()
 				['id_quiz_dispute']
 			);
 
+			$user_name = !empty($user_settings['real_name']) ? $user_settings['real_name'] : (!empty($user_settings['member_name']) ? $user_settings['member_name'] : '');
+			$pmfrom = [
+				'id' => $user_settings['id_member'],
+				'name' => $user_name,
+				'username' => $user_name
+			];
+
+			if (!empty($modSettings['SMFQuiz_DisputeAux']) && !empty($auxID)) {
+				$quiz_name = Quiz\Helper::quiz_userInfoName($auxID);
+				if (!empty($quiz_name)) {
+					$pmfrom = [
+						'id' => $auxID,
+						'name' => $quiz_name,
+						'username' => $quiz_name
+					];
+				}
+			}
+
 			require_once($sourcedir . '/Subs-Post.php');
 			sendpm(
 				['to' => [], 'bcc' => $quizAdmins],
 				Quiz\Helper::quiz_pmFilter($txt['quiz_dispute_pmtitle']),
 				Quiz\Helper::quiz_pmFilter(sprintf($txt['quiz_dispute_report'], $scripturl . '?action=admin;area=quiz;sa=disputes') . sprintf($txt['quizDisputeReason'], $reason)),
+				0,
+				$pmfrom
 			);
 		}
 	}
