@@ -1266,13 +1266,17 @@ function GetQuizzesData()
 {
 	global $context, $scripturl, $smcFunc, $txt, $modSettings, $settings;
 
-	// If user has clicked button to disable quiz
-	if (isset($_GET['disable_quiz_id']))
+	// If user has clicked the button to disable a quiz
+	if (isset($_GET['disable_quiz_id'])) {
 		UpdateQuizStatus($_GET['disable_quiz_id'], 0);
+		exit('disabled');
+	}
 
-	// If user has clicked button to enable quiz
-	if (isset($_GET['enable_quiz_id']))
+	// If user has clicked the button to enable a quiz
+	if (isset($_GET['enable_quiz_id'])) {
 		UpdateQuizStatus($_GET['enable_quiz_id'], 1);
+		exit('enabled');
+	}
 
 	$starts_with = isset($_GET['starts_with']) ? $_GET['starts_with'] : '';
 	$sort = isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'updated';
@@ -1490,7 +1494,7 @@ function GetQuizzesData()
 		$query_parameters
 	);
 
-	$context['SMFQuiz']['quizzes'] = Array();
+	$context['SMFQuiz']['quizzes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$context['SMFQuiz']['quizzes'][] = $row;
 

@@ -264,6 +264,36 @@ function clearResults(thisform)
 }
 
 $(document).ready(function(){
+	$(".quizAdminQuizButton").on("click", function() {
+		let exportData = [{ name: smf_session_var, value: smf_session_id}], quizAction = $(this).attr("data-new_action"), thisTag = $(this), newAction = "", newImg = "";
+		$.post(quizAction, exportData)
+		.done(function( resultData ) {
+			if (resultData) {
+				if (resultData == "disabled" && quizAction.includes("disable")) {
+					newAction = quizAction.replace("disable", "enable");
+					newImg = thisTag.children("img.quizAdminQuizImg").attr("src").replace("unlock", "lock");
+					thisTag.attr("data-new_action", newAction);
+					thisTag.children("img.quizAdminQuizImg").attr("src", newImg);
+				}
+				else if (resultData == "enabled") {
+					newAction = quizAction.replace("enable", "disable");
+					newImg = thisTag.children("img.quizAdminQuizImg").attr("src").replace("lock", "unlock");
+					thisTag.attr("data-new_action", newAction);
+					thisTag.children("img.quizAdminQuizImg").attr("src", newImg);
+				}
+				console.log("Quiz admin option: " + quizAction + " selected ~ " + resultData);
+			}
+			else {
+				alert("Error ~ Quiz admin option: " + quizAction);
+			}
+
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			alert("Error ~ Quiz admin option: " + quizAction + " ~ " + errorThrown);
+		})
+		.always(function() {
+			console.log("Quiz admin option: " + quizAction + " finished");
+		});
+	});
 	$(".quizAdminFormButton").on("click", function() {
 		let exportData = [{ name: smf_session_var, value: smf_session_id}], quizAction = $(this).attr("data-new_action");
 		$.post(quizAction, exportData)

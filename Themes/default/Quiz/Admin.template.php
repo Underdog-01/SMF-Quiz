@@ -1380,8 +1380,13 @@ function template_show_quizzes()
 										<td style="text-align: center;">', $row['show_answers'] == 1 ? '<img src="' . $settings['default_images_url'] . '/quiz_images/tick.png" alt="yes" title="Yes" align="top" />' : '<img src="' . $settings['default_images_url'] . '/quiz_images/cross.png" alt="no" title="No" align="top" />' , '</td>
 										<td style="text-align: left;min-width: 8%;width: 8%;" class="nobr" >
 											<a href="', $scripturl, '?action=' . $context['current_action'] . ';area=' . $context['admin_area'] . ';sa=' . $context['current_subaction'] . ';id=' , $row['id_quiz'] , '"><img src="' . $settings['default_images_url'] . '/quiz_images/edit.png" alt="edit" title="' , $txt['SMFQuizAdmin_EditQuiz_Page']['EditQuiz'] , '" align="top" /></a>
-											' , $row['enabled'] == 1 ? '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;disable_quiz_id=' . $row['id_quiz'] . formatQueryString() . '"><img src="' . $settings['default_images_url'] . '/quiz_images/unlock.png" alt="enabled" title="' . $txt['SMFQuizAdmin_Quizzes_Page']['UploadEnabled'] . '" align="top" />' : '<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;enable_quiz_id=' . $row['id_quiz'] . formatQueryString() . '"><img src="' . $settings['default_images_url'] . '/quiz_images/lock.png" alt="disabled" title="' . $txt['SMFQuizAdmin_Quizzes_Page']['UploadDisabled'] . '" align="top" /></a>' , '
-											' , $row['for_review'] == 1 ? '<img src="' . $settings['default_images_url'] . '/quiz_images/review.png" alt="for review" title="' . $txt['SMFQuizAdmin_Quizzes_Page']['WaitingReview'] . '" align="top" /> <a href="#" onclick="window.open(\'' . $scripturl . '?action=SMFQuiz;sa=play;id_quiz=' . $row['id_quiz'] . '\',\'playnew\',\'height=625,width=720,toolbar=no,scrollbars=yes,location=no,statusbar=no,menubar=no,resizable=yes\')"><img src="' . $settings['default_images_url'] . '/quiz_images/preview.png" alt="Preview Quiz" title="' . $txt['SMFQuizAdmin_Quizzes_Page']['PreviewQuiz'] . '" align="top" /></a>' : '' , '
+											<span class="quizAdminQuizButton" data-quizid="' .  $row['id_quiz'] . '" data-new_action="' . $scripturl . '?action=admin;area=quiz;sa=quizzes;' . (!empty($row['enabled']) ? 'disable' : 'enable') . '_quiz_id=' . $row['id_quiz'] . formatQueryString() . '">
+												<img class="quizAdminQuizImg" style="vertical-align: top;" src="' . $settings['default_images_url'] . '/quiz_images/' . (!empty($row['enabled']) ? 'un' : '') . 'lock.png" alt="' . (!empty($row['enabled']) ? 'en' : 'dis') . 'abled" title="' . $txt['SMFQuizAdmin_Quizzes_Page']['UploadEnabled'] . '">
+											</span>', ($row['for_review'] == 1 ? '
+											<img style="vertical-align: top;" src="' . $settings['default_images_url'] . '/quiz_images/review.png" alt="for review" title="' . $txt['SMFQuizAdmin_Quizzes_Page']['WaitingReview'] . '">
+											<a style="padding-left: 1rem;" href="#" onclick="window.open(\'' . $scripturl . '?action=SMFQuiz;sa=play;id_quiz=' . $row['id_quiz'] . '\',\'playnew\',\'height=625,width=720,toolbar=no,scrollbars=yes,location=no,statusbar=no,menubar=no,resizable=yes\')">
+												<img style="vertical-align: top;" src="' . $settings['default_images_url'] . '/quiz_images/preview.png" alt="Preview Quiz" title="' . $txt['SMFQuizAdmin_Quizzes_Page']['PreviewQuiz'] . '">
+											</a>' : ''), '
 										</td>
 									</tr>';
 		}
@@ -1652,16 +1657,19 @@ function template_show_quiz_leagues()
 			{
 				case 0 :
 					echo '
-										<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizleagues;enable_quizleague_id=' . $row['id_quiz_league'] . formatQueryString() . '"><img src="' . $settings['default_images_url'] . '/quiz_images/lock.png" alt="disabled" title="' . $txt['SMFQuizAdmin_QuizLeagues_Page']['LeagueDisabled'] . '" align="top" /></a>';
+										<span class="quizAdminQuizButton" data-quizleagueid="' .  $row['id_quiz_league'] . '" data-new_action="' . $scripturl . '?action=admin;area=quiz;sa=quizleagues;enable_quizleague_id=' . $row['id_quiz_league'] . formatQueryString() . '">
+											<img class="quizAdminQuizImg" style="vertical-align: top;" src="' . $settings['default_images_url'] . '/quiz_images/lock.png" alt="disabled" title="' . $txt['SMFQuizAdmin_QuizLeagues_Page']['LeagueDisabled'] . '">
+										</span>';
 					break;
 				case 1 :
 					echo '
-										<a href="' . $scripturl . '?action=admin;area=quiz;sa=quizleagues;disable_quizleague_id=' . $row['id_quiz_league'] . formatQueryString() . '"><img src="' . $settings['default_images_url'] . '/quiz_images/unlock.png" alt="enabled" title="' . $txt['SMFQuizAdmin_QuizLeagues_Page']['LeagueEnabled'] . '" align="top" />';
+										<span class="quizAdminQuizButton" data-quizleagueid="' .  $row['id_quiz_league'] . '" data-new_action="' . $scripturl . '?action=admin;area=quiz;sa=quizleagues;disable_quizleague_id=' . $row['id_quiz_league'] . formatQueryString() . '">
+											<img class="quizAdminQuizImg" style="vertical-align: top;" src="' . $settings['default_images_url'] . '/quiz_images/unlock.png" alt="enabled" title="' . $txt['SMFQuizAdmin_QuizLeagues_Page']['LeagueEnabled'] . '">
+										</span>';
 					break;
 				default:
 					echo '
-										<img src="' . $settings['default_images_url'] . '/quiz_images/time.png" alt="completed" title="' . $txt['SMFQuizAdmin_QuizLeagues_Page']['LeagueCompleted'] . '" align="top" />';
-					break;
+										<img style="vertical-align: top;" src="' . $settings['default_images_url'] . '/quiz_images/time.png" alt="completed" title="' . $txt['SMFQuizAdmin_QuizLeagues_Page']['LeagueCompleted'] . '">';
 			}
 			echo '
 									</td>
