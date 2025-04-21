@@ -85,7 +85,7 @@ class Profile
 				$member_info[$userSet] = !empty($user_info[$userSet]) ? $user_info[$userSet] : '';
 			}
 		}
-		elseif (allowedTo('profile_identity_any')) {
+		elseif (allowedTo('profile_identity_any') && allowedTo('quiz_admin')) {
 			$allowed = true;
 			$member_info = Helper::quiz_userPrefs($memID);
 		}
