@@ -329,15 +329,20 @@ function GetUserQuizzesData()
 	if (isset($_GET['review']))
 	{
 		$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
-		$quizAdmins = array_filter(array_merge(Quiz\Helper::quiz_usersAllowedTo('quiz_admin'), $usersPrefs));
+		$quizAdmins = array_unique(array_filter(array_merge(Quiz\Helper::quiz_usersAllowedTo('quiz_admin'), $usersPrefs)));
+		if (($key = array_search($user_info['id'], $quizAdmins)) !== false) {
+			unset($quizAdmins[$key]);
+		}
+		$quizAdmins = array_values($quizAdmins);
+
 		if (!empty($quizAdmins)) {
 			SetQuizForReview($_GET['review']);
 
 			include_once($sourcedir . '/Subs-Post.php');
 
 			$pmto = array(
-				'to' => $quizAdmins,
-				'bcc' => array()
+				'to' => [],
+				'bcc' => $quizAdmins
 			);
 
 			$subject = $txt['SMFQuiz_UserQuizzes_Page']['UserQuizSubmittedForReview'];
