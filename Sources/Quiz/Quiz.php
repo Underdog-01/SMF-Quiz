@@ -328,7 +328,7 @@ function GetUserQuizzesData()
 	// @TODO check input
 	if (isset($_GET['review']))
 	{
-		$usersPrefs = array_uniqueQuiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
+		$usersPrefs = Quiz\Helper::quiz_usersAcknowledge('quiz_pm_alert');
 		$quizAdmins = array_unique(array_filter(array_intersect(Quiz\Helper::quiz_usersAllowedTo('quiz_admin'), $usersPrefs)));
 		if (($key = array_search($user_info['id'], $quizAdmins)) !== false) {
 			unset($quizAdmins[$key]);
