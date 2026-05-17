@@ -1,0 +1,50 @@
+# Autodetect text files
+* text=auto eol=lf
+
+# Definitively text files
+*.txt text
+*.c text
+*.h text
+*.c text
+*.h text
+*.js text
+*.py text
+*.css text
+*.html text
+*.php text
+
+# Force LF for files that must have Unix line endings
+*.sh text eol=lf
+
+# Force CRLF for files that must have Windows line endings (e.g., batch files)
+*.bat text eol=crlf
+*.sln text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.data binary
+*.bmp binary
+*.mp3 binary
+*.wav binary
+*.aac binary
+*.mp4 binary
+*.avi binary
+*.mkv binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.rar binary
+*.tar binary
+*.db binary
+*.sqlite binary
+*.mysql binary
+*.exe binary
+*.app binary
+*.dll binary
+*.so binary
+*.avro binary
+*.parquet binary
+*.feather binary
