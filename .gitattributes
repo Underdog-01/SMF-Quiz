@@ -13,6 +13,14 @@
 *.css text
 *.html text
 *.php text
+*.xml text
+*.json text
+*.yml text
+*.md text
+*.lock text
+.gitignore text
+.git-blame-ignore-revs text
+LICENSE text
 
 # Force LF for files that must have Unix line endings
 *.sh text eol=lf
